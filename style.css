@@ -67,7 +67,7 @@ h1 {
   border: 1px solid var(--border);
   border-radius: 16px;
   background: linear-gradient(180deg, var(--surface), rgba(255, 255, 255, 0.03));
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
   margin: 14px 0;
 }
 
