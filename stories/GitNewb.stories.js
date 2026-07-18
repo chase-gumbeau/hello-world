@@ -1,22 +1,16 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GitNewb</title>
-    <meta name="description" content="My first GitHub Pages site." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@300;400;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./style.css" />
-    <link rel="stylesheet" href="./material-theme.css" />
-    <script type="module" src="./main.js"></script>
-  </head>
-  <body>
-    <main class="container">
+export default {
+  title: 'GitNewb/Page',
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'fullscreen',
+  },
+};
+
+export const Home = {
+  render: () => {
+    const main = document.createElement('main');
+    main.className = 'container';
+    main.innerHTML = `
       <header class="header">
         <div class="badge" aria-hidden="true">GitHub Pages</div>
         <h1>GitNewb</h1>
@@ -71,11 +65,13 @@
       </section>
 
       <footer class="footer">
-        <a class="link" href="./README.md">Read the README</a>
+        <a class="link" href="#">Read the README</a>
       </footer>
-    </main>
+    `;
 
-    <md-dialog id="welcome-dialog">
+    const dialog = document.createElement('md-dialog');
+    dialog.id = 'welcome-dialog';
+    dialog.innerHTML = `
       <div slot="headline">Welcome to Material</div>
       <form slot="content" id="welcome-dialog-form" method="dialog">
         This dialog uses Google Material Web. It works on GitHub Pages after the site is
@@ -84,6 +80,13 @@
       <div slot="actions">
         <md-text-button form="welcome-dialog-form" value="close">Close</md-text-button>
       </div>
-    </md-dialog>
-  </body>
-</html>
+    `;
+
+    const openDialogButton = main.querySelector('#open-dialog');
+    openDialogButton?.addEventListener('click', () => dialog.show());
+
+    const wrapper = document.createElement('div');
+    wrapper.append(main, dialog);
+    return wrapper;
+  },
+};

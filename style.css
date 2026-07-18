@@ -8,6 +8,10 @@
   --muted: #555555;
   --border: #cccccc;
   --accent: #000000;
+
+  /* Material Web typefaces */
+  --md-ref-typeface-brand: Merriweather, Georgia, "Times New Roman", serif;
+  --md-ref-typeface-plain: Lato, system-ui, sans-serif;
 }
 
 * {
@@ -21,11 +25,20 @@ body {
 
 body {
   margin: 0;
-  font-family: "Google Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
-    Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+    Arial, "Apple Color Emoji", "Segoe UI Emoji";
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Merriweather, Georgia, "Times New Roman", serif;
 }
 
 .container {
@@ -54,6 +67,10 @@ h1 {
   margin: 10px 0 6px;
   font-size: 44px;
   line-height: 1.1;
+}
+
+.hello-world-title {
+  font-weight: 300;
 }
 
 .subtitle {
@@ -104,4 +121,34 @@ ol {
 
 .link:hover {
   border-bottom-color: var(--accent);
+}
+
+.material-demo {
+  font-family: Lato, ui-sans-serif, system-ui, sans-serif;
+}
+
+.material-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.material-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.material-field {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 14px 0;
+}
+
+.material-chips {
+  display: block;
+  margin: 14px 0;
 }
