@@ -33,7 +33,7 @@ jobs:
       - name: Build Storybook
         run: npm run build-storybook
         env:
-          STORYBOOK_BASE: /GitNewb/
+          STORYBOOK_BASE: /hello-world/
 
       - name: Copy scroll image assets
         run: |
