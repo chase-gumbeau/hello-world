@@ -3,3 +3,6 @@ storybook-static/
 dist/
 debug-storybook.log
 *.log
+tidbyt/*.webp
+tidbyt/*.gif
+.tmp-*.png
