@@ -1,0 +1,252 @@
+/* Vestaboard-inspired split-flap board */
+
+.solari {
+  --solari-void: #141414;
+  --solari-frame: #1a1a1a;
+  --solari-flap: #0c0c0c;
+  --solari-flap-lit: #121212;
+  --solari-ink: #f3f3f3;
+  --solari-gap: 3px;
+  --solari-radius: 2px;
+  --solari-flip: 110ms;
+
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  margin: 0;
+  padding: clamp(20px, 4vw, 48px);
+  display: grid;
+  place-items: center;
+  background: #f2f0ec;
+  cursor: pointer;
+  user-select: none;
+}
+
+.solari *,
+.solari *::before,
+.solari *::after {
+  box-sizing: border-box;
+}
+
+.solari__frame {
+  width: min(96vw, 920px);
+  padding: clamp(18px, 2.8vw, 28px) clamp(18px, 2.8vw, 28px) clamp(22px, 3vw, 32px);
+  border-radius: 10px;
+  background: linear-gradient(165deg, #222 0%, var(--solari-frame) 35%, #111 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 0 0 1px #0a0a0a,
+    0 28px 60px rgba(0, 0, 0, 0.28),
+    0 8px 16px rgba(0, 0, 0, 0.18);
+}
+
+.solari__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--solari-cols, 22), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--solari-rows, 6), auto);
+  gap: var(--solari-gap);
+  width: 100%;
+  padding: 2px;
+  background: #050505;
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px #000 inset;
+}
+
+.solari__cell {
+  position: relative;
+  aspect-ratio: 10 / 14;
+  width: 100%;
+  perspective: 900px;
+  background: #000;
+  border-radius: var(--solari-radius);
+}
+
+.solari__half,
+.solari__flap {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    var(--solari-flap-lit) 0%,
+    var(--solari-flap) 42%,
+    #080808 100%
+  );
+  color: var(--solari-ink);
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.solari__half--top {
+  top: 0;
+  border-radius: var(--solari-radius) var(--solari-radius) 0 0;
+  z-index: 1;
+}
+
+.solari__half--bottom {
+  bottom: 0;
+  border-radius: 0 0 var(--solari-radius) var(--solari-radius);
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    #090909 0%,
+    var(--solari-flap) 50%,
+    #060606 100%
+  );
+}
+
+.solari__half--bottom .solari__glyph,
+.solari__flap--bottom .solari__glyph {
+  transform: translateY(-50%);
+}
+
+.solari__glyph {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(10px, 2.35vw, 22px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.solari__half--top .solari__glyph,
+.solari__flap--top .solari__glyph {
+  top: 0;
+}
+
+.solari__flap--top {
+  top: 0;
+  border-radius: var(--solari-radius) var(--solari-radius) 0 0;
+  transform-origin: bottom center;
+  transform: rotateX(0deg);
+  z-index: 3;
+}
+
+.solari__flap--bottom {
+  bottom: 0;
+  border-radius: 0 0 var(--solari-radius) var(--solari-radius);
+  transform-origin: top center;
+  transform: rotateX(90deg);
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    #090909 0%,
+    var(--solari-flap) 50%,
+    #060606 100%
+  );
+}
+
+.solari__flap--top.is-flip {
+  animation: solari-flip-top var(--solari-flip) ease-in forwards;
+  z-index: 4;
+}
+
+.solari__flap--bottom.is-flip {
+  animation: solari-flip-bottom var(--solari-flip) ease-out forwards;
+  animation-delay: calc(var(--solari-flip) * 0.42);
+  z-index: 4;
+}
+
+.solari__seam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  margin-top: -0.5px;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.65);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.solari__nub {
+  position: absolute;
+  top: 50%;
+  width: 3px;
+  height: 5px;
+  margin-top: -2.5px;
+  border-radius: 1px;
+  background: #2a2a2a;
+  box-shadow: 0 0 0 1px #050505;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.solari__nub--left {
+  left: -1px;
+}
+
+.solari__nub--right {
+  right: -1px;
+}
+
+.solari__brand {
+  margin-top: clamp(14px, 2vw, 20px);
+  text-align: center;
+  font-family: 'Lato', system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: #2e2e2e;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.solari.is-settled .solari__brand::after {
+  content: '';
+}
+
+@keyframes solari-flip-top {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes solari-flip-bottom {
+  from {
+    transform: rotateX(90deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .solari {
+    padding: 16px;
+  }
+
+  .solari__frame {
+    padding: 14px 14px 18px;
+  }
+
+  .solari__grid {
+    gap: 2px;
+  }
+
+  .solari__glyph {
+    font-size: clamp(8px, 3.2vw, 14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .solari__flap--top.is-flip,
+  .solari__flap--bottom.is-flip {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+}
