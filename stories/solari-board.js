@@ -153,11 +153,7 @@ export function createSolariBoard(message = 'HELLO WORLD') {
     }
   }
 
-  const brand = document.createElement('div');
-  brand.className = 'solari__brand';
-  brand.textContent = 'Vestaboard';
-
-  frame.append(grid, brand);
+  frame.append(grid);
   root.append(frame);
 
   const run = async () => {

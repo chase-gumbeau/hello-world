@@ -191,22 +191,6 @@
   right: -1px;
 }
 
-.solari__brand {
-  margin-top: clamp(14px, 2vw, 20px);
-  text-align: center;
-  font-family: 'Lato', system-ui, sans-serif;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.42em;
-  text-transform: uppercase;
-  color: #2e2e2e;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
-}
-
-.solari.is-settled .solari__brand::after {
-  content: '';
-}
-
 @keyframes solari-flip-top {
   from {
     transform: rotateX(0deg);
