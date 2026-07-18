@@ -4,6 +4,13 @@ import { getScrollTripsByYear } from './scrolls-registry.js';
 const DESIGN_W = 3842;
 const DESIGN_H = 2160;
 
+// Link exit-on-click: scaled down by 0.125 (→ 0.875) and faded out, 200ms
+// linear, fired the instant a city is clicked so it runs concurrently with
+// the host shell's slide transition (see `scrolls-app.js` `navigate()`).
+const LINK_EXIT_MS = 200;
+const LINK_EXIT_EASING = 'linear';
+const LINK_EXIT_SCALE = 0.875;
+
 /**
  * Scrolls title / home screen — destination list inside the centered frame.
  *
@@ -62,6 +69,7 @@ export function createScrollsHome({ embedded = false } = {}) {
     event.preventDefault();
     const destination = event.currentTarget.getAttribute('data-destination');
     if (!destination) return;
+    playLinksExit();
     root.dispatchEvent(
       new CustomEvent('scrolls:navigate', {
         detail: { destination },
@@ -72,6 +80,19 @@ export function createScrollsHome({ embedded = false } = {}) {
 
   const cityLinks = root.querySelectorAll('[data-destination]');
   cityLinks.forEach((link) => link.addEventListener('click', onCityClick));
+
+  /** Exit animation for every destination link, run once any city is clicked. */
+  function playLinksExit() {
+    cityLinks.forEach((link) => {
+      link.animate(
+        [
+          { transform: 'scale(1)', opacity: 1 },
+          { transform: `scale(${LINK_EXIT_SCALE})`, opacity: 0 },
+        ],
+        { duration: LINK_EXIT_MS, easing: LINK_EXIT_EASING, fill: 'forwards' }
+      );
+    });
+  }
 
   function fitStage() {
     const width = root.clientWidth || window.innerWidth;

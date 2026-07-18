@@ -1,15 +1,32 @@
 import './scrolls.css';
 import { mountScrolls } from './scrolls-mount.js';
 import { mountFrameGlow } from './scrolls-frame-glow.js';
+import { getScrollTrip } from './scrolls-registry.js';
 
-const SHELL_CHROME = `
+/** @param {import('./scrolls-registry.js').ScrollTrip} [trip] */
+function buildMetaChrome(trip) {
+  if (!trip) return '';
+  return `
+  <div class="meta" aria-hidden="true">
+    <p class="meta-year">${trip.year}</p>
+    <p class="meta-title">${trip.title}</p>
+  </div>`;
+}
+
+/**
+ * @param {import('./scrolls-registry.js').ScrollTrip} [trip] Trip metadata
+ *   (year/title) for the left-side chrome — omitted renders no meta block.
+ */
+function buildShellChrome(trip) {
+  return `
   <div class="scrim" aria-hidden="true">
     <div class="scrim-hole"></div>
   </div>
   <div class="edge-fade edge-fade--left" aria-hidden="true"></div>
   <div class="edge-fade edge-fade--right" aria-hidden="true"></div>
-  <div class="window-frame" aria-hidden="true"></div>
+  <div class="window-frame" aria-hidden="true"></div>${buildMetaChrome(trip)}
 `;
+}
 
 /** Remove duplicated shell markup from imported Figma body HTML. */
 export function stripScrollShell(html) {
@@ -24,10 +41,10 @@ export function stripScrollShell(html) {
 }
 
 /** Inject shared shell chrome as stage-level siblings after the canvas wrapper. */
-function injectScrollShell(html) {
+function injectScrollShell(html, chrome) {
   return html.replace(
     /(<div\b[^>]*\bclass="[^"]*\bcanvas\b[^"]*"[^>]*>[\s\S]*<\/div>)(\s*)$/,
-    (_, canvasBlock, trailing) => `${canvasBlock}${SHELL_CHROME}${trailing}`
+    (_, canvasBlock, trailing) => `${canvasBlock}${chrome}${trailing}`
   );
 }
 
@@ -51,7 +68,7 @@ export function createScrollExperience({ id, bodyHtml, frameCount, embedded = fa
   let content = stripScrollShell(bodyHtml);
   content = rewriteAssetPaths(content);
   if (!embedded) {
-    content = injectScrollShell(content);
+    content = injectScrollShell(content, buildShellChrome(id ? getScrollTrip(id) : null));
   }
 
   root.innerHTML = `

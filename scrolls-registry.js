@@ -1,7 +1,9 @@
 import { createScrolls } from './scrolls.js';
 import { createCostaRicaScrolls } from './scrolls-costa-rica.js';
 import { createMexicoCityScrolls } from './scrolls-mexico-city.js';
+import { createPuertoRicoScrolls } from './scrolls-puerto-rico.js';
 import { createScrolls33 } from './scrolls-33.js';
+import { createGuanajuatoScrolls } from './scrolls-guanajuato.js';
 
 /**
  * Registry of scroll trips. Home, Storybook, and the app shell all read from here.
@@ -45,6 +47,15 @@ export const SCROLL_TRIPS = [
     mount: (options) => createMexicoCityScrolls(options),
   },
   {
+    id: 'puerto-rico',
+    year: 2025,
+    title: 'Puerto Rico',
+    frames: 20,
+    storyExport: 'PuertoRico',
+    heroImage: 'assets/scrolls-puerto-rico/imgImage32.png',
+    mount: (options) => createPuertoRicoScrolls(options),
+  },
+  {
     id: 'costa-rica',
     year: 2024,
     title: 'Costa Rica',
@@ -61,6 +72,15 @@ export const SCROLL_TRIPS = [
     storyExport: 'ThirtyThree',
     heroImage: 'assets/scrolls-33/img01-bg-strip.jpg',
     mount: (options) => createScrolls33(options),
+  },
+  {
+    id: 'guanajuato',
+    year: 2023,
+    title: 'Guanajuato',
+    frames: 20,
+    storyExport: 'Guanajuato',
+    heroImage: 'assets/scrolls-guanajuato/imgImage67.png',
+    mount: (options) => createGuanajuatoScrolls(options),
   },
 ];
 

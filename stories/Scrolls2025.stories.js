@@ -34,3 +34,16 @@ export const Summer = {
   },
   render: () => getScrollTrip('summer').mount(),
 };
+
+export const PuertoRico = {
+  name: 'Puerto Rico',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Standalone horizontal Puerto Rico photo scroll with a black scrim cutout — content in the window stays full brightness as frames move left and right.',
+      },
+    },
+  },
+  render: () => getScrollTrip('puerto-rico').mount(),
+};

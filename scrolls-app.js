@@ -47,20 +47,24 @@ export function createScrollsApp() {
         <div class="scrolls-app__scrim-hole"></div>
       </div>
       <div class="scrolls-app__frame" aria-hidden="true"></div>
+      <div class="scrolls-app__meta" data-scrolls-app-meta aria-hidden="true" hidden>
+        <p class="scrolls-app__meta-year" data-scrolls-app-meta-year></p>
+        <p class="scrolls-app__meta-title" data-scrolls-app-meta-title></p>
+      </div>
       <button
         class="scrolls-app__back"
         type="button"
         data-scrolls-app-back
         aria-label="Back to Scrolls home"
         hidden
-      >Back</button>
+      ><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span></button>
       <button
         class="scrolls-app__grayscale"
         type="button"
         data-scrolls-app-grayscale
         aria-pressed="false"
-        aria-label="Toggle grayscale filter"
-      >Grayscale</button>
+        aria-label="Turn on grayscale filter"
+      ><span class="material-symbols-outlined" aria-hidden="true">filter_b_and_w</span></button>
     </div>
   `;
 
@@ -70,6 +74,17 @@ export function createScrollsApp() {
   const stage = root.querySelector('.scrolls-app__stage');
   const frame = root.querySelector('.scrolls-app__frame');
   const glow = mountFrameGlow(stage || root, frame);
+  const metaEl = root.querySelector('[data-scrolls-app-meta]');
+  const metaYearEl = root.querySelector('[data-scrolls-app-meta-year]');
+  const metaTitleEl = root.querySelector('[data-scrolls-app-meta-title]');
+
+  /** Show the destination's year/title chrome; hidden entirely on Home. */
+  function updateMeta(key) {
+    const trip = key === 'home' ? null : getScrollTrip(key);
+    metaEl.hidden = !trip;
+    metaYearEl.textContent = trip ? String(trip.year) : '';
+    metaTitleEl.textContent = trip ? trip.title : '';
+  }
 
   /** @type {string | null} */
   let peekDestination = null;
@@ -161,8 +176,10 @@ export function createScrollsApp() {
     frame.classList.toggle('is-destination', key !== 'home');
 
     const prevLayer = current ? current.el : null;
-    const enterFromY = direction === 'forward' ? '7%' : '-7%';
-    const exitToX = direction === 'forward' ? '-4%' : '4%';
+    // Forward: incoming slides in from the right, outgoing exits left.
+    // Back: mirrored — incoming slides in from the left, outgoing exits right.
+    const enterFromX = direction === 'forward' ? '100%' : '-100%';
+    const exitToX = direction === 'forward' ? '-100%' : '100%';
 
     nextLayer.style.opacity = '0';
     layers.appendChild(nextLayer);
@@ -184,7 +201,7 @@ export function createScrollsApp() {
     finished.push(
       nextLayer.animate(
         [
-          { transform: `translate3d(0, ${enterFromY}, 0)`, opacity: 0 },
+          { transform: `translate3d(${enterFromX}, 0, 0)`, opacity: 0 },
           { transform: 'translate3d(0, 0, 0)', opacity: 1 },
         ],
         { duration: TRANSITION_MS, easing: EASING, fill: 'forwards' }
@@ -199,6 +216,7 @@ export function createScrollsApp() {
       current = { key, el: nextLayer };
       backButton.hidden = key === 'home';
       grayscaleButton.hidden = key === 'home';
+      updateMeta(key);
       animating = false;
     });
   }
@@ -217,7 +235,6 @@ export function createScrollsApp() {
   function onGrayscaleClick() {
     isGrayscale = !isGrayscale;
     root.classList.toggle('is-grayscale', isGrayscale);
-    grayscaleButton.textContent = isGrayscale ? 'Color' : 'Grayscale';
     grayscaleButton.setAttribute('aria-pressed', String(isGrayscale));
     grayscaleButton.setAttribute(
       'aria-label',
@@ -236,6 +253,7 @@ export function createScrollsApp() {
   current = { key: 'home', el: initialLayer };
   backButton.hidden = true;
   grayscaleButton.hidden = true;
+  updateMeta('home');
 
   // Warm palette cache so hover peeks feel instant
   for (const trip of SCROLL_TRIPS) {
