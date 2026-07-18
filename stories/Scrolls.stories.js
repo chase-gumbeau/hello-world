@@ -1,7 +1,7 @@
 import { createScrollsApp } from '../scrolls-app.js';
 
 export default {
-  title: 'Scrolls',
+  title: 'Projects/Scrolls',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

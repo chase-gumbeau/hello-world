@@ -1,7 +1,7 @@
 import { getScrollTrip } from '../scrolls-registry.js';
 
 export default {
-  title: 'Scrolls/2024',
+  title: 'Projects/Scrolls/2024',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
