@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 751.935 1187" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Mask group">
+<mask id="mask0_0_11" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="752" height="1187">
+<path id="Exclude" d="M751.934 365.401C698.128 402.819 662.635 467.026 662.635 539.953V996.147H751.934V1187H7.86316e-05V996.147H114.895V539.953C114.895 456.003 67.8615 383.607 7.86316e-05 350.331V0H751.934V365.401ZM388.765 330.852C278.976 330.852 189.974 424.47 189.974 539.953V996.147H587.555V539.953C587.555 424.47 498.554 330.852 388.765 330.852Z" fill="var(--fill-0, #D1BDC9)"/>
+</mask>
+<g mask="url(#mask0_0_11)">
+<rect id="image 52" x="762" y="-43" width="1275" height="745" transform="rotate(90 762 -43)" fill="var(--fill-0, white)"/>
+</g>
+</g>
+</svg>

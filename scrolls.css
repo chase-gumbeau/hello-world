@@ -75,7 +75,7 @@ body.scrolls-page {
   height: calc(1918.889px * var(--stage-scale, 1));
   transform: translate(-50%, -50%);
   border-radius: calc(78.222px * var(--stage-scale, 1));
-  box-shadow: 0 0 0 100vmax #000;
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.52);
 }
 
 .scrolls-root .window-frame {
@@ -109,6 +109,50 @@ body.scrolls-page {
 .scrolls-root .edge-fade--right {
   right: 0;
   background: linear-gradient(to left, #000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* Left-side year/title chrome — position mirrors Figma node 2046:432
+   (left 270.31px, top 935.88px, width 851.578px in the 3842×2160 canvas),
+   expressed as an offset from stage center so it scales with the frame.
+   Sits above the scrim so its own translucency isn't further dimmed. */
+.scrolls-root .meta {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(
+    calc(-1650.69px * var(--stage-scale, 1)),
+    calc(-144.12px * var(--stage-scale, 1))
+  );
+  width: calc(851.578px * var(--stage-scale, 1));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: calc(35px * var(--stage-scale, 1));
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  pointer-events: none;
+  z-index: 35;
+}
+
+.scrolls-root .meta-year {
+  margin: 0;
+  font-family: Lato, system-ui, sans-serif;
+  font-size: calc(48px * var(--stage-scale, 1));
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.scrolls-root .meta-title {
+  margin: 0;
+  font-family: "EB Garamond", Garamond, "Times New Roman", serif;
+  font-size: calc(80px * var(--stage-scale, 1));
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Embedded mode: hosted inside scrolls-app's shell, which owns the single

@@ -30,16 +30,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build site
-        run: npm run build
+      - name: Build Storybook
+        run: npm run build-storybook
+        env:
+          STORYBOOK_BASE: /GitNewb/
+
+      - name: Copy scroll image assets
+        run: |
+          mkdir -p storybook-static/assets
+          cp -R assets/scrolls* storybook-static/assets/
 
       - name: Add Jekyll bypass
-        run: cp .nojekyll dist/.nojekyll 2>/dev/null || touch dist/.nojekyll
+        run: touch storybook-static/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: storybook-static
 
   deploy:
     needs: build

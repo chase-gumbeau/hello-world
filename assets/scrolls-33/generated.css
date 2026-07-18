@@ -80,6 +80,8 @@
   color: #fff;
   white-space: nowrap;
   margin: 0;
+  z-index: 5;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
 }
 .s33-5 {
   position: absolute;
@@ -93,6 +95,7 @@
   color: #00adbd;
   white-space: nowrap;
   margin: 0;
+  z-index: 5;
 }
 
 /* Panel 2 */

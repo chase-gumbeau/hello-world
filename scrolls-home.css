@@ -73,10 +73,28 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 33px;
+  gap: 0;
   margin: 0;
   padding: 0;
   list-style: none;
+  text-align: center;
+}
+
+.scrolls-home__section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 33px;
+}
+
+.scrolls-home__sep {
+  margin: 44px 0;
+  font-family: Lato, system-ui, sans-serif;
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.6);
   text-align: center;
 }
 
@@ -93,7 +111,7 @@
 .scrolls-home__city {
   margin: 0;
   font-family: "EB Garamond", Garamond, "Times New Roman", serif;
-  font-size: 80px;
+  font-size: calc(24px / var(--app-stage-scale, var(--stage-scale, 1)));
   font-weight: 400;
   line-height: normal;
   color: #fff;
@@ -103,7 +121,6 @@
 
 .scrolls-home__city:hover,
 .scrolls-home__city:focus-visible {
-  font-style: italic;
   text-decoration: underline;
   opacity: 0.7;
   outline: none;

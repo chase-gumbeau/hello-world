@@ -11,6 +11,11 @@ const preview = {
         date: /Date$/i,
       },
     },
+    options: {
+      storySort: {
+        order: ['Scrolls', ['Home', '2025', '2024'], '*'],
+      },
+    },
   },
 };
 

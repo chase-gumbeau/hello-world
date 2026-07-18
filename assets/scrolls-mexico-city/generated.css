@@ -329,12 +329,17 @@
   left: -334.84px;
   top: -130.99px;
 }
-.mx40 {
+/* Strip must generate a box (not `display: contents`) so --scroll-x transforms
+   apply. Frame `left` values in this export are canvas-absolute, so the strip
+   sits at the canvas origin — unlike Summer/Costa Rica strips that start at 1382. */
+.scrolls-root .mx40.scroll-strip {
   will-change: transform;
   position: absolute;
-  display: contents;
-  left: 1382px;
-  top: 405px;
+  display: block;
+  left: 0;
+  top: 0;
+  width: 22000px;
+  height: 2160px;
   transform: translateX(var(--scroll-x, 0px));
 }
 .mx41 {

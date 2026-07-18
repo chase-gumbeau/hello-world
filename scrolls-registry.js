@@ -1,18 +1,24 @@
 import { createScrolls } from './scrolls.js';
 import { createCostaRicaScrolls } from './scrolls-costa-rica.js';
 import { createMexicoCityScrolls } from './scrolls-mexico-city.js';
+import { createPuertoRicoScrolls } from './scrolls-puerto-rico.js';
 import { createScrolls33 } from './scrolls-33.js';
+import { createGuanajuatoScrolls } from './scrolls-guanajuato.js';
 
 /**
  * Registry of scroll trips. Home, Storybook, and the app shell all read from here.
  *
+ * Storybook sidebar groups trips by year via `stories/Scrolls{year}.stories.js`
+ * (`title: 'Scrolls/2025'`, etc.). `storyExport` is the CSF named export in that
+ * year file; story ids become e.g. `scrolls-2025--mexico-city`.
+ *
  * @typedef {Object} ScrollTrip
  * @property {string} id Destination key used by home links and in-app navigation.
  * @property {number} year
- * @property {string} title Display name on the home screen.
+ * @property {string} title Display name on the home screen / Storybook story.
  * @property {number} frames Horizontal frame count for mountScrolls.
- * @property {string} storyId Named export key in stories/Scrolls.stories.js.
- * @property {string} storyName Storybook sidebar label.
+ * @property {string} storyExport Named export in the year Storybook file.
+ * @property {string} [heroImage] First-frame image path for home border peek palette.
  * @property {(options?: { embedded?: boolean }) => HTMLElement} mount
  * @property {boolean} [hideFromHome] When true, the trip keeps its own
  *   Storybook story and in-app destination but is omitted from the home
@@ -27,30 +33,35 @@ export const SCROLL_TRIPS = [
     year: 2025,
     title: 'Summer',
     frames: 20,
-    // Leading underscore lets the export name start with the year (bare
-    // identifiers can't start with a digit) while keeping Storybook's
-    // export-key-derived story id year-first: scrolls--2025-summer.
-    storyId: '_2025Summer',
-    storyName: '2025 Summer',
+    storyExport: 'Summer',
+    heroImage: 'assets/scrolls/imgImage154.png',
     mount: (options) => createScrolls(options),
-    hideFromHome: true,
   },
   {
     id: 'mexico-city',
     year: 2025,
     title: 'Mexico City',
     frames: 20,
-    storyId: '_2025MexicoCity',
-    storyName: '2025 Mexico City',
+    storyExport: 'MexicoCity',
+    heroImage: 'assets/scrolls-mexico-city/imgImage73.png',
     mount: (options) => createMexicoCityScrolls(options),
+  },
+  {
+    id: 'puerto-rico',
+    year: 2025,
+    title: 'Puerto Rico',
+    frames: 20,
+    storyExport: 'PuertoRico',
+    heroImage: 'assets/scrolls-puerto-rico/imgImage32.png',
+    mount: (options) => createPuertoRicoScrolls(options),
   },
   {
     id: 'costa-rica',
     year: 2024,
     title: 'Costa Rica',
     frames: 10,
-    storyId: '_2024CostaRica',
-    storyName: '2024 Costa Rica',
+    storyExport: 'CostaRica',
+    heroImage: 'assets/scrolls-costa-rica/imgImage23.png',
     mount: (options) => createCostaRicaScrolls(options),
   },
   {
@@ -58,12 +69,18 @@ export const SCROLL_TRIPS = [
     year: 2024,
     title: '33',
     frames: 10,
-    // Leading underscore lets the export name start with the year (bare
-    // identifiers can't start with a digit) while keeping Storybook's
-    // export-key-derived story id year-first: scrolls--2024-33.
-    storyId: '_2024ThirtyThree',
-    storyName: '2024 33',
+    storyExport: 'ThirtyThree',
+    heroImage: 'assets/scrolls-33/img01-bg-strip.jpg',
     mount: (options) => createScrolls33(options),
+  },
+  {
+    id: 'guanajuato',
+    year: 2023,
+    title: 'Guanajuato',
+    frames: 20,
+    storyExport: 'Guanajuato',
+    heroImage: 'assets/scrolls-guanajuato/imgImage67.png',
+    mount: (options) => createGuanajuatoScrolls(options),
   },
 ];
 
