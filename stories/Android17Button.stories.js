@@ -94,7 +94,7 @@ function createButton({ label, variant, size = 'md' }) {
 function createShowcase({ label = 'Hello world' } = {}) {
   const root = document.createElement('main');
   root.className = 'a17-study';
-  root.setAttribute('aria-label', 'Android 17 button animation study');
+  root.setAttribute('aria-label', 'Animation mesh gradient study');
 
   const combo = createButton({ label, variant: 'combo', size: 'lg' });
   const rotate = createButton({ label, variant: 'rotate', size: 'md' });
@@ -144,7 +144,7 @@ function createShowcase({ label = 'Hello world' } = {}) {
 function createSolo({ label = 'Hello world', variant = 'rotate' } = {}) {
   const root = document.createElement('main');
   root.className = 'a17-study';
-  root.setAttribute('aria-label', `Android 17 ${variant} button`);
+  root.setAttribute('aria-label', `Animation mesh gradient ${variant} button`);
 
   const captions = {
     rotate: 'Rotate',
@@ -168,7 +168,7 @@ function createSolo({ label = 'Hello world', variant = 'rotate' } = {}) {
 }
 
 export default {
-  title: 'Studies/Android 17 Button',
+  title: 'Studies/Animation mesh gradient',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

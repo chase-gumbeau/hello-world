@@ -1,24 +1,21 @@
 # GitNewb
 
-Welcome to my first GitHub project! 👋
+Personal playground for Storybook experiments, UI studies, and small projects.
 
-I'm learning GitHub for the first time. This repo is where I'm practicing and exploring how it all works.
+## Projects
 
-## What is this?
+- **[Scrolls](docs/scrolls.md)** — horizontal photo-scroll trips (home shell, shared frame, year-grouped destinations). Geometry, alignment checks, and how to add a trip are documented there.
 
-This is a starter project—a place to try out Git and GitHub without pressure. Perfect for anyone who's new to version control and wants to see how it looks on GitHub.
+## Develop
 
-## Website (GitHub Pages)
+```bash
+npm install
+npm run storybook
+```
 
-This repo includes a tiny website in `index.html`. Once GitHub Pages is enabled, it will be published automatically when you push changes to `main`.
+Storybook opens at http://localhost:6006. Scrolls lives under **Projects → Scrolls**.
 
-## How to see this on GitHub
-
-1. Go to [github.com/chase-gumbeau/GitNewb](https://github.com/chase-gumbeau/GitNewb)
-2. This README will show up right on the main project page.
-
-That's it! You're already using GitHub.
-
----
-
-*Made with care by a GitHub newbie.*
+```bash
+npm run scrolls:check-align   # verify every trip starts at the frame left edge
+npm run build-storybook      # static build for GitHub Pages
+```

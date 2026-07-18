@@ -1,8 +1,21 @@
 #!/usr/bin/env python3
-"""Convert Mexico City Frame25 JSX → HTML + utility CSS (mirrors Costa Rica/Summer scrolls pipeline)."""
+"""Convert Mexico City Frame25 JSX → HTML + utility CSS (mirrors Costa Rica/Summer scrolls pipeline).
+
+Post-processes canvas-absolute panels so the first frame sits at FRAME_LEFT
+(flush with the shared window). See docs/scrolls.md and scrolls_geometry.py.
+"""
 import re
 import json
 from pathlib import Path
+
+from scrolls_geometry import (
+    DESIGN_H,
+    DESIGN_W,
+    FIGMA_STRIP_LEFT,
+    FRAME_LEFT,
+    FRAME_PANEL_H,
+    FRAME_PANEL_W,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSET_DIR = "assets/scrolls-mexico-city"
@@ -347,51 +360,97 @@ strip_cls = None
 for old, new in class_map.items():
     if "rounded-[80px]" in old and "size-full" in old and "bg-black" in old:
         canvas_cls = new
-    if "left-[1478px]" in old and "top-[405px]" in old and "contents" in old:
+    if f"left-[{FIGMA_STRIP_LEFT}px]" in old and "top-[405px]" in old and "contents" in old:
         strip_cls = new
 
 if not canvas_cls or not strip_cls:
     raise SystemExit(f"missing canvas/strip classes: {canvas_cls=} {strip_cls=}")
 
 css_text = "\n".join(css_lines)
+
+PANEL_H = f"height: {int(FRAME_PANEL_H)}px"
+PANEL_W = f"width: {FRAME_PANEL_W}px"
+
+
+def align_canvas_absolute_panels(css: str) -> str:
+    """Shift 1080×1350 panels so the leftmost sits at FRAME_LEFT.
+
+    Mexico City exports panels as canvas-absolute (strip at origin), unlike
+    flex-strip trips where the strip itself is at FRAME_LEFT.
+    """
+    rule_pat = re.compile(r"(\.([a-zA-Z_][\w-]*)\s*\{)([^}]+)(\})", re.S)
+    lefts = []
+    for m in rule_pat.finditer(css):
+        body = m.group(3)
+        if PANEL_H not in body or PANEL_W not in body:
+            continue
+        lm = re.search(r"left:\s*([\d.]+)px", body)
+        if lm:
+            lefts.append(float(lm.group(1)))
+    if not lefts:
+        print("WARN: no canvas-absolute panels found to align")
+        return css
+    origin = min(lefts)
+    offset = origin - FRAME_LEFT
+    if abs(offset) < 0.01:
+        print(f"Panels already aligned at {FRAME_LEFT}")
+        return css
+
+    def shift_rule(m):
+        head, body, tail = m.group(1), m.group(3), m.group(4)
+        if PANEL_H not in body or PANEL_W not in body:
+            return m.group(0)
+        lm = re.search(r"left:\s*([\d.]+)px", body)
+        if not lm:
+            return m.group(0)
+        new_left = float(lm.group(1)) - offset
+        body = re.sub(r"left:\s*[\d.]+px", f"left: {new_left:g}px", body, count=1)
+        return f"{head}{body}{tail}"
+
+    css = rule_pat.sub(shift_rule, css)
+    print(f"Aligned panels: origin {origin:g} → {FRAME_LEFT} (shifted {-offset:g}px)")
+    return css
+
+
+css_text = align_canvas_absolute_panels(css_text)
+
+# Strip hosts canvas-absolute panels: sit at canvas origin and scroll via --scroll-x.
+# Figma marks the strip as display:contents at FIGMA_STRIP_LEFT; we rebuild it.
+strip_override = f"""
+/* Strip must generate a box (not `display: contents`) so --scroll-x transforms
+   apply. Frame `left` values are canvas-absolute (first panel at {FRAME_LEFT}, the
+   centered frame's left edge); the strip sits at the canvas origin. */
+.scrolls-root .{strip_cls}.scroll-strip {{
+  will-change: transform;
+  position: absolute;
+  display: block;
+  left: 0;
+  top: 0;
+  width: 22000px;
+  height: {DESIGN_H}px;
+  transform: translateX(var(--scroll-x, 0px));
+}}
+"""
+# Drop any auto-generated strip rule that still carries the Figma left.
 css_text = re.sub(
-    rf"(\.{strip_cls} \{{[^}}]*?)left: 1478px;",
-    r"\1left: 1382px;",
+    rf"\.{strip_cls} \{{[^}}]+\}}\n?",
+    "",
     css_text,
     count=1,
 )
-pat = rf"\.{strip_cls} \{{[^}}]+\}}"
+css_text = css_text.rstrip() + "\n" + strip_override
 
-
-def merge_transform(m):
-    block = m.group(0)
-    if "will-change:" not in block:
-        block = block.replace("{", "{\n  will-change: transform;", 1)
-    if "translateX(var(--scroll-x" in block:
-        return block
-    if "transform:" in block:
-        return re.sub(
-            r"transform:\s*([^;]+);",
-            r"transform: \1 translateX(var(--scroll-x, 0px));",
-            block,
-            count=1,
-        )
-    return block[:-1] + "  transform: translateX(var(--scroll-x, 0px));\n}"
-
-
-css_text = re.sub(pat, merge_transform, css_text, count=1)
-
-# Force design canvas size (Figma artboard 3842x2160)
+# Force design canvas size (Figma artboard)
 css_text = re.sub(
     rf"(\.{canvas_cls} \{{[^}}]*?)width: 100%;\n  height: 100%;",
-    r"\1width: 3842px;\n  height: 2160px;",
+    rf"\1width: {DESIGN_W}px;\n  height: {DESIGN_H}px;",
     css_text,
     count=1,
 )
-if f".{canvas_cls} {{" in css_text and "width: 3842px" not in css_text.split(f".{canvas_cls} {{")[1].split("}")[0]:
+if f".{canvas_cls} {{" in css_text and f"width: {DESIGN_W}px" not in css_text.split(f".{canvas_cls} {{")[1].split("}")[0]:
     css_text = css_text.replace(
         f".{canvas_cls} {{",
-        f".{canvas_cls} {{\n  width: 3842px;\n  height: 2160px;",
+        f".{canvas_cls} {{\n  width: {DESIGN_W}px;\n  height: {DESIGN_H}px;",
         1,
     )
 

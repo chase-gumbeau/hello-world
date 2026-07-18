@@ -63,16 +63,20 @@
   box-sizing: border-box;
   overflow: hidden;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .scrolls-home__list {
-  position: absolute;
-  left: 108.32px;
-  top: 521.44px;
+  position: relative;
+  left: auto;
+  top: auto;
   width: 851.578px;
+  transform: none;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   gap: 0;
   margin: 0;
   padding: 0;
@@ -83,8 +87,9 @@
 .scrolls-home__section {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   gap: 33px;
+  width: 100%;
 }
 
 .scrolls-home__sep {
@@ -124,6 +129,39 @@
   text-decoration: underline;
   opacity: 0.7;
   outline: none;
+}
+
+/* Left-rail layout: destination list in the left gutter outside the frame,
+   left-aligned and vertically centered. Frame stays empty in the center. */
+.scrolls-home.is-layout-left .scrolls-home__frame {
+  display: block;
+}
+
+.scrolls-home.is-layout-left .scrolls-home__list {
+  position: absolute;
+  left: 200px;
+  top: 50%;
+  width: 980px;
+  max-width: calc(1382px - 240px);
+  transform: translateY(-50%);
+  align-items: flex-start;
+  text-align: left;
+  z-index: 15;
+  will-change: transform, opacity;
+}
+
+.scrolls-home.is-layout-left .scrolls-home__section {
+  align-items: flex-start;
+}
+
+.scrolls-home.is-layout-left .scrolls-home__sep,
+.scrolls-home.is-layout-left .scrolls-home__year,
+.scrolls-home.is-layout-left .scrolls-home__city {
+  text-align: left;
+}
+
+.scrolls-home.is-layout-left .scrolls-home__list.is-exiting {
+  pointer-events: none;
 }
 
 /* Embedded mode: hosted inside scrolls-app's shell, which owns the single

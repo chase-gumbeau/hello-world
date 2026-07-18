@@ -4,6 +4,8 @@ import re
 import json
 from pathlib import Path
 
+from scrolls_geometry import DESIGN_H, DESIGN_W, FRAME_LEFT, FRAME_PANEL_W
+
 ROOT = Path(__file__).resolve().parents[1]
 ASSET_DIR = "assets/scrolls-puerto-rico"
 PREFIX = "pr"
@@ -359,13 +361,13 @@ if not strip_cls:
 # stage (3842x2160) and wrap the strip in it, mirroring Guanajuato/Mexico City.
 canvas_cls = f"{PREFIX}100"
 css_lines.append(
-    f".{canvas_cls} {{\n  background: #000;\n  overflow: clip;\n  position: relative;\n  border-radius: 80px;\n  width: 3842px;\n  height: 2160px;\n}}"
+    f".{canvas_cls} {{\n  background: #000;\n  overflow: clip;\n  position: relative;\n  border-radius: 80px;\n  width: {DESIGN_W}px;\n  height: {DESIGN_H}px;\n}}"
 )
 
 FRAME_COUNT = 20
-FRAME_W = 1080
+FRAME_W = FRAME_PANEL_W
 # Matches the shared design stage centering used by Summer/Costa Rica/Guanajuato.
-STRIP_LEFT = 1382
+STRIP_LEFT = FRAME_LEFT
 
 # Rebuild the strip rule from scratch (rather than patching the auto-generated
 # text) to avoid duplicate/conflicting declarations — e.g. the original

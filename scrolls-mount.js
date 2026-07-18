@@ -1,5 +1,7 @@
 import './scrolls.css';
 
+// Design stage / frame numbers — keep in sync with scripts/scrolls_geometry.py
+// and docs/scrolls.md (FRAME_LEFT = (3842 - 1078) / 2 = 1382).
 const DESIGN_W = 3842;
 const DESIGN_H = 2160;
 const FRAME_W = 1080;

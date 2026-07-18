@@ -9,7 +9,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "scrolls:check-align": "python3 scripts/check_scroll_frame_align.py",
+    "scrolls:convert:mexico-city": "python3 scripts/convert_mexico_city.py",
+    "scrolls:convert:costa-rica": "python3 scripts/convert_costa_rica.py",
+    "scrolls:convert:puerto-rico": "python3 scripts/convert_puerto_rico.py"
   },
   "repository": {
     "type": "git",
