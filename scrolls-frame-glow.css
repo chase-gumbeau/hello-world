@@ -1,0 +1,119 @@
+/* Frame glow — ambient mesh drift + cursor hotspot above; B&W → peek morph */
+
+.scrolls-frame-glow {
+  --glow-c0: #ffffff;
+  --glow-c1: #e8e8e8;
+  --glow-c2: #9a9a9a;
+  --glow-c3: #3a3a3a;
+  --glow-c4: #0a0a0a;
+  --glow-c5: #000000;
+  --glow-accent: #ffffff;
+  --glow-x: 50%;
+  --glow-y: 18%;
+  /* Ambient field anchors (driven by JS drift on Home) */
+  --glow-ax0: 72%;
+  --glow-ay0: 18%;
+  --glow-ax1: 88%;
+  --glow-ay1: 22%;
+  --glow-ax2: 12%;
+  --glow-ay2: 78%;
+  --glow-ax3: 70%;
+  --glow-ay3: 88%;
+
+  isolation: isolate;
+  border: none !important;
+  padding: 2px;
+  box-sizing: border-box;
+  background: transparent;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  filter: url(#scrolls-frame-noise);
+  box-shadow:
+    calc(var(--glow-ox, 0px) * 0.35) calc(var(--glow-oy, 0px) * 0.35) 14px
+      color-mix(in srgb, var(--glow-accent) 35%, transparent),
+    calc(var(--glow-ox, 0px) * -0.2) calc(var(--glow-oy, 0px) * -0.2) 10px
+      rgba(0, 0, 0, 0.55);
+  opacity: 1;
+  transition:
+    opacity 400ms ease,
+    box-shadow 520ms ease;
+}
+
+/* Bottom: slow-moving color fields (independent of cursor) */
+.scrolls-frame-glow__ambient {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      95% 75% at var(--glow-ax0) var(--glow-ay0),
+      var(--glow-c0) 0%,
+      transparent 52%
+    ),
+    radial-gradient(
+      80% 70% at var(--glow-ax1) var(--glow-ay1),
+      var(--glow-c1) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      75% 80% at var(--glow-ax2) var(--glow-ay2),
+      var(--glow-c2) 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      70% 65% at var(--glow-ax3) var(--glow-ay3),
+      var(--glow-c3) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      120% 100% at 50% 50%,
+      var(--glow-c4) 10%,
+      var(--glow-c5) 100%
+    );
+}
+
+/* Top: cursor-tracked highlight sitting above the drifting mesh */
+.scrolls-frame-glow__cursor {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    70% 55% at var(--glow-x) var(--glow-y),
+    color-mix(in srgb, var(--glow-accent) 72%, transparent) 0%,
+    color-mix(in srgb, var(--glow-c0) 28%, transparent) 28%,
+    transparent 58%
+  );
+  opacity: 0.55;
+  mix-blend-mode: soft-light;
+  transition: opacity 420ms ease;
+}
+
+.scrolls-frame-glow.is-peeking {
+  box-shadow:
+    calc(var(--glow-ox, 0px) * 0.4) calc(var(--glow-oy, 0px) * 0.4) 18px
+      color-mix(in srgb, var(--glow-accent) 50%, transparent),
+    calc(var(--glow-ox, 0px) * -0.15) calc(var(--glow-oy, 0px) * -0.15) 12px
+      color-mix(in srgb, var(--glow-c2) 35%, transparent);
+}
+
+.scrolls-frame-glow.is-peeking .scrolls-frame-glow__cursor {
+  opacity: 0.9;
+  mix-blend-mode: screen;
+}
+
+/* Destination / story view — quieter frame so content leads; no ambient drift */
+.scrolls-frame-glow.is-destination {
+  opacity: 0.5;
+}
+
+.scrolls-frame-glow.is-destination .scrolls-frame-glow__cursor {
+  opacity: 0.35;
+}

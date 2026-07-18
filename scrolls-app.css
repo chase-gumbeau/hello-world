@@ -136,3 +136,46 @@
 .scrolls-app__back[hidden] {
   display: none;
 }
+
+/* Mirrors .scrolls-app__back, anchored to the inside bottom of the frame
+   instead of the inside top. */
+.scrolls-app__grayscale {
+  position: absolute;
+  left: 50%;
+  bottom: calc(50% - (1918.889px * var(--stage-scale, 1)) / 2 + (48px * var(--stage-scale, 1)));
+  transform: translate(-50%, 0);
+  z-index: 50;
+  margin: 0;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.85);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  opacity: 0.8;
+  outline: none;
+  box-shadow: none;
+  transition: opacity 200ms ease, background 200ms ease;
+}
+
+.scrolls-app__grayscale:hover,
+.scrolls-app__grayscale:focus,
+.scrolls-app__grayscale:focus-visible {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.14);
+  outline: none;
+  box-shadow: none;
+}
+
+.scrolls-app__grayscale[hidden] {
+  display: none;
+}
+
+/* Grayscale filter targets the content viewport only — frame, glow ring,
+   and the chrome buttons themselves stay in color. */
+.scrolls-app.is-grayscale .scrolls-app__canvas {
+  filter: grayscale(1);
+}

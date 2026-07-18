@@ -1,5 +1,6 @@
 import './scrolls.css';
 import { mountScrolls } from './scrolls-mount.js';
+import { mountFrameGlow } from './scrolls-frame-glow.js';
 
 const SHELL_CHROME = `
   <div class="scrim" aria-hidden="true">
@@ -60,5 +61,16 @@ export function createScrollExperience({ id, bodyHtml, frameCount, embedded = fa
   `;
 
   mountScrolls(root, { frameCount });
+  if (!embedded) {
+    const stage = root.querySelector('[data-scrolls-stage]');
+    const frame = root.querySelector('.window-frame');
+    const glow = mountFrameGlow(stage || root, frame);
+    frame?.classList.add('is-destination');
+    const prevDispose = root._scrollsDispose;
+    root._scrollsDispose = () => {
+      glow.dispose();
+      prevDispose?.();
+    };
+  }
   return root;
 }

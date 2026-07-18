@@ -16,6 +16,7 @@ import { createScrolls33 } from './scrolls-33.js';
  * @property {string} title Display name on the home screen / Storybook story.
  * @property {number} frames Horizontal frame count for mountScrolls.
  * @property {string} storyExport Named export in the year Storybook file.
+ * @property {string} [heroImage] First-frame image path for home border peek palette.
  * @property {(options?: { embedded?: boolean }) => HTMLElement} mount
  * @property {boolean} [hideFromHome] When true, the trip keeps its own
  *   Storybook story and in-app destination but is omitted from the home
@@ -31,6 +32,7 @@ export const SCROLL_TRIPS = [
     title: 'Summer',
     frames: 20,
     storyExport: 'Summer',
+    heroImage: 'assets/scrolls/imgImage154.png',
     mount: (options) => createScrolls(options),
   },
   {
@@ -39,6 +41,7 @@ export const SCROLL_TRIPS = [
     title: 'Mexico City',
     frames: 20,
     storyExport: 'MexicoCity',
+    heroImage: 'assets/scrolls-mexico-city/imgImage73.png',
     mount: (options) => createMexicoCityScrolls(options),
   },
   {
@@ -47,6 +50,7 @@ export const SCROLL_TRIPS = [
     title: 'Costa Rica',
     frames: 10,
     storyExport: 'CostaRica',
+    heroImage: 'assets/scrolls-costa-rica/imgImage23.png',
     mount: (options) => createCostaRicaScrolls(options),
   },
   {
@@ -55,6 +59,7 @@ export const SCROLL_TRIPS = [
     title: '33',
     frames: 10,
     storyExport: 'ThirtyThree',
+    heroImage: 'assets/scrolls-33/img01-bg-strip.jpg',
     mount: (options) => createScrolls33(options),
   },
 ];

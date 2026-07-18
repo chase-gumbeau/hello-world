@@ -1,6 +1,8 @@
 import './scrolls-app.css';
 import { createScrollsHome } from './scrolls-home.js';
-import { SCROLL_DESTINATIONS } from './scrolls-registry.js';
+import { SCROLL_DESTINATIONS, getScrollTrip, SCROLL_TRIPS } from './scrolls-registry.js';
+import { mountFrameGlow } from './scrolls-frame-glow.js';
+import { extractPaletteFromImage, tripAssetUrl } from './scrolls-palette.js';
 
 const DESIGN_W = 3842;
 const DESIGN_H = 2160;
@@ -52,11 +54,68 @@ export function createScrollsApp() {
         aria-label="Back to Scrolls home"
         hidden
       >Back</button>
+      <button
+        class="scrolls-app__grayscale"
+        type="button"
+        data-scrolls-app-grayscale
+        aria-pressed="false"
+        aria-label="Toggle grayscale filter"
+      >Grayscale</button>
     </div>
   `;
 
   const layers = root.querySelector('[data-scrolls-app-layers]');
   const backButton = root.querySelector('[data-scrolls-app-back]');
+  const grayscaleButton = root.querySelector('[data-scrolls-app-grayscale]');
+  const stage = root.querySelector('.scrolls-app__stage');
+  const frame = root.querySelector('.scrolls-app__frame');
+  const glow = mountFrameGlow(stage || root, frame);
+
+  /** @type {string | null} */
+  let peekDestination = null;
+  /** @type {number} */
+  let peekToken = 0;
+
+  async function peekTrip(destinationId) {
+    const trip = getScrollTrip(destinationId);
+    if (!trip?.heroImage) {
+      glow.setPalette(null);
+      return;
+    }
+    const token = ++peekToken;
+    peekDestination = destinationId;
+    try {
+      const colors = await extractPaletteFromImage(tripAssetUrl(trip.heroImage));
+      if (token !== peekToken || peekDestination !== destinationId) return;
+      glow.setPalette(colors);
+    } catch {
+      if (token === peekToken) glow.setPalette(null);
+    }
+  }
+
+  function clearPeek() {
+    peekDestination = null;
+    peekToken += 1;
+    glow.setPalette(null);
+  }
+
+  function onDestinationEnter(event) {
+    if (current?.key !== 'home') return;
+    const link = event.target.closest?.('[data-destination]');
+    if (!link || !root.contains(link)) return;
+    const id = link.getAttribute('data-destination');
+    if (!id || id === peekDestination) return;
+    peekTrip(id);
+  }
+
+  function onDestinationLeave(event) {
+    if (current?.key !== 'home') return;
+    const link = event.target.closest?.('[data-destination]');
+    if (!link) return;
+    const next = event.relatedTarget?.closest?.('[data-destination]');
+    if (next && root.contains(next)) return;
+    clearPeek();
+  }
 
   /** @type {{ key: string, el: HTMLElement } | null} */
   let current = null;
@@ -93,10 +152,13 @@ export function createScrollsApp() {
     if (animating || !DESTINATIONS[key]) return;
     if (current && current.key === key) return;
 
+    clearPeek();
+
     const nextLayer = mountLayer(key);
     if (!nextLayer) return;
 
     animating = true;
+    frame.classList.toggle('is-destination', key !== 'home');
 
     const prevLayer = current ? current.el : null;
     const enterFromY = direction === 'forward' ? '7%' : '-7%';
@@ -136,6 +198,7 @@ export function createScrollsApp() {
       }
       current = { key, el: nextLayer };
       backButton.hidden = key === 'home';
+      grayscaleButton.hidden = key === 'home';
       animating = false;
     });
   }
@@ -149,18 +212,46 @@ export function createScrollsApp() {
     navigate('home', { direction: 'back' });
   }
 
+  let isGrayscale = false;
+
+  function onGrayscaleClick() {
+    isGrayscale = !isGrayscale;
+    root.classList.toggle('is-grayscale', isGrayscale);
+    grayscaleButton.textContent = isGrayscale ? 'Color' : 'Grayscale';
+    grayscaleButton.setAttribute('aria-pressed', String(isGrayscale));
+    grayscaleButton.setAttribute(
+      'aria-label',
+      isGrayscale ? 'Turn off grayscale filter' : 'Turn on grayscale filter'
+    );
+  }
+
   layers.addEventListener('scrolls:navigate', onNavigateEvent);
   backButton.addEventListener('click', onBackClick);
+  grayscaleButton.addEventListener('click', onGrayscaleClick);
+  root.addEventListener('pointerover', onDestinationEnter);
+  root.addEventListener('pointerout', onDestinationLeave);
 
   const initialLayer = mountLayer('home');
   layers.appendChild(initialLayer);
   current = { key: 'home', el: initialLayer };
   backButton.hidden = true;
+  grayscaleButton.hidden = true;
+
+  // Warm palette cache so hover peeks feel instant
+  for (const trip of SCROLL_TRIPS) {
+    if (trip.heroImage) {
+      extractPaletteFromImage(tripAssetUrl(trip.heroImage));
+    }
+  }
 
   root._scrollsAppDispose = () => {
+    glow.dispose();
     resizeObserver.disconnect();
     layers.removeEventListener('scrolls:navigate', onNavigateEvent);
     backButton.removeEventListener('click', onBackClick);
+    grayscaleButton.removeEventListener('click', onGrayscaleClick);
+    root.removeEventListener('pointerover', onDestinationEnter);
+    root.removeEventListener('pointerout', onDestinationLeave);
   };
 
   return root;
