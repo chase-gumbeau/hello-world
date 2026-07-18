@@ -3,3 +3,4 @@ storybook-static/
 dist/
 debug-storybook.log
 *.log
+.tmp-*.png

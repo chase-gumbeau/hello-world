@@ -1,0 +1,126 @@
+/* Scrolls home / title screen */
+
+.scrolls-home {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+}
+
+.scrolls-home__stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+
+.scrolls-home__canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3842px;
+  height: 2160px;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center center;
+  background: #000;
+  overflow: hidden;
+  border-radius: 80px;
+}
+
+.scrolls-home__edge {
+  position: absolute;
+  top: 0;
+  width: 732px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.scrolls-home__edge--left {
+  left: 0;
+  background: linear-gradient(to right, #000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.scrolls-home__edge--right {
+  right: 0;
+  background: linear-gradient(to left, #000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.scrolls-home__frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1078px;
+  height: 1918.889px;
+  transform: translate(-50%, -50%);
+  border: 4.889px solid #fff;
+  border-radius: 78.222px;
+  box-sizing: border-box;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.scrolls-home__list {
+  position: absolute;
+  left: 108.32px;
+  top: 521.44px;
+  width: 851.578px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 33px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+
+.scrolls-home__year {
+  margin: 0;
+  font-family: Lato, system-ui, sans-serif;
+  font-size: 48px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 9.6px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.scrolls-home__city {
+  margin: 0;
+  font-family: "EB Garamond", Garamond, "Times New Roman", serif;
+  font-size: 80px;
+  font-weight: 400;
+  line-height: normal;
+  color: #fff;
+  text-decoration: none;
+  transition: opacity 200ms ease;
+}
+
+.scrolls-home__city:hover,
+.scrolls-home__city:focus-visible {
+  font-style: italic;
+  text-decoration: underline;
+  opacity: 0.7;
+  outline: none;
+}
+
+/* Embedded mode: hosted inside scrolls-app's shell, which owns the single
+   stable frame/scrim/edge chrome — hide this component's own copies and
+   drop the 100vh assumption so it sizes to its host layer instead. */
+.scrolls-home.is-embedded,
+.scrolls-home.is-embedded .scrolls-home__stage {
+  min-height: 0;
+}
+
+.scrolls-home.is-embedded .scrolls-home__frame {
+  border-color: transparent;
+}
+
+.scrolls-home.is-embedded .scrolls-home__edge {
+  display: none;
+}

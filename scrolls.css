@@ -1,0 +1,126 @@
+/* 2025 Summer Scrolls */
+
+.scrolls-root,
+.scrolls-root * ,
+.scrolls-root *::before,
+.scrolls-root *::after {
+  box-sizing: border-box;
+}
+
+body.scrolls-page {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+}
+
+.scrolls-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.scrolls-root.is-dragging {
+  cursor: grabbing;
+}
+
+.scrolls-root .stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;
+}
+
+.scrolls-root .canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center center;
+  z-index: 1;
+}
+
+/* Shared by all scroll variants — mountScrolls drives horizontal motion via --scroll-x */
+.scrolls-root .scroll-strip {
+  transform: translateY(-50%) translateX(var(--scroll-x, 0px));
+  will-change: transform;
+}
+
+/* Stage-level chrome — lives outside the scaled canvas so the scrim box-shadow
+   isn't clipped to the artboard and can cover the full viewport. */
+.scrolls-root .scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.scrolls-root .scrim-hole {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(1078px * var(--stage-scale, 1));
+  height: calc(1918.889px * var(--stage-scale, 1));
+  transform: translate(-50%, -50%);
+  border-radius: calc(78.222px * var(--stage-scale, 1));
+  box-shadow: 0 0 0 100vmax #000;
+}
+
+.scrolls-root .window-frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(1078px * var(--stage-scale, 1));
+  height: calc(1918.889px * var(--stage-scale, 1));
+  transform: translate(-50%, -50%);
+  border-radius: calc(78.222px * var(--stage-scale, 1));
+  border: calc(4.889px * var(--stage-scale, 1)) solid #fff;
+  pointer-events: none;
+  z-index: 30;
+  box-sizing: border-box;
+}
+
+.scrolls-root .edge-fade {
+  position: absolute;
+  top: 0;
+  width: calc(732px * var(--stage-scale, 1));
+  height: 100%;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.scrolls-root .edge-fade--left {
+  left: 0;
+  background: linear-gradient(to right, #000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.scrolls-root .edge-fade--right {
+  right: 0;
+  background: linear-gradient(to left, #000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* Embedded mode: hosted inside scrolls-app's shell, which owns the single
+   stable frame/scrim/edge chrome — hide this component's own copies and
+   drop the 100vh assumption so it sizes to its host layer instead. */
+.scrolls-root.is-embedded,
+.scrolls-root.is-embedded .stage {
+  min-height: 0;
+}
+
+.scrolls-root.is-embedded .scrim,
+.scrolls-root.is-embedded .window-frame,
+.scrolls-root.is-embedded .edge-fade {
+  display: none;
+}
