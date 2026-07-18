@@ -64,6 +64,192 @@ const WASH_STOPS = [
   { t: 1, x: 104, y: 104, rx: 140, ry: 120, r: 133, g: 88, b: 184, a: 0.3 },
 ];
 
+const BRIEF_HEADLINE = `
+  <p class="morning-brief__date md-typescale-label-large">Friday · July 17 2026</p>
+
+  <h1 class="morning-brief__headline">
+    The whole day is yours, Chase — nothing on the calendar until the gym at 5:30.
+  </h1>
+`;
+
+const BRIEF_VISUAL = `
+  <div class="morning-brief__visual">
+    <div class="morning-brief__sky" aria-hidden="true">
+      ${sunSvg}
+      ${birdsSvg}
+    </div>
+    __TIMELINE__
+  </div>
+`;
+
+const BRIEF_SCHEDULE = `
+  <section class="morning-brief__schedule" aria-label="Day schedule">
+    <article class="morning-brief__slot">
+      <h2 class="morning-brief__slot-time">8 AM – 1 PM</h2>
+      <p class="morning-brief__slot-body">
+        The calendar is empty here — a long, unbroken stretch for design work.
+      </p>
+    </article>
+    <article class="morning-brief__slot">
+      <h2 class="morning-brief__slot-time">1 – 5:30 PM</h2>
+      <p class="morning-brief__slot-body">
+        Still clear; the afternoon runs straight through to evening.
+      </p>
+    </article>
+    <article class="morning-brief__slot">
+      <h2 class="morning-brief__slot-time">5:30 PM ONWARD</h2>
+      <p class="morning-brief__slot-body">
+        Gym at Los Campeones, the only entry today. Saturday is clear too.
+      </p>
+    </article>
+  </section>
+
+  <md-divider class="morning-brief__rule" role="separator"></md-divider>
+`;
+
+/** Concept 2: two-column Needs attention / Resolved (lists in schedule slots). */
+const BRIEF_SCHEDULE_CONCEPT2 = `
+  <section class="morning-brief__schedule" aria-label="Status">
+    <article class="morning-brief__slot">
+      <h2 class="morning-brief__slot-time">Needs attention</h2>
+      <ol class="morning-brief__card-list">
+        <li class="morning-brief__card-list-item">
+          <p class="morning-brief__card-list-body">
+            Nothing needs you this morning — the inbox is newsletters and receipts, and no one is waiting on a reply.
+          </p>
+          <md-divider class="morning-brief__card-list-divider" role="separator"></md-divider>
+        </li>
+        <li class="morning-brief__card-list-item">
+          <h3 class="morning-brief__card-list-title">
+            Review lease renewal draft from property manager
+          </h3>
+          <p class="morning-brief__card-list-body">
+            Placeholder — a marked-up PDF landed overnight; reply needed before Friday.
+          </p>
+          <md-divider class="morning-brief__card-list-divider" role="separator"></md-divider>
+        </li>
+        <li class="morning-brief__card-list-item">
+          <h3 class="morning-brief__card-list-title">
+            Confirm dentist appointment for next Tuesday
+          </h3>
+          <p class="morning-brief__card-list-body">
+            Placeholder — office texted asking you to confirm or reschedule by end of day.
+          </p>
+          <md-divider class="morning-brief__card-list-divider" role="separator"></md-divider>
+        </li>
+        <li class="morning-brief__card-list-item">
+          <h3 class="morning-brief__card-list-title">
+            Approve contractor invoice for kitchen repair
+          </h3>
+          <p class="morning-brief__card-list-body">
+            Placeholder — $420 invoice awaits payment; work was completed last week.
+          </p>
+          <md-divider class="morning-brief__card-list-divider" role="separator"></md-divider>
+        </li>
+        <li class="morning-brief__card-list-item">
+          <h3 class="morning-brief__card-list-title">
+            RSVP to Maya’s birthday dinner Saturday
+          </h3>
+          <p class="morning-brief__card-list-body">
+            Placeholder — calendar invite is still pending; host asked for a headcount.
+          </p>
+        </li>
+      </ol>
+    </article>
+    <article class="morning-brief__slot">
+      <h2 class="morning-brief__slot-time">Resolved</h2>
+      <ol class="morning-brief__card-list">
+        <li class="morning-brief__card-list-item">
+          <h3 class="morning-brief__card-list-title">
+            $136 refund came through from FastGrowingTrees
+          </h3>
+          <p class="morning-brief__card-list-body">
+            The refund notice
+            <a href="#">in your inbox</a>
+            Friday afternoon confirms order #9503679586 was refunded in full — $136.00, on your statement within days.
+          </p>
+          <md-divider class="morning-brief__card-list-divider" role="separator"></md-divider>
+        </li>
+        <li class="morning-brief__card-list-item">
+          <h3 class="morning-brief__card-list-title">
+            UPS package delivered Friday at 3:13 PM
+          </h3>
+          <p class="morning-brief__card-list-body">
+            UPS confirmed
+            <a href="#">in your inbox</a>
+            that the package from The UPS Store arrived Friday — nothing left to track.
+          </p>
+        </li>
+      </ol>
+    </article>
+  </section>
+`;
+
+/** Reference + Concept 1: headline, sky + timeline visual, schedule. */
+const BRIEF_INTRO = `
+  ${BRIEF_HEADLINE}
+  ${BRIEF_VISUAL}
+  ${BRIEF_SCHEDULE}
+`;
+
+/** Concept 2: no sky strip, no scrubber / timeline visual block. */
+const BRIEF_INTRO_CONCEPT2 = `
+  ${BRIEF_HEADLINE}
+  ${BRIEF_SCHEDULE_CONCEPT2}
+`;
+
+const BRIEF_BODY = `
+  ${BRIEF_INTRO}
+
+  <section class="morning-brief__section" aria-labelledby="needs-attention-heading">
+    <h2 id="needs-attention-heading" class="morning-brief__section-title md-typescale-title-medium">
+      Needs attention
+    </h2>
+    <p class="morning-brief__section-body md-typescale-body-medium">
+      Nothing needs you this morning — the inbox is newsletters and receipts, and no one is waiting on a reply.
+    </p>
+  </section>
+
+  <section class="morning-brief__section" aria-labelledby="resolved-heading">
+    <h2 id="resolved-heading" class="morning-brief__section-title md-typescale-title-medium">
+      Resolved
+    </h2>
+    <ol class="morning-brief__resolved">
+      <li class="morning-brief__resolved-item">
+        <span class="morning-brief__resolved-num" aria-hidden="true">1</span>
+        <div class="morning-brief__resolved-content">
+          <h3 class="morning-brief__resolved-title">
+            $136 refund came through from FastGrowingTrees
+          </h3>
+          <p class="morning-brief__resolved-detail">
+            The refund notice
+            <a href="#">in your inbox</a>
+            Friday afternoon confirms order #9503679586 was refunded in full — $136.00, on your statement within days.
+          </p>
+        </div>
+      </li>
+      <li class="morning-brief__resolved-item">
+        <span class="morning-brief__resolved-num" aria-hidden="true">2</span>
+        <div class="morning-brief__resolved-content">
+          <h3 class="morning-brief__resolved-title">
+            UPS package delivered Friday at 3:13 PM
+          </h3>
+          <p class="morning-brief__resolved-detail">
+            UPS confirmed
+            <a href="#">in your inbox</a>
+            that the package from The UPS Store arrived Friday — nothing left to track.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </section>
+`;
+
+/** Concept 2: headline + two-column status schedule only (no cards row). */
+const BRIEF_BODY_CONCEPT2 = `
+  ${BRIEF_INTRO_CONCEPT2}
+`;
+
 function clamp(n, min, max) {
   return Math.min(max, Math.max(min, n));
 }
@@ -308,15 +494,44 @@ function bindTimelineScrubber(page, initialTod) {
   setFromPercent(percent, { scrubbing: false });
 }
 
-function createMorningBrief({ timeOfDay = 'morning' } = {}) {
-  const tod = TIME_OF_DAY.includes(timeOfDay) ? timeOfDay : 'morning';
-  const noiseId = `morning-brief-noise-${Math.random().toString(36).slice(2, 9)}`;
-  const page = document.createElement('main');
-  page.className = `morning-brief morning-brief--${tod} m3-scope`;
-  page.setAttribute('aria-label', 'Morning brief');
-  page.dataset.timeOfDay = tod;
+function referenceTimelineHtml() {
+  return `
+    <div class="morning-brief__timeline" aria-hidden="true">
+      <div class="morning-brief__timeline-line"></div>
+      <div class="morning-brief__timeline-dot"></div>
+    </div>
+  `;
+}
 
-  page.innerHTML = `
+function conceptTimelineHtml(tod) {
+  return `
+    <div class="morning-brief__timeline">
+      <svg
+        class="morning-brief__timeline-svg"
+        aria-hidden="true"
+        focusable="false"
+        preserveAspectRatio="none"
+      >
+        <path class="morning-brief__timeline-path" fill="none" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <button
+        type="button"
+        class="morning-brief__timeline-dot"
+        role="slider"
+        aria-label="Time of day"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="${TOD_POSITION[tod]}"
+        aria-valuetext="${tod}"
+        style="left: ${TOD_POSITION[tod]}%"
+      ></button>
+    </div>
+  `;
+}
+
+function conceptGrainHtml() {
+  const noiseId = `morning-brief-noise-${Math.random().toString(36).slice(2, 9)}`;
+  return `
     <svg class="morning-brief__grain" aria-hidden="true" focusable="false">
       <defs>
         <filter id="${noiseId}" x="0%" y="0%" width="100%" height="100%">
@@ -326,110 +541,45 @@ function createMorningBrief({ timeOfDay = 'morning' } = {}) {
       </defs>
       <rect width="100%" height="100%" filter="url(#${noiseId})"/>
     </svg>
-    <div class="morning-brief__inner">
-      <p class="morning-brief__date md-typescale-label-large">Friday · July 17 2026</p>
-
-      <h1 class="morning-brief__headline">
-        The whole day is yours, Chase — nothing on the calendar until the gym at 5:30.
-      </h1>
-
-      <div class="morning-brief__visual">
-        <div class="morning-brief__sky" aria-hidden="true">
-          ${sunSvg}
-          ${birdsSvg}
-        </div>
-        <div class="morning-brief__timeline">
-          <svg
-            class="morning-brief__timeline-svg"
-            aria-hidden="true"
-            focusable="false"
-            preserveAspectRatio="none"
-          >
-            <path class="morning-brief__timeline-path" fill="none" vector-effect="non-scaling-stroke"/>
-          </svg>
-          <button
-            type="button"
-            class="morning-brief__timeline-dot"
-            role="slider"
-            aria-label="Time of day"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            aria-valuenow="${TOD_POSITION[tod]}"
-            aria-valuetext="${tod}"
-            style="left: ${TOD_POSITION[tod]}%"
-          ></button>
-        </div>
-      </div>
-
-      <section class="morning-brief__schedule" aria-label="Day schedule">
-        <article class="morning-brief__slot">
-          <h2 class="morning-brief__slot-time">8 AM – 1 PM</h2>
-          <p class="morning-brief__slot-body">
-            The calendar is empty here — a long, unbroken stretch for design work.
-          </p>
-        </article>
-        <article class="morning-brief__slot">
-          <h2 class="morning-brief__slot-time">1 – 5:30 PM</h2>
-          <p class="morning-brief__slot-body">
-            Still clear; the afternoon runs straight through to evening.
-          </p>
-        </article>
-        <article class="morning-brief__slot">
-          <h2 class="morning-brief__slot-time">5:30 PM ONWARD</h2>
-          <p class="morning-brief__slot-body">
-            Gym at Los Campeones, the only entry today. Saturday is clear too.
-          </p>
-        </article>
-      </section>
-
-      <md-divider class="morning-brief__rule" role="separator"></md-divider>
-
-      <section class="morning-brief__section" aria-labelledby="needs-attention-heading">
-        <h2 id="needs-attention-heading" class="morning-brief__section-title md-typescale-title-medium">
-          Needs attention
-        </h2>
-        <p class="morning-brief__section-body md-typescale-body-medium">
-          Nothing needs you this morning — the inbox is newsletters and receipts, and no one is waiting on a reply.
-        </p>
-      </section>
-
-      <section class="morning-brief__section" aria-labelledby="resolved-heading">
-        <h2 id="resolved-heading" class="morning-brief__section-title md-typescale-title-medium">
-          Resolved
-        </h2>
-        <ol class="morning-brief__resolved">
-          <li class="morning-brief__resolved-item">
-            <span class="morning-brief__resolved-num" aria-hidden="true">1</span>
-            <div class="morning-brief__resolved-content">
-              <h3 class="morning-brief__resolved-title">
-                $136 refund came through from FastGrowingTrees
-              </h3>
-              <p class="morning-brief__resolved-detail">
-                The refund notice
-                <a href="#">in your inbox</a>
-                Friday afternoon confirms order #9503679586 was refunded in full — $136.00, on your statement within days.
-              </p>
-            </div>
-          </li>
-          <li class="morning-brief__resolved-item">
-            <span class="morning-brief__resolved-num" aria-hidden="true">2</span>
-            <div class="morning-brief__resolved-content">
-              <h3 class="morning-brief__resolved-title">
-                UPS package delivered Friday at 3:13 PM
-              </h3>
-              <p class="morning-brief__resolved-detail">
-                UPS confirmed
-                <a href="#">in your inbox</a>
-                that the package from The UPS Store arrived Friday — nothing left to track.
-              </p>
-            </div>
-          </li>
-        </ol>
-      </section>
-    </div>
   `;
+}
 
-  bindTimelineScrubber(page, tod);
+/**
+ * @param {{ variant?: 'reference' | 'concept' | 'concept2', timeOfDay?: string }} options
+ */
+function createMorningBrief({ variant = 'reference', timeOfDay = 'morning' } = {}) {
+  if (variant === 'concept2') return createMorningBriefConcept2();
+
+  const isConcept = variant === 'concept';
+  const tod = TIME_OF_DAY.includes(timeOfDay) ? timeOfDay : 'morning';
+  const page = document.createElement('main');
+  page.className = isConcept
+    ? `morning-brief morning-brief--concept morning-brief--${tod} m3-scope`
+    : 'morning-brief morning-brief--reference m3-scope';
+  page.setAttribute('aria-label', 'Morning brief');
+  if (isConcept) page.dataset.timeOfDay = tod;
+
+  const timeline = isConcept ? conceptTimelineHtml(tod) : referenceTimelineHtml();
+  const grain = isConcept ? conceptGrainHtml() : '';
+  page.innerHTML = `${grain}<div class="morning-brief__inner">${BRIEF_BODY.replace('__TIMELINE__', timeline)}</div>`;
+
+  if (isConcept) bindTimelineScrubber(page, tod);
+  return page;
+}
+
+/**
+ * Concept 2 — concept ambient (fixed morning wash + grain), no scrubber,
+ * Needs attention / Resolved as a two-column schedule with divided ordered lists.
+ */
+function createMorningBriefConcept2() {
+  const page = document.createElement('main');
+  page.className =
+    'morning-brief morning-brief--concept morning-brief--concept-2 morning-brief--morning m3-scope';
+  page.setAttribute('aria-label', 'Morning brief');
+  page.dataset.timeOfDay = 'morning';
+
+  page.innerHTML = `${conceptGrainHtml()}<div class="morning-brief__inner">${BRIEF_BODY_CONCEPT2}</div>`;
+  applyWashFromProgress(page, TOD_POSITION.morning / 100, { scrubbing: false });
   return page;
 }
 
@@ -440,14 +590,20 @@ export default {
     layout: 'fullscreen',
   },
   argTypes: {
+    variant: {
+      control: false,
+      table: { disable: true },
+    },
     timeOfDay: {
       control: { type: 'select' },
       options: TIME_OF_DAY,
       description:
-        'Starting ambient wash. Drag the timeline dot for a continuous orange→blue→purple morph; Controls snap to morning / noon / evening.',
+        'Concept only: starting ambient wash. Drag the timeline capsule for a continuous orange→blue→purple morph; Controls snap to morning / noon / evening.',
+      if: { arg: 'variant', eq: 'concept' },
     },
   },
   args: {
+    variant: 'reference',
     timeOfDay: 'morning',
   },
   render: (args) => createMorningBrief(args),
@@ -455,8 +611,22 @@ export default {
 
 export const Page = {
   name: 'Reference 1',
+  args: {
+    variant: 'reference',
+  },
 };
 
 export const Concept1 = {
   name: 'Concept 1',
+  args: {
+    variant: 'concept',
+    timeOfDay: 'morning',
+  },
+};
+
+export const Concept2 = {
+  name: 'Concept 2',
+  args: {
+    variant: 'concept2',
+  },
 };
