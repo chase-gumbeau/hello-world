@@ -75,7 +75,7 @@ body.scrolls-page {
   height: calc(1918.889px * var(--stage-scale, 1));
   transform: translate(-50%, -50%);
   border-radius: calc(78.222px * var(--stage-scale, 1));
-  box-shadow: 0 0 0 100vmax #000;
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.52);
 }
 
 .scrolls-root .window-frame {

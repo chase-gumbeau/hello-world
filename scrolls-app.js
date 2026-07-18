@@ -51,7 +51,7 @@ export function createScrollsApp() {
         data-scrolls-app-back
         aria-label="Back to Scrolls home"
         hidden
-      >‹ Home</button>
+      >Back</button>
     </div>
   `;
 
@@ -67,6 +67,8 @@ export function createScrollsApp() {
     const height = root.clientHeight || window.innerHeight;
     const scale = Math.min(width / DESIGN_W, height / DESIGN_H);
     root.style.setProperty('--stage-scale', String(scale));
+    // Survives nested home overwriting --stage-scale when embedded.
+    root.style.setProperty('--app-stage-scale', String(scale));
   }
 
   const resizeObserver = new ResizeObserver(fitStage);

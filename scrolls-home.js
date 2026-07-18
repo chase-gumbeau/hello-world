@@ -23,16 +23,24 @@ export function createScrollsHome({ embedded = false } = {}) {
   if (embedded) root.classList.add('is-embedded');
   root.setAttribute('aria-label', 'Scrolls home');
 
-  const listHtml = getScrollTripsByYear()
+  const yearGroups = getScrollTripsByYear();
+  const listHtml = yearGroups
     .map(
-      ({ year, trips }) => `
-            <p class="scrolls-home__year">${year}</p>
-            ${trips
-              .map(
-                (trip) =>
-                  `<a class="scrolls-home__city" href="#" data-destination="${trip.id}">${trip.title}</a>`
-              )
-              .join('\n            ')}`
+      ({ year, trips }, index) => `
+            ${
+              index > 0
+                ? `<p class="scrolls-home__sep" aria-hidden="true">·</p>`
+                : ''
+            }
+            <div class="scrolls-home__section">
+              <p class="scrolls-home__year">${year}</p>
+              ${trips
+                .map(
+                  (trip) =>
+                    `<a class="scrolls-home__city" href="#" data-destination="${trip.id}">${trip.title}</a>`
+                )
+                .join('\n              ')}
+            </div>`
     )
     .join('\n            ');
 
@@ -70,6 +78,9 @@ export function createScrollsHome({ embedded = false } = {}) {
     const height = root.clientHeight || window.innerHeight;
     const scale = Math.min(width / DESIGN_W, height / DESIGN_H);
     root.style.setProperty('--stage-scale', String(scale));
+    if (!embedded) {
+      root.style.setProperty('--app-stage-scale', String(scale));
+    }
   }
 
   const resizeObserver = new ResizeObserver(fitStage);
