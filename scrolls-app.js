@@ -8,6 +8,8 @@ const DESIGN_W = 3842;
 const DESIGN_H = 2160;
 const TRANSITION_MS = 650;
 const EASING = 'cubic-bezier(0.16, 1, 0.3, 1)';
+/** Left-home hover: design-px per second while auto-scrolling the peek strip. */
+const PEEK_SCROLL_SPEED = 360;
 
 /** Factories for every destination the shell knows how to mount. */
 function buildDestinations(homeLayout = 'centered') {
@@ -86,6 +88,48 @@ export function createScrollsApp({ homeLayout = 'centered' } = {}) {
   let peekToken = 0;
   /** @type {Map<string, HTMLElement>} */
   const peekCache = new Map();
+  /** @type {number} */
+  let peekScrollRaf = 0;
+  /** @type {number} */
+  let peekScrollLast = 0;
+
+  function stopPeekScroll() {
+    if (peekScrollRaf) {
+      cancelAnimationFrame(peekScrollRaf);
+      peekScrollRaf = 0;
+    }
+  }
+
+  /**
+   * Slowly advance the peek strip from the start to the end of the trip
+   * while the destination title stays hovered.
+   * @param {HTMLElement} tripRoot
+   */
+  function startPeekScroll(tripRoot) {
+    stopPeekScroll();
+    tripRoot.scrolls?.set(0, true);
+    peekScrollLast = performance.now();
+
+    function tick(now) {
+      const api = tripRoot.scrolls;
+      if (!api) {
+        peekScrollRaf = 0;
+        return;
+      }
+      const dt = Math.min(0.05, (now - peekScrollLast) / 1000);
+      peekScrollLast = now;
+      const { scrollX, max } = api.get();
+      const next = Math.max(max, scrollX - PEEK_SCROLL_SPEED * dt);
+      api.set(next, true);
+      if (next > max + 0.5) {
+        peekScrollRaf = requestAnimationFrame(tick);
+      } else {
+        peekScrollRaf = 0;
+      }
+    }
+
+    peekScrollRaf = requestAnimationFrame(tick);
+  }
 
   function showPeekComposition(destinationId) {
     if (homeLayout !== 'left' || !peekEl) return;
@@ -105,12 +149,13 @@ export function createScrollsApp({ homeLayout = 'centered' } = {}) {
     if (peekEl.firstElementChild !== tripRoot) {
       peekEl.replaceChildren(tripRoot);
     }
-    tripRoot.scrolls?.set(0, true);
     peekEl.classList.add('is-visible');
     peekEl.setAttribute('aria-hidden', 'false');
+    startPeekScroll(tripRoot);
   }
 
   function hidePeekComposition() {
+    stopPeekScroll();
     peekEl?.classList.remove('is-visible');
     peekEl?.setAttribute('aria-hidden', 'true');
   }
@@ -297,6 +342,7 @@ export function createScrollsApp({ homeLayout = 'centered' } = {}) {
   }
 
   root._scrollsAppDispose = () => {
+    stopPeekScroll();
     glow.dispose();
     resizeObserver.disconnect();
     layers.removeEventListener('scrolls:navigate', onNavigateEvent);
