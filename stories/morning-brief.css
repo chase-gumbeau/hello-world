@@ -490,12 +490,39 @@
   line-height: 1.45;
 }
 
+.morning-brief--concept-2 .morning-brief__card-list--pins {
+  counter-reset: none;
+}
+
+.morning-brief--concept-2 .morning-brief__card-list--pins .morning-brief__card-list-item {
+  counter-increment: none;
+  padding-left: 28px;
+}
+
+.morning-brief--concept-2 .morning-brief__card-list--pins .morning-brief__card-list-item::before {
+  content: 'push_pin';
+  font-family: 'Material Symbols Outlined';
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  color: color-mix(in srgb, var(--mb-muted) 75%, transparent);
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+  -webkit-font-smoothing: antialiased;
+}
+
 .morning-brief--concept-2 .morning-brief__card-list-item:first-child {
   padding-top: 4px;
 }
 
 .morning-brief--concept-2 .morning-brief__card-list-item:first-child::before {
   top: 4px;
+}
+
+.morning-brief--concept-2 .morning-brief__card-list--pins .morning-brief__card-list-item:first-child::before {
+  top: 6px;
 }
 
 .morning-brief--concept-2 .morning-brief__card-list-item:last-child {

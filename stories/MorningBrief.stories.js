@@ -107,12 +107,38 @@ const BRIEF_SCHEDULE = `
   <md-divider class="morning-brief__rule" role="separator"></md-divider>
 `;
 
-/** Concept 2: two-column Needs attention / Resolved (lists in schedule slots). */
+/** Concept 2: two-column Resolved / Needs attention (lists in schedule slots). */
 const BRIEF_SCHEDULE_CONCEPT2 = `
   <section class="morning-brief__schedule" aria-label="Status">
     <article class="morning-brief__slot">
-      <h2 class="morning-brief__slot-time">Needs attention</h2>
+      <h2 class="morning-brief__slot-time">Resume</h2>
       <ol class="morning-brief__card-list">
+        <li class="morning-brief__card-list-item">
+          <h3 class="morning-brief__card-list-title">
+            $136 refund came through from FastGrowingTrees
+          </h3>
+          <p class="morning-brief__card-list-body">
+            The refund notice
+            <a href="#">in your inbox</a>
+            Friday afternoon confirms order #9503679586 was refunded in full — $136.00, on your statement within days.
+          </p>
+          <md-divider class="morning-brief__card-list-divider" role="separator"></md-divider>
+        </li>
+        <li class="morning-brief__card-list-item">
+          <h3 class="morning-brief__card-list-title">
+            UPS package delivered Friday at 3:13 PM
+          </h3>
+          <p class="morning-brief__card-list-body">
+            UPS confirmed
+            <a href="#">in your inbox</a>
+            that the package from The UPS Store arrived Friday — nothing left to track.
+          </p>
+        </li>
+      </ol>
+    </article>
+    <article class="morning-brief__slot">
+      <h2 class="morning-brief__slot-time">Needs attention</h2>
+      <ol class="morning-brief__card-list morning-brief__card-list--pins">
         <li class="morning-brief__card-list-item">
           <p class="morning-brief__card-list-body">
             Nothing needs you this morning — the inbox is newsletters and receipts, and no one is waiting on a reply.
@@ -152,32 +178,6 @@ const BRIEF_SCHEDULE_CONCEPT2 = `
           </h3>
           <p class="morning-brief__card-list-body">
             Placeholder — calendar invite is still pending; host asked for a headcount.
-          </p>
-        </li>
-      </ol>
-    </article>
-    <article class="morning-brief__slot">
-      <h2 class="morning-brief__slot-time">Resolved</h2>
-      <ol class="morning-brief__card-list">
-        <li class="morning-brief__card-list-item">
-          <h3 class="morning-brief__card-list-title">
-            $136 refund came through from FastGrowingTrees
-          </h3>
-          <p class="morning-brief__card-list-body">
-            The refund notice
-            <a href="#">in your inbox</a>
-            Friday afternoon confirms order #9503679586 was refunded in full — $136.00, on your statement within days.
-          </p>
-          <md-divider class="morning-brief__card-list-divider" role="separator"></md-divider>
-        </li>
-        <li class="morning-brief__card-list-item">
-          <h3 class="morning-brief__card-list-title">
-            UPS package delivered Friday at 3:13 PM
-          </h3>
-          <p class="morning-brief__card-list-body">
-            UPS confirmed
-            <a href="#">in your inbox</a>
-            that the package from The UPS Store arrived Friday — nothing left to track.
           </p>
         </li>
       </ol>
@@ -569,7 +569,7 @@ function createMorningBrief({ variant = 'reference', timeOfDay = 'morning' } = {
 
 /**
  * Concept 2 — concept ambient (fixed morning wash + grain), no scrubber,
- * Needs attention / Resolved as a two-column schedule with divided ordered lists.
+ * Resolved / Needs attention as a two-column schedule with divided ordered lists.
  */
 function createMorningBriefConcept2() {
   const page = document.createElement('main');
