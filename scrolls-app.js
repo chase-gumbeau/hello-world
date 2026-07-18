@@ -10,15 +10,18 @@ const TRANSITION_MS = 650;
 const EASING = 'cubic-bezier(0.16, 1, 0.3, 1)';
 
 /** Factories for every destination the shell knows how to mount. */
-const DESTINATIONS = {
-  home: () => createScrollsHome({ embedded: true }),
-  ...Object.fromEntries(
-    Object.entries(SCROLL_DESTINATIONS).map(([id, mount]) => [
-      id,
-      () => mount({ embedded: true }),
-    ])
-  ),
-};
+function buildDestinations(homeLayout = 'centered') {
+  return {
+    home: ({ animateIn = false } = {}) =>
+      createScrollsHome({ embedded: true, layout: homeLayout, animateIn }),
+    ...Object.fromEntries(
+      Object.entries(SCROLL_DESTINATIONS).map(([id, mount]) => [
+        id,
+        () => mount({ embedded: true }),
+      ])
+    ),
+  };
+}
 
 /**
  * App shell that owns the single, stable centered frame/scrim "window" and
@@ -29,23 +32,28 @@ const DESTINATIONS = {
  * content slides up from beneath the scrim, fading in as it settles —
  * the frame border itself never moves.
  *
+ * @param {{ homeLayout?: 'centered' | 'left' }} [options]
  * @returns {HTMLElement}
  */
-export function createScrollsApp() {
+export function createScrollsApp({ homeLayout = 'centered' } = {}) {
+  const DESTINATIONS = buildDestinations(homeLayout);
   const root = document.createElement('div');
   root.className = 'scrolls-app';
+  if (homeLayout === 'left') root.classList.add('is-home-left');
   root.setAttribute('aria-label', 'Scrolls');
 
   root.innerHTML = `
     <div class="scrolls-app__stage">
       <div class="scrolls-app__canvas" data-scrolls-app-canvas>
         <div class="scrolls-app__layers" data-scrolls-app-layers></div>
+        <div class="scrolls-app__peek" data-scrolls-app-peek aria-hidden="true"></div>
       </div>
       <div class="scrolls-app__edge scrolls-app__edge--left" aria-hidden="true"></div>
       <div class="scrolls-app__edge scrolls-app__edge--right" aria-hidden="true"></div>
       <div class="scrolls-app__scrim" aria-hidden="true">
         <div class="scrolls-app__scrim-hole"></div>
       </div>
+      <div class="scrolls-app__nav" data-scrolls-app-nav></div>
       <div class="scrolls-app__frame" aria-hidden="true"></div>
       <button
         class="scrolls-app__back"
@@ -69,21 +77,59 @@ export function createScrollsApp() {
   const grayscaleButton = root.querySelector('[data-scrolls-app-grayscale]');
   const stage = root.querySelector('.scrolls-app__stage');
   const frame = root.querySelector('.scrolls-app__frame');
+  const peekEl = root.querySelector('[data-scrolls-app-peek]');
   const glow = mountFrameGlow(stage || root, frame);
 
   /** @type {string | null} */
   let peekDestination = null;
   /** @type {number} */
   let peekToken = 0;
+  /** @type {Map<string, HTMLElement>} */
+  const peekCache = new Map();
+
+  function showPeekComposition(destinationId) {
+    if (homeLayout !== 'left' || !peekEl) return;
+    const factory = DESTINATIONS[destinationId];
+    if (!factory) {
+      hidePeekComposition();
+      return;
+    }
+
+    let tripRoot = peekCache.get(destinationId);
+    if (!tripRoot) {
+      tripRoot = factory();
+      tripRoot.classList.add('is-peek');
+      peekCache.set(destinationId, tripRoot);
+    }
+
+    if (peekEl.firstElementChild !== tripRoot) {
+      peekEl.replaceChildren(tripRoot);
+    }
+    tripRoot.scrolls?.set(0, true);
+    peekEl.classList.add('is-visible');
+    peekEl.setAttribute('aria-hidden', 'false');
+  }
+
+  function hidePeekComposition() {
+    peekEl?.classList.remove('is-visible');
+    peekEl?.setAttribute('aria-hidden', 'true');
+  }
 
   async function peekTrip(destinationId) {
     const trip = getScrollTrip(destinationId);
-    if (!trip?.heroImage) {
+    if (!trip) {
       glow.setPalette(null);
+      hidePeekComposition();
       return;
     }
     const token = ++peekToken;
     peekDestination = destinationId;
+    showPeekComposition(destinationId);
+
+    if (!trip.heroImage) {
+      glow.setPalette(null);
+      return;
+    }
     try {
       const colors = await extractPaletteFromImage(tripAssetUrl(trip.heroImage));
       if (token !== peekToken || peekDestination !== destinationId) return;
@@ -97,6 +143,7 @@ export function createScrollsApp() {
     peekDestination = null;
     peekToken += 1;
     glow.setPalette(null);
+    hidePeekComposition();
   }
 
   function onDestinationEnter(event) {
@@ -134,13 +181,15 @@ export function createScrollsApp() {
   resizeObserver.observe(root);
   fitStage();
 
-  function mountLayer(key) {
+  function mountLayer(key, { animateIn = false } = {}) {
     const factory = DESTINATIONS[key];
     if (!factory) return null;
     const layerEl = document.createElement('div');
     layerEl.className = 'scrolls-app__layer';
     layerEl.dataset.key = key;
-    layerEl.appendChild(factory());
+    layerEl.appendChild(
+      key === 'home' ? factory({ animateIn }) : factory()
+    );
     return layerEl;
   }
 
@@ -154,7 +203,9 @@ export function createScrollsApp() {
 
     clearPeek();
 
-    const nextLayer = mountLayer(key);
+    const nextLayer = mountLayer(key, {
+      animateIn: key === 'home' && direction === 'back',
+    });
     if (!nextLayer) return;
 
     animating = true;
@@ -253,6 +304,12 @@ export function createScrollsApp() {
     grayscaleButton.removeEventListener('click', onGrayscaleClick);
     root.removeEventListener('pointerover', onDestinationEnter);
     root.removeEventListener('pointerout', onDestinationLeave);
+    hidePeekComposition();
+    for (const tripRoot of peekCache.values()) {
+      tripRoot._scrollsDispose?.();
+    }
+    peekCache.clear();
+    peekEl?.replaceChildren();
   };
 
   return root;

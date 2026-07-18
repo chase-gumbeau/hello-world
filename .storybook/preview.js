@@ -17,11 +17,33 @@ const preview = {
           'Foundations',
           'Studies',
           'Projects',
-          ['Morning Brief', 'Solari Board', 'Scrolls', ['Home', '2025', '2024', '2023']],
+          [
+            'Morning Brief',
+            'Solari Board',
+            'Scrolls',
+            ['Home', 'Home Left', '2025', '2024', '2023'],
+          ],
           '*',
         ],
       },
     },
+  },
+  globalTypes: {
+    scrollsHome: {
+      description: 'Scrolls home layout version',
+      toolbar: {
+        title: 'Home',
+        icon: 'sidebar',
+        items: [
+          { value: 'centered', title: 'Home · Centered' },
+          { value: 'left', title: 'Home · Left' },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
+  initialGlobals: {
+    scrollsHome: 'centered',
   },
 };
 

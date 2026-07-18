@@ -131,6 +131,39 @@
   outline: none;
 }
 
+/* Left-rail layout: destination list in the left gutter outside the frame,
+   left-aligned and vertically centered. Frame stays empty in the center. */
+.scrolls-home.is-layout-left .scrolls-home__frame {
+  display: block;
+}
+
+.scrolls-home.is-layout-left .scrolls-home__list {
+  position: absolute;
+  left: 200px;
+  top: 50%;
+  width: 980px;
+  max-width: calc(1382px - 240px);
+  transform: translateY(-50%);
+  align-items: flex-start;
+  text-align: left;
+  z-index: 15;
+  will-change: transform, opacity;
+}
+
+.scrolls-home.is-layout-left .scrolls-home__section {
+  align-items: flex-start;
+}
+
+.scrolls-home.is-layout-left .scrolls-home__sep,
+.scrolls-home.is-layout-left .scrolls-home__year,
+.scrolls-home.is-layout-left .scrolls-home__city {
+  text-align: left;
+}
+
+.scrolls-home.is-layout-left .scrolls-home__list.is-exiting {
+  pointer-events: none;
+}
+
 /* Embedded mode: hosted inside scrolls-app's shell, which owns the single
    stable frame/scrim/edge chrome — hide this component's own copies and
    drop the 100vh assumption so it sizes to its host layer instead. */

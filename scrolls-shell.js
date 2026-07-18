@@ -66,7 +66,11 @@ export function createScrollExperience({ id, bodyHtml, frameCount, embedded = fa
     </div>
   `;
 
-  mountScrolls(root, { frameCount });
+  const unmountScrolls = mountScrolls(root, { frameCount });
+  root._scrollsDispose = () => {
+    unmountScrolls();
+  };
+
   if (!embedded) {
     const stage = root.querySelector('[data-scrolls-stage]');
     const frame = root.querySelector('.window-frame');

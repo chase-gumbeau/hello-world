@@ -68,3 +68,4 @@ Mexico City’s convert also shifts every 1080×1350 panel so the first lands at
 
 - Year/title meta beside the frame was removed — destinations show only frame, scrim, and content.
 - Embedded mode (`embedded: true`) hides each trip’s own scrim/frame so the app shell owns the single window.
+- Home layouts: **Centered** (nav in the frame) and **Left** (nav in the left gutter; slides out on click). Switch with the Storybook toolbar **Home** dropdown, or open **Projects → Scrolls → Home Left**.
