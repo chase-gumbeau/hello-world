@@ -47,10 +47,6 @@ export function createScrollsApp() {
         <div class="scrolls-app__scrim-hole"></div>
       </div>
       <div class="scrolls-app__frame" aria-hidden="true"></div>
-      <div class="scrolls-app__meta" data-scrolls-app-meta aria-hidden="true" hidden>
-        <p class="scrolls-app__meta-year" data-scrolls-app-meta-year></p>
-        <p class="scrolls-app__meta-title" data-scrolls-app-meta-title></p>
-      </div>
       <button
         class="scrolls-app__back"
         type="button"
@@ -74,17 +70,6 @@ export function createScrollsApp() {
   const stage = root.querySelector('.scrolls-app__stage');
   const frame = root.querySelector('.scrolls-app__frame');
   const glow = mountFrameGlow(stage || root, frame);
-  const metaEl = root.querySelector('[data-scrolls-app-meta]');
-  const metaYearEl = root.querySelector('[data-scrolls-app-meta-year]');
-  const metaTitleEl = root.querySelector('[data-scrolls-app-meta-title]');
-
-  /** Show the destination's year/title chrome; hidden entirely on Home. */
-  function updateMeta(key) {
-    const trip = key === 'home' ? null : getScrollTrip(key);
-    metaEl.hidden = !trip;
-    metaYearEl.textContent = trip ? String(trip.year) : '';
-    metaTitleEl.textContent = trip ? trip.title : '';
-  }
 
   /** @type {string | null} */
   let peekDestination = null;
@@ -216,7 +201,6 @@ export function createScrollsApp() {
       current = { key, el: nextLayer };
       backButton.hidden = key === 'home';
       grayscaleButton.hidden = key === 'home';
-      updateMeta(key);
       animating = false;
     });
   }
@@ -253,7 +237,6 @@ export function createScrollsApp() {
   current = { key: 'home', el: initialLayer };
   backButton.hidden = true;
   grayscaleButton.hidden = true;
-  updateMeta('home');
 
   // Warm palette cache so hover peeks feel instant
   for (const trip of SCROLL_TRIPS) {

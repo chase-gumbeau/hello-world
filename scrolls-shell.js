@@ -1,30 +1,15 @@
 import './scrolls.css';
 import { mountScrolls } from './scrolls-mount.js';
 import { mountFrameGlow } from './scrolls-frame-glow.js';
-import { getScrollTrip } from './scrolls-registry.js';
 
-/** @param {import('./scrolls-registry.js').ScrollTrip} [trip] */
-function buildMetaChrome(trip) {
-  if (!trip) return '';
-  return `
-  <div class="meta" aria-hidden="true">
-    <p class="meta-year">${trip.year}</p>
-    <p class="meta-title">${trip.title}</p>
-  </div>`;
-}
-
-/**
- * @param {import('./scrolls-registry.js').ScrollTrip} [trip] Trip metadata
- *   (year/title) for the left-side chrome — omitted renders no meta block.
- */
-function buildShellChrome(trip) {
+function buildShellChrome() {
   return `
   <div class="scrim" aria-hidden="true">
     <div class="scrim-hole"></div>
   </div>
   <div class="edge-fade edge-fade--left" aria-hidden="true"></div>
   <div class="edge-fade edge-fade--right" aria-hidden="true"></div>
-  <div class="window-frame" aria-hidden="true"></div>${buildMetaChrome(trip)}
+  <div class="window-frame" aria-hidden="true"></div>
 `;
 }
 
@@ -37,7 +22,11 @@ export function stripScrollShell(html) {
     )
     .replace(/\s*<div class="edge-fade edge-fade--left" aria-hidden="true"><\/div>\s*/g, '\n')
     .replace(/\s*<div class="edge-fade edge-fade--right" aria-hidden="true"><\/div>\s*/g, '\n')
-    .replace(/\s*<div class="window-frame" aria-hidden="true"><\/div>\s*/g, '\n');
+    .replace(/\s*<div class="window-frame" aria-hidden="true"><\/div>\s*/g, '\n')
+    .replace(
+      /\s*<div class="meta" aria-hidden="true">[\s\S]*?<\/div>\s*/g,
+      '\n'
+    );
 }
 
 /** Inject shared shell chrome as stage-level siblings after the canvas wrapper. */
@@ -68,7 +57,7 @@ export function createScrollExperience({ id, bodyHtml, frameCount, embedded = fa
   let content = stripScrollShell(bodyHtml);
   content = rewriteAssetPaths(content);
   if (!embedded) {
-    content = injectScrollShell(content, buildShellChrome(id ? getScrollTrip(id) : null));
+    content = injectScrollShell(content, buildShellChrome());
   }
 
   root.innerHTML = `

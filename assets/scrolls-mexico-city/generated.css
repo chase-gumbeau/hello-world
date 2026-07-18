@@ -93,7 +93,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 10126px;
+  left: 10030px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -102,7 +102,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 11207px;
+  left: 11111px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -111,7 +111,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 12288px;
+  left: 12192px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -120,7 +120,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 13369px;
+  left: 13273px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -129,7 +129,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 14450px;
+  left: 14354px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -138,7 +138,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 1478px;
+  left: 1382px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -147,7 +147,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 15531px;
+  left: 15435px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -156,7 +156,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 16612px;
+  left: 16516px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -165,7 +165,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 17693px;
+  left: 17597px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -174,7 +174,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 18774px;
+  left: 18678px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -183,7 +183,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 19855px;
+  left: 19759px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -192,7 +192,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 20936px;
+  left: 20840px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -201,7 +201,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 22017px;
+  left: 21921px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -210,7 +210,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 2559px;
+  left: 2463px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -219,7 +219,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 3640px;
+  left: 3544px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -228,7 +228,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 4721px;
+  left: 4625px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -237,7 +237,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 5802px;
+  left: 5706px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -246,7 +246,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 6883px;
+  left: 6787px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -255,7 +255,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 7964px;
+  left: 7868px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -264,7 +264,7 @@
   position: absolute;
   background: #000;
   height: 1350px;
-  left: 9045px;
+  left: 8949px;
   overflow: clip;
   top: 405px;
   width: 1080px;
@@ -330,8 +330,8 @@
   top: -130.99px;
 }
 /* Strip must generate a box (not `display: contents`) so --scroll-x transforms
-   apply. Frame `left` values in this export are canvas-absolute, so the strip
-   sits at the canvas origin — unlike Summer/Costa Rica strips that start at 1382. */
+   apply. Frame `left` values are canvas-absolute (first panel at 1382, the
+   centered frame's left edge); the strip sits at the canvas origin. */
 .scrolls-root .mx40.scroll-strip {
   will-change: transform;
   position: absolute;

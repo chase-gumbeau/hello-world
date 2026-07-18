@@ -4,6 +4,8 @@ import re
 import json
 from pathlib import Path
 
+from scrolls_geometry import DESIGN_H, DESIGN_W, FIGMA_STRIP_LEFT, FRAME_LEFT
+
 ROOT = Path(__file__).resolve().parents[1]
 ASSET_DIR = "assets/scrolls-costa-rica"
 src = (ROOT / ASSET_DIR / "source.jsx").read_text()
@@ -329,17 +331,17 @@ strip_cls = None
 for old, new in class_map.items():
     if "rounded-[80px]" in old and "size-full" in old and "bg-black" in old:
         canvas_cls = new
-    if "left-[1478px]" in old and "w-[11652px]" in old:
+    if f"left-[{FIGMA_STRIP_LEFT}px]" in old and "w-[11652px]" in old:
         strip_cls = new
 
 if not canvas_cls or not strip_cls:
     raise SystemExit(f"missing canvas/strip classes: {canvas_cls=} {strip_cls=}")
 
-# Center strip like Summer: 1478 → 1382; add scroll transform
+# Center strip like Summer: Figma offset → FRAME_LEFT; add scroll transform
 css_text = "\n".join(css_lines)
 css_text = re.sub(
-    rf"(\.{strip_cls} \{{[^}}]*?)left: 1478px;",
-    rf"\1left: 1382px;",
+    rf"(\.{strip_cls} \{{[^}}]*?)left: {FIGMA_STRIP_LEFT}px;",
+    rf"\1left: {FRAME_LEFT}px;",
     css_text,
     count=1,
 )
@@ -364,10 +366,10 @@ def merge_transform(m):
 
 css_text = re.sub(pat, merge_transform, css_text, count=1)
 
-# Force design canvas size (Figma artboard 3842×2160; size-full → 100% is wrong for scaled stage)
+# Force design canvas size (Figma artboard; size-full → 100% is wrong for scaled stage)
 css_text = re.sub(
     rf"(\.{canvas_cls} \{{[^}}]*?)width: 100%;\n  height: 100%;",
-    rf"\1width: 3842px;\n  height: 2160px;",
+    rf"\1width: {DESIGN_W}px;\n  height: {DESIGN_H}px;",
     css_text,
     count=1,
 )
