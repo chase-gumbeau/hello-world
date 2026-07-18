@@ -1,0 +1,276 @@
+import './scrolls-app.css';
+import { createScrollsHome } from './scrolls-home.js';
+import { SCROLL_DESTINATIONS, getScrollTrip, SCROLL_TRIPS } from './scrolls-registry.js';
+import { mountFrameGlow } from './scrolls-frame-glow.js';
+import { extractPaletteFromImage, tripAssetUrl } from './scrolls-palette.js';
+
+const DESIGN_W = 3842;
+const DESIGN_H = 2160;
+const TRANSITION_MS = 650;
+const EASING = 'cubic-bezier(0.16, 1, 0.3, 1)';
+
+/** Factories for every destination the shell knows how to mount. */
+const DESTINATIONS = {
+  home: () => createScrollsHome({ embedded: true }),
+  ...Object.fromEntries(
+    Object.entries(SCROLL_DESTINATIONS).map(([id, mount]) => [
+      id,
+      () => mount({ embedded: true }),
+    ])
+  ),
+};
+
+/**
+ * App shell that owns the single, stable centered frame/scrim "window" and
+ * animates destinations underneath it — no Storybook `?path=` navigation.
+ *
+ * On `scrolls:navigate` (dispatched by e.g. `createScrollsHome()`'s city
+ * links), the outgoing content pushes left + fades while the incoming
+ * content slides up from beneath the scrim, fading in as it settles —
+ * the frame border itself never moves.
+ *
+ * @returns {HTMLElement}
+ */
+export function createScrollsApp() {
+  const root = document.createElement('div');
+  root.className = 'scrolls-app';
+  root.setAttribute('aria-label', 'Scrolls');
+
+  root.innerHTML = `
+    <div class="scrolls-app__stage">
+      <div class="scrolls-app__canvas" data-scrolls-app-canvas>
+        <div class="scrolls-app__layers" data-scrolls-app-layers></div>
+      </div>
+      <div class="scrolls-app__edge scrolls-app__edge--left" aria-hidden="true"></div>
+      <div class="scrolls-app__edge scrolls-app__edge--right" aria-hidden="true"></div>
+      <div class="scrolls-app__scrim" aria-hidden="true">
+        <div class="scrolls-app__scrim-hole"></div>
+      </div>
+      <div class="scrolls-app__frame" aria-hidden="true"></div>
+      <div class="scrolls-app__meta" data-scrolls-app-meta aria-hidden="true" hidden>
+        <p class="scrolls-app__meta-year" data-scrolls-app-meta-year></p>
+        <p class="scrolls-app__meta-title" data-scrolls-app-meta-title></p>
+      </div>
+      <button
+        class="scrolls-app__back"
+        type="button"
+        data-scrolls-app-back
+        aria-label="Back to Scrolls home"
+        hidden
+      ><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span></button>
+      <button
+        class="scrolls-app__grayscale"
+        type="button"
+        data-scrolls-app-grayscale
+        aria-pressed="false"
+        aria-label="Turn on grayscale filter"
+      ><span class="material-symbols-outlined" aria-hidden="true">filter_b_and_w</span></button>
+    </div>
+  `;
+
+  const layers = root.querySelector('[data-scrolls-app-layers]');
+  const backButton = root.querySelector('[data-scrolls-app-back]');
+  const grayscaleButton = root.querySelector('[data-scrolls-app-grayscale]');
+  const stage = root.querySelector('.scrolls-app__stage');
+  const frame = root.querySelector('.scrolls-app__frame');
+  const glow = mountFrameGlow(stage || root, frame);
+  const metaEl = root.querySelector('[data-scrolls-app-meta]');
+  const metaYearEl = root.querySelector('[data-scrolls-app-meta-year]');
+  const metaTitleEl = root.querySelector('[data-scrolls-app-meta-title]');
+
+  /** Show the destination's year/title chrome; hidden entirely on Home. */
+  function updateMeta(key) {
+    const trip = key === 'home' ? null : getScrollTrip(key);
+    metaEl.hidden = !trip;
+    metaYearEl.textContent = trip ? String(trip.year) : '';
+    metaTitleEl.textContent = trip ? trip.title : '';
+  }
+
+  /** @type {string | null} */
+  let peekDestination = null;
+  /** @type {number} */
+  let peekToken = 0;
+
+  async function peekTrip(destinationId) {
+    const trip = getScrollTrip(destinationId);
+    if (!trip?.heroImage) {
+      glow.setPalette(null);
+      return;
+    }
+    const token = ++peekToken;
+    peekDestination = destinationId;
+    try {
+      const colors = await extractPaletteFromImage(tripAssetUrl(trip.heroImage));
+      if (token !== peekToken || peekDestination !== destinationId) return;
+      glow.setPalette(colors);
+    } catch {
+      if (token === peekToken) glow.setPalette(null);
+    }
+  }
+
+  function clearPeek() {
+    peekDestination = null;
+    peekToken += 1;
+    glow.setPalette(null);
+  }
+
+  function onDestinationEnter(event) {
+    if (current?.key !== 'home') return;
+    const link = event.target.closest?.('[data-destination]');
+    if (!link || !root.contains(link)) return;
+    const id = link.getAttribute('data-destination');
+    if (!id || id === peekDestination) return;
+    peekTrip(id);
+  }
+
+  function onDestinationLeave(event) {
+    if (current?.key !== 'home') return;
+    const link = event.target.closest?.('[data-destination]');
+    if (!link) return;
+    const next = event.relatedTarget?.closest?.('[data-destination]');
+    if (next && root.contains(next)) return;
+    clearPeek();
+  }
+
+  /** @type {{ key: string, el: HTMLElement } | null} */
+  let current = null;
+  let animating = false;
+
+  function fitStage() {
+    const width = root.clientWidth || window.innerWidth;
+    const height = root.clientHeight || window.innerHeight;
+    const scale = Math.min(width / DESIGN_W, height / DESIGN_H);
+    root.style.setProperty('--stage-scale', String(scale));
+    // Survives nested home overwriting --stage-scale when embedded.
+    root.style.setProperty('--app-stage-scale', String(scale));
+  }
+
+  const resizeObserver = new ResizeObserver(fitStage);
+  resizeObserver.observe(root);
+  fitStage();
+
+  function mountLayer(key) {
+    const factory = DESTINATIONS[key];
+    if (!factory) return null;
+    const layerEl = document.createElement('div');
+    layerEl.className = 'scrolls-app__layer';
+    layerEl.dataset.key = key;
+    layerEl.appendChild(factory());
+    return layerEl;
+  }
+
+  /**
+   * @param {string} key
+   * @param {{ direction?: 'forward' | 'back' }} [opts]
+   */
+  function navigate(key, { direction = 'forward' } = {}) {
+    if (animating || !DESTINATIONS[key]) return;
+    if (current && current.key === key) return;
+
+    clearPeek();
+
+    const nextLayer = mountLayer(key);
+    if (!nextLayer) return;
+
+    animating = true;
+    frame.classList.toggle('is-destination', key !== 'home');
+
+    const prevLayer = current ? current.el : null;
+    // Forward: incoming slides in from the right, outgoing exits left.
+    // Back: mirrored — incoming slides in from the left, outgoing exits right.
+    const enterFromX = direction === 'forward' ? '100%' : '-100%';
+    const exitToX = direction === 'forward' ? '-100%' : '100%';
+
+    nextLayer.style.opacity = '0';
+    layers.appendChild(nextLayer);
+
+    const finished = [];
+
+    if (prevLayer) {
+      finished.push(
+        prevLayer.animate(
+          [
+            { transform: 'translate3d(0, 0, 0)', opacity: 1 },
+            { transform: `translate3d(${exitToX}, 0, 0)`, opacity: 0 },
+          ],
+          { duration: TRANSITION_MS, easing: EASING, fill: 'forwards' }
+        ).finished
+      );
+    }
+
+    finished.push(
+      nextLayer.animate(
+        [
+          { transform: `translate3d(${enterFromX}, 0, 0)`, opacity: 0 },
+          { transform: 'translate3d(0, 0, 0)', opacity: 1 },
+        ],
+        { duration: TRANSITION_MS, easing: EASING, fill: 'forwards' }
+      ).finished
+    );
+
+    Promise.all(finished).then(() => {
+      if (prevLayer) {
+        prevLayer.firstElementChild?._scrollsHomeDispose?.();
+        prevLayer.remove();
+      }
+      current = { key, el: nextLayer };
+      backButton.hidden = key === 'home';
+      grayscaleButton.hidden = key === 'home';
+      updateMeta(key);
+      animating = false;
+    });
+  }
+
+  function onNavigateEvent(event) {
+    const destination = event.detail && event.detail.destination;
+    if (destination) navigate(destination, { direction: 'forward' });
+  }
+
+  function onBackClick() {
+    navigate('home', { direction: 'back' });
+  }
+
+  let isGrayscale = false;
+
+  function onGrayscaleClick() {
+    isGrayscale = !isGrayscale;
+    root.classList.toggle('is-grayscale', isGrayscale);
+    grayscaleButton.setAttribute('aria-pressed', String(isGrayscale));
+    grayscaleButton.setAttribute(
+      'aria-label',
+      isGrayscale ? 'Turn off grayscale filter' : 'Turn on grayscale filter'
+    );
+  }
+
+  layers.addEventListener('scrolls:navigate', onNavigateEvent);
+  backButton.addEventListener('click', onBackClick);
+  grayscaleButton.addEventListener('click', onGrayscaleClick);
+  root.addEventListener('pointerover', onDestinationEnter);
+  root.addEventListener('pointerout', onDestinationLeave);
+
+  const initialLayer = mountLayer('home');
+  layers.appendChild(initialLayer);
+  current = { key: 'home', el: initialLayer };
+  backButton.hidden = true;
+  grayscaleButton.hidden = true;
+  updateMeta('home');
+
+  // Warm palette cache so hover peeks feel instant
+  for (const trip of SCROLL_TRIPS) {
+    if (trip.heroImage) {
+      extractPaletteFromImage(tripAssetUrl(trip.heroImage));
+    }
+  }
+
+  root._scrollsAppDispose = () => {
+    glow.dispose();
+    resizeObserver.disconnect();
+    layers.removeEventListener('scrolls:navigate', onNavigateEvent);
+    backButton.removeEventListener('click', onBackClick);
+    grayscaleButton.removeEventListener('click', onGrayscaleClick);
+    root.removeEventListener('pointerover', onDestinationEnter);
+    root.removeEventListener('pointerout', onDestinationLeave);
+  };
+
+  return root;
+}

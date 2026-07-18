@@ -1,0 +1,234 @@
+/* Scrolls app shell — owns the single stable frame/scrim "window" that
+   destinations animate underneath. Geometry mirrors scrolls-home.css /
+   scrolls.css so the frame lines up pixel-for-pixel with each destination's
+   own (now-hidden, embedded-mode) chrome. */
+
+.scrolls-app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+}
+
+.scrolls-app__stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;
+}
+
+.scrolls-app__canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3842px;
+  height: 2160px;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center center;
+  background: #000;
+  overflow: hidden;
+  border-radius: 80px;
+  z-index: 1;
+}
+
+.scrolls-app__layers {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.scrolls-app__layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}
+
+.scrolls-app__edge {
+  position: absolute;
+  top: 0;
+  width: calc(732px * var(--stage-scale, 1));
+  height: 100%;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.scrolls-app__edge--left {
+  left: 0;
+  background: linear-gradient(to right, #000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.scrolls-app__edge--right {
+  right: 0;
+  background: linear-gradient(to left, #000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* Stage-level chrome — outside the scaled canvas so the scrim covers the
+   full viewport instead of being clipped to the artboard. */
+.scrolls-app__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.scrolls-app__scrim-hole {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(1078px * var(--stage-scale, 1));
+  height: calc(1918.889px * var(--stage-scale, 1));
+  transform: translate(-50%, -50%);
+  border-radius: calc(78.222px * var(--stage-scale, 1));
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.52);
+}
+
+.scrolls-app__frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(1078px * var(--stage-scale, 1));
+  height: calc(1918.889px * var(--stage-scale, 1));
+  transform: translate(-50%, -50%);
+  border: calc(4.889px * var(--stage-scale, 1)) solid #fff;
+  border-radius: calc(78.222px * var(--stage-scale, 1));
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 40;
+}
+
+/* Left-side year/title chrome — position mirrors Figma node 2046:432
+   (left 270.31px, top 935.88px, width 851.578px in the 3842×2160 canvas),
+   expressed as an offset from stage center so it scales with the frame.
+   Sits above the scrim so its own translucency isn't further dimmed.
+   Shown for every destination except Home (toggled via [hidden] in JS). */
+.scrolls-app__meta {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(
+    calc(-1650.69px * var(--stage-scale, 1)),
+    calc(-144.12px * var(--stage-scale, 1))
+  );
+  width: calc(851.578px * var(--stage-scale, 1));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: calc(35px * var(--stage-scale, 1));
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  pointer-events: none;
+  z-index: 35;
+}
+
+.scrolls-app__meta[hidden] {
+  display: none;
+}
+
+.scrolls-app__meta-year {
+  margin: 0;
+  font-family: Lato, system-ui, sans-serif;
+  font-size: calc(48px * var(--stage-scale, 1));
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.scrolls-app__meta-title {
+  margin: 0;
+  font-family: "EB Garamond", Garamond, "Times New Roman", serif;
+  font-size: calc(80px * var(--stage-scale, 1));
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Shared chrome icon buttons — 44px circular hit targets over the frame
+   gutters. Midpoint of each gutter (1350px content strip ↔ frame inner edge
+   with 4.889px border): ±814.778px from stage center. */
+.scrolls-app__back,
+.scrolls-app__grayscale {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  margin: 0;
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  opacity: 0.8;
+  outline: none;
+  box-shadow: none;
+  transition: opacity 200ms ease, background 200ms ease;
+}
+
+.scrolls-app__back {
+  top: calc(50% - (814.778px * var(--stage-scale, 1)));
+}
+
+.scrolls-app__grayscale {
+  top: calc(50% + (814.778px * var(--stage-scale, 1)));
+}
+
+.scrolls-app__back .material-symbols-outlined,
+.scrolls-app__grayscale .material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  user-select: none;
+  pointer-events: none;
+}
+
+.scrolls-app__grayscale[aria-pressed="true"] .material-symbols-outlined {
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+.scrolls-app__back:hover,
+.scrolls-app__back:focus,
+.scrolls-app__back:focus-visible,
+.scrolls-app__grayscale:hover,
+.scrolls-app__grayscale:focus,
+.scrolls-app__grayscale:focus-visible {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.14);
+  outline: none;
+  box-shadow: none;
+}
+
+.scrolls-app__back[hidden],
+.scrolls-app__grayscale[hidden] {
+  display: none;
+}
+
+/* Grayscale filter targets the content viewport only — frame, glow ring,
+   and the chrome buttons themselves stay in color. */
+.scrolls-app.is-grayscale .scrolls-app__canvas {
+  filter: grayscale(1);
+}

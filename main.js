@@ -1,9 +1,4 @@
-import './material-setup.js';
-import './material-theme.css';
+import { createScrolls } from './scrolls.js';
 
-const dialog = document.querySelector('#welcome-dialog');
-const openDialogButton = document.querySelector('#open-dialog');
-
-openDialogButton?.addEventListener('click', () => {
-  dialog?.show();
-});
+document.body.classList.add('scrolls-page');
+document.body.replaceChildren(createScrolls());

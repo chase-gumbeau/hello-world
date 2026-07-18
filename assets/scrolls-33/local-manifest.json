@@ -1,0 +1,15 @@
+{
+  "img01-bg-strip.jpg": "Shared panoramic green-fabric backdrop, cropped per panel (Figma node \"image 81\", reused across all 10 panels)",
+  "img02-magnolia.jpg": "Magnolia flower illustration (Figma \"image 72\", panels 1 & 10)",
+  "img03-portrait-a.jpg": "Portrait photo A (Figma \"image 60\", panels 1-3)",
+  "img04-portrait-b.jpg": "Portrait photo B (Figma \"image 76\"/\"image 75\"/\"image 82\", panels 3-5)",
+  "img05-portrait-c.jpg": "Portrait photo C (Figma \"image 67\", panels 5-7)",
+  "img06-portrait-d.jpg": "Portrait photo D, badge-masked (Figma \"image 79\", panel 7)",
+  "img07-portrait-e.jpg": "Portrait photo E (Figma \"image 82\"/\"image 79\", panels 7-8)",
+  "img08-portrait-f.jpg": "Portrait photo F (Figma \"image 68\", panels 7-9)",
+  "img09-mask-badge.svg": "Badge/union cutout mask shape (Figma \"image 78\"/\"image 77\", panels 7 & 9)",
+  "img10-mask-rect.svg": "Rounded-rect cutout mask shape (Figma \"image 80\" mask, panel 7)",
+  "img11-portrait-g.jpg": "Portrait photo G, flipped (Figma \"image 80\", panels 8-9)",
+  "img12-union-badge.svg": "Flat union badge decal (Figma \"Union\", panel 8)",
+  "img13-portrait-h.jpg": "Portrait photo H, badge-masked (Figma \"image 78\", panel 9)"
+}
