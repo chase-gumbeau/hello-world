@@ -1,0 +1,134 @@
+/* Scrolls app shell — owns the single stable frame/scrim "window" that
+   destinations animate underneath. Geometry mirrors scrolls-home.css /
+   scrolls.css so the frame lines up pixel-for-pixel with each destination's
+   own (now-hidden, embedded-mode) chrome. */
+
+.scrolls-app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+}
+
+.scrolls-app__stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;
+}
+
+.scrolls-app__canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3842px;
+  height: 2160px;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center center;
+  background: #000;
+  overflow: hidden;
+  border-radius: 80px;
+  z-index: 1;
+}
+
+.scrolls-app__layers {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.scrolls-app__layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}
+
+.scrolls-app__edge {
+  position: absolute;
+  top: 0;
+  width: calc(732px * var(--stage-scale, 1));
+  height: 100%;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.scrolls-app__edge--left {
+  left: 0;
+  background: linear-gradient(to right, #000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.scrolls-app__edge--right {
+  right: 0;
+  background: linear-gradient(to left, #000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* Stage-level chrome — outside the scaled canvas so the scrim covers the
+   full viewport instead of being clipped to the artboard. */
+.scrolls-app__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.scrolls-app__scrim-hole {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(1078px * var(--stage-scale, 1));
+  height: calc(1918.889px * var(--stage-scale, 1));
+  transform: translate(-50%, -50%);
+  border-radius: calc(78.222px * var(--stage-scale, 1));
+  box-shadow: 0 0 0 100vmax #000;
+}
+
+.scrolls-app__frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(1078px * var(--stage-scale, 1));
+  height: calc(1918.889px * var(--stage-scale, 1));
+  transform: translate(-50%, -50%);
+  border: calc(4.889px * var(--stage-scale, 1)) solid #fff;
+  border-radius: calc(78.222px * var(--stage-scale, 1));
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.scrolls-app__back {
+  position: absolute;
+  left: 50%;
+  top: calc(50% - (1918.889px * var(--stage-scale, 1)) / 2 + (48px * var(--stage-scale, 1)));
+  transform: translate(-50%, 0);
+  z-index: 50;
+  margin: 0;
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.85);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 200ms ease, background 200ms ease;
+}
+
+.scrolls-app__back:hover,
+.scrolls-app__back:focus-visible {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.14);
+  outline: none;
+}
+
+.scrolls-app__back[hidden] {
+  display: none;
+}
