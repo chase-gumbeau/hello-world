@@ -13,7 +13,13 @@ const preview = {
     },
     options: {
       storySort: {
-        order: ['Scrolls', ['Home', '2025', '2024'], '*'],
+        order: [
+          'Foundations',
+          'Studies',
+          'Projects',
+          ['Morning Brief', 'Solari Board', 'Scrolls', ['Home', '2025', '2024', '2023']],
+          '*',
+        ],
       },
     },
   },

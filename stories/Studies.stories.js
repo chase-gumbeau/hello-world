@@ -1,8 +1,5 @@
-import './solari-board.css';
-import { createSolariBoard } from './solari-board.js';
-
 export default {
-  title: 'GitNewb/Studies',
+  title: 'Studies',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
@@ -16,7 +13,7 @@ export const Overview = {
     main.className = 'container';
     main.innerHTML = `
       <header class="header">
-        <div class="badge" aria-hidden="true">GitNewb</div>
+        <div class="badge" aria-hidden="true">Studies</div>
         <h1 class="hello-world-title">Studies</h1>
         <p class="subtitle">
           Explorations and experiments live here — add new stories under this section as you go.
@@ -25,9 +22,4 @@ export const Overview = {
     `;
     return main;
   },
-};
-
-export const SolariBoard = {
-  name: 'Solari Board',
-  render: () => createSolariBoard('HELLO WORLD'),
 };

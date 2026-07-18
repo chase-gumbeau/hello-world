@@ -584,7 +584,7 @@ function createMorningBriefConcept2() {
 }
 
 export default {
-  title: 'GitNewb/Morning Brief',
+  title: 'Projects/Morning Brief',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
