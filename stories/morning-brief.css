@@ -10,13 +10,125 @@
   --mb-link: var(--md-sys-color-on-surface);
   --mb-max: 720px;
 
+  /*
+   * Continuous ambient wash — driven by JS scrubber via custom properties.
+   * Defaults = morning (top-left orange). Stops: morning → noon → evening.
+   */
+  --mb-wash-x: -4%;
+  --mb-wash-y: -6%;
+  --mb-wash-rx: 150%;
+  --mb-wash-ry: 120%;
+  --mb-wash-r: 224;
+  --mb-wash-g: 120;
+  --mb-wash-b: 48;
+  --mb-wash-a: 0.3;
+
   box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
   margin: 0;
   padding: 48px 40px 80px;
+  /* Solid base only — colored wash lives on ::after above grain so multiply cannot crush it */
   background: var(--md-sys-color-surface-container-lowest);
   color: var(--mb-ink);
   font-family: var(--md-ref-typeface-plain);
+}
+
+/* Register props so they can ease briefly on keyboard / release (not during drag). */
+@property --mb-wash-x {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: -4%;
+}
+
+@property --mb-wash-y {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: -6%;
+}
+
+@property --mb-wash-rx {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 150%;
+}
+
+@property --mb-wash-ry {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 120%;
+}
+
+@property --mb-wash-r {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 224;
+}
+
+@property --mb-wash-g {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 120;
+}
+
+@property --mb-wash-b {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 48;
+}
+
+@property --mb-wash-a {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.3;
+}
+
+/*
+ * Ambient wash layer — above grain, under content.
+ * One radial driven by --mb-wash-* so scrubbing slides/shifts continuously.
+ */
+.morning-brief::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse var(--mb-wash-rx) var(--mb-wash-ry) at var(--mb-wash-x) var(--mb-wash-y),
+    rgba(var(--mb-wash-r), var(--mb-wash-g), var(--mb-wash-b), var(--mb-wash-a)),
+    transparent 62%
+  );
+  transition:
+    --mb-wash-x 160ms ease,
+    --mb-wash-y 160ms ease,
+    --mb-wash-rx 160ms ease,
+    --mb-wash-ry 160ms ease,
+    --mb-wash-r 160ms ease,
+    --mb-wash-g 160ms ease,
+    --mb-wash-b 160ms ease,
+    --mb-wash-a 160ms ease;
+}
+
+/* Instant follow while dragging — no laggy transitions */
+.morning-brief.is-scrubbing::after {
+  transition: none;
+}
+
+/*
+ * Film-grain overlay — in-DOM SVG + feTurbulence (CSS background data-URIs often skip SVG filters).
+ * Use multiply (not overlay/soft-light): mid-gray soft-light is nearly a no-op on Material light surfaces.
+ * Kept under the wash (::after) so grain textures the surface without desaturating the color.
+ */
+.morning-brief__grain {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.28;
+  mix-blend-mode: multiply;
 }
 
 .morning-brief *,
@@ -26,6 +138,8 @@
 }
 
 .morning-brief__inner {
+  position: relative;
+  z-index: 2;
   max-width: var(--mb-max);
   margin: 0 auto;
 }
@@ -96,31 +210,65 @@
 .morning-brief__timeline {
   position: relative;
   width: 100%;
-  height: 12px;
+  height: 52px;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
 }
 
-.morning-brief__timeline-line {
+.morning-brief__timeline-svg {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 1px;
-  background: color-mix(in srgb, var(--mb-ink) 55%, transparent);
-  transform: translateY(-50%);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.morning-brief__timeline-path {
+  stroke: color-mix(in srgb, var(--mb-ink) 55%, transparent);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .morning-brief__timeline-dot {
   position: absolute;
   top: 50%;
-  left: 72%;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--mb-ink) 78%, transparent);
+  left: 16%;
+  z-index: 1;
+  /* Visible capsule thumb */
+  width: 24px;
+  height: 11px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mb-ink) 82%, transparent);
   box-shadow:
     0 0 6px 1px color-mix(in srgb, var(--md-sys-color-primary) 32%, transparent),
     0 0 14px 3px color-mix(in srgb, var(--md-sys-color-primary) 16%, transparent);
   transform: translate(-50%, -50%);
+  cursor: grab;
+  touch-action: none;
+  appearance: none;
+}
+
+/* Larger invisible hit target for easier dragging */
+.morning-brief__timeline-dot::before {
+  content: '';
+  position: absolute;
+  inset: -10px -8px;
+}
+
+.morning-brief__timeline-dot:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 4px;
+}
+
+.morning-brief__timeline-dot.is-dragging,
+.morning-brief__timeline-dot:active {
+  cursor: grabbing;
 }
 
 .morning-brief__schedule {
