@@ -39,41 +39,6 @@ const preview = {
       },
     },
   },
-  globalTypes: {
-    scrollsHome: {
-      description: 'Scrolls home layout version',
-      toolbar: {
-        title: 'Home',
-        icon: 'sidebar',
-        items: [
-          { value: 'centered', title: 'Home · Centered' },
-          { value: 'left', title: 'Home · Left' },
-        ],
-        dynamicTitle: true,
-      },
-    },
-    workBriefPersona: {
-      description: 'Work Brief persona variant',
-      toolbar: {
-        title: 'Brief',
-        icon: 'user',
-        items: [
-          { value: 'clinician', title: 'Brief · Clinician' },
-          { value: 'supplier_csr', title: 'Brief · Supplier CSR' },
-          { value: 'supplier_manager', title: 'Brief · Supplier Manager' },
-          { value: 'patient', title: 'Brief · Patient' },
-          { value: 'payor', title: 'Brief · Payor' },
-          { value: 'catalog', title: 'Brief · Catalog' },
-          { value: 'ops_cs', title: 'Brief · Ops / CS' },
-        ],
-        dynamicTitle: true,
-      },
-    },
-  },
-  initialGlobals: {
-    scrollsHome: 'centered',
-    workBriefPersona: 'supplier_csr',
-  },
 };
 
 export default preview;

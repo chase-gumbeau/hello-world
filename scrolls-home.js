@@ -1,8 +1,6 @@
 import './scrolls-home.css';
 import { getScrollTripsByYear } from './scrolls-registry.js';
-
-const DESIGN_W = 3842;
-const DESIGN_H = 2160;
+import { applyStageVars } from './scrolls-stage-scale.js';
 
 // Centered layout: scale + fade each link on click.
 const LINK_EXIT_MS = 200;
@@ -157,13 +155,12 @@ export function createScrollsHome({
   }
 
   function fitStage() {
-    const width = root.clientWidth || window.innerWidth;
-    const height = root.clientHeight || window.innerHeight;
-    const scale = Math.min(width / DESIGN_W, height / DESIGN_H);
-    root.style.setProperty('--stage-scale', String(scale));
-    if (!embedded) {
-      root.style.setProperty('--app-stage-scale', String(scale));
-    }
+    // Embedded home lives in artboard layout space (scale ~1); the app shell
+    // owns --app-stage-scale + menu tokens from the real viewport.
+    applyStageVars(root, {
+      setAppScale: !embedded,
+      setMenuTokens: !embedded,
+    });
   }
 
   const resizeObserver = new ResizeObserver(fitStage);

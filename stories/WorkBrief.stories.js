@@ -426,12 +426,6 @@ export function createWorkBrief({ persona: personaId = 'supplier_csr' } = {}) {
   return page;
 }
 
-/** @param {{ workBriefPersona?: string }} [globals] */
-function personaFromGlobals(globals = {}) {
-  const id = globals.workBriefPersona;
-  return PERSONA_IDS.includes(id) ? id : 'supplier_csr';
-}
-
 export default {
   title: 'Projects/Work Brief',
   tags: ['autodocs'],
@@ -440,22 +434,28 @@ export default {
     docs: {
       description: {
         component:
-          'Persona Orient surfaces for Parachute work contexts — same brief grammar as Morning Brief (verdict, territories, Resume / Needs attention). Use the toolbar **Brief** dropdown to switch personas, or open an individual story.',
+          'Persona Orient surfaces for Parachute work contexts — same brief grammar as Morning Brief (verdict, territories, Resume / Needs attention). Open an individual story for each persona.',
       },
     },
   },
-  render: (_args, { globals }) =>
-    createWorkBrief({ persona: personaFromGlobals(globals) }),
+  args: {
+    persona: 'supplier_csr',
+  },
+  argTypes: {
+    persona: {
+      control: 'select',
+      options: PERSONA_IDS,
+    },
+  },
+  render: (args) => createWorkBrief({ persona: args.persona }),
 };
 
-/** Toolbar-driven default — switches with the Brief dropdown. */
 export const Page = {
   name: 'Page',
   parameters: {
     docs: {
       description: {
-        story:
-          'Default work brief. Switch personas with the toolbar **Brief** dropdown.',
+        story: 'Default work brief (Supplier CSR). Open other stories for additional personas.',
       },
     },
   },
@@ -463,35 +463,35 @@ export const Page = {
 
 export const Clinician = {
   name: 'Clinician',
-  globals: { workBriefPersona: 'clinician' },
+  args: { persona: 'clinician' },
 };
 
 export const SupplierCsr = {
   name: 'Supplier CSR',
-  globals: { workBriefPersona: 'supplier_csr' },
+  args: { persona: 'supplier_csr' },
 };
 
 export const SupplierManager = {
   name: 'Supplier Manager',
-  globals: { workBriefPersona: 'supplier_manager' },
+  args: { persona: 'supplier_manager' },
 };
 
 export const Patient = {
   name: 'Patient',
-  globals: { workBriefPersona: 'patient' },
+  args: { persona: 'patient' },
 };
 
 export const Payor = {
   name: 'Payor',
-  globals: { workBriefPersona: 'payor' },
+  args: { persona: 'payor' },
 };
 
 export const Catalog = {
   name: 'Catalog',
-  globals: { workBriefPersona: 'catalog' },
+  args: { persona: 'catalog' },
 };
 
 export const OpsCs = {
   name: 'Ops / CS',
-  globals: { workBriefPersona: 'ops_cs' },
+  args: { persona: 'ops_cs' },
 };
