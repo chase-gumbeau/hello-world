@@ -146,25 +146,24 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: calc(33px * var(--stage-scale, 1));
+  gap: var(--menu-stack-gap, 8px);
   width: 100%;
 }
 
 .scrolls-app__nav .scrolls-home__sep {
-  margin: calc(44px * var(--stage-scale, 1)) 0;
-  font-size: calc(48px * var(--stage-scale, 1));
+  margin: var(--menu-sep-gap, 18px) 0;
+  font-size: var(--menu-year-size, 15px);
   text-align: left;
 }
 
 .scrolls-app__nav .scrolls-home__year {
-  font-size: calc(48px * var(--stage-scale, 1));
-  letter-spacing: calc(9.6px * var(--stage-scale, 1));
+  font-size: var(--menu-year-size, 15px);
+  letter-spacing: var(--menu-year-tracking, 2.4px);
   text-align: left;
 }
 
 .scrolls-app__nav .scrolls-home__city {
-  /* Screen-stable size (matches in-canvas left/centered homes). */
-  font-size: 24px;
+  font-size: var(--menu-city-size, 24px);
   text-align: left;
 }
 
@@ -176,6 +175,32 @@
     -50%
   );
   opacity: 0;
+}
+
+/* Compact / portrait: left-rail nav can't sit in the gutter — center it in
+   the frame so destinations stay readable and on-screen. */
+.scrolls-app.is-compact.is-home-left .scrolls-app__nav .scrolls-home__list {
+  left: 50%;
+  width: min(calc(100% - 48px), 320px);
+  max-width: none;
+  transform: translate(-50%, -50%);
+  align-items: center;
+  text-align: center;
+}
+
+.scrolls-app.is-compact.is-home-left .scrolls-app__nav .scrolls-home__section {
+  align-items: center;
+}
+
+.scrolls-app.is-compact.is-home-left .scrolls-app__nav .scrolls-home__sep,
+.scrolls-app.is-compact.is-home-left .scrolls-app__nav .scrolls-home__year,
+.scrolls-app.is-compact.is-home-left .scrolls-app__nav .scrolls-home__city {
+  text-align: center;
+}
+
+.scrolls-app.is-compact.is-home-left .scrolls-app__nav .scrolls-home__list.is-exiting,
+.scrolls-app.is-compact.is-home-left .scrolls-app__nav .scrolls-home__list.is-entering {
+  transform: translate(-50%, -50%) translateX(-40vw);
 }
 
 .scrolls-app__frame {

@@ -3,9 +3,8 @@ import { createScrollsHome } from './scrolls-home.js';
 import { SCROLL_DESTINATIONS, getScrollTrip, SCROLL_TRIPS } from './scrolls-registry.js';
 import { mountFrameGlow } from './scrolls-frame-glow.js';
 import { extractPaletteFromImage, tripAssetUrl } from './scrolls-palette.js';
+import { applyStageVars } from './scrolls-stage-scale.js';
 
-const DESIGN_W = 3842;
-const DESIGN_H = 2160;
 const TRANSITION_MS = 650;
 const EASING = 'cubic-bezier(0.16, 1, 0.3, 1)';
 /** Left-home hover: design-px per second while auto-scrolling the peek strip. */
@@ -214,12 +213,8 @@ export function createScrollsApp({ homeLayout = 'centered' } = {}) {
   let animating = false;
 
   function fitStage() {
-    const width = root.clientWidth || window.innerWidth;
-    const height = root.clientHeight || window.innerHeight;
-    const scale = Math.min(width / DESIGN_W, height / DESIGN_H);
-    root.style.setProperty('--stage-scale', String(scale));
-    // Survives nested home overwriting --stage-scale when embedded.
-    root.style.setProperty('--app-stage-scale', String(scale));
+    // --app-stage-scale survives nested home overwriting --stage-scale when embedded.
+    applyStageVars(root, { setAppScale: true });
   }
 
   const resizeObserver = new ResizeObserver(fitStage);
