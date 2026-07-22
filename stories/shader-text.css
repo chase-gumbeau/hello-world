@@ -1,0 +1,469 @@
+/**
+ * Shader Type study — animated shaders on text and glyphs.
+ * Graphite studio, copper ink, sea-glass glow.
+ */
+
+.stx-study {
+  --stx-bg-0: #12100e;
+  --stx-bg-1: #1c1814;
+  --stx-bg-2: #2a221c;
+  --stx-ink: #ecd4a8;
+  --stx-ink-hot: #f4e6c8;
+  --stx-glow: #6fc4b8;
+  --stx-glow-dim: rgba(111, 196, 184, 0.35);
+  --stx-mute: #8a7f72;
+  --stx-rule: rgba(236, 212, 168, 0.18);
+  --stx-font-display: 'Italiana', 'EB Garamond', Georgia, serif;
+  --stx-font-body: 'EB Garamond', Georgia, serif;
+  --stx-font-ui: 'Lato', system-ui, sans-serif;
+
+  position: relative;
+  box-sizing: border-box;
+  min-height: 100vh;
+  margin: 0;
+  padding: clamp(28px, 5vw, 64px) clamp(18px, 4vw, 48px) 72px;
+  overflow: hidden;
+  color: var(--stx-ink);
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -10%, #3a2e24 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 100% 80%, #1a2a28 0%, transparent 50%),
+    linear-gradient(165deg, var(--stx-bg-1), var(--stx-bg-0) 55%, #0e0c0a);
+  font-family: var(--stx-font-body);
+}
+
+.stx-study *,
+.stx-study *::before,
+.stx-study *::after {
+  box-sizing: border-box;
+}
+
+.stx-study__atmosphere {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(236, 212, 168, 0.04), transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(111, 196, 184, 0.05), transparent 45%);
+  animation: stx-drift 18s ease-in-out infinite alternate;
+}
+
+@keyframes stx-drift {
+  from {
+    transform: translate3d(-1.5%, -1%, 0) scale(1.02);
+    opacity: 0.7;
+  }
+  to {
+    transform: translate3d(1.5%, 1.5%, 0) scale(1.06);
+    opacity: 1;
+  }
+}
+
+.stx-study__stage {
+  position: relative;
+  z-index: 1;
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stx-study__intro {
+  text-align: center;
+  margin-bottom: clamp(20px, 4vw, 36px);
+  animation: stx-rise 0.9s ease-out both;
+}
+
+.stx-study__eyebrow {
+  margin: 0 0 10px;
+  font-family: var(--stx-font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stx-glow);
+  opacity: 0.75;
+}
+
+.stx-study__brand {
+  margin: 0;
+  font-family: var(--stx-font-display);
+  font-weight: 400;
+  font-size: clamp(3rem, 9vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: 0.04em;
+  color: var(--stx-ink-hot);
+  text-shadow: 0 0 40px rgba(236, 212, 168, 0.15);
+}
+
+.stx-study__lede {
+  max-width: 36rem;
+  margin: 16px auto 0;
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  line-height: 1.45;
+  color: var(--stx-mute);
+  font-style: italic;
+}
+
+.stx-study__hero {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  animation: stx-rise 1s 0.12s ease-out both;
+}
+
+.stx-study__rule {
+  width: min(100%, 720px);
+  height: 1px;
+  margin: clamp(28px, 5vw, 48px) 0;
+  border: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--stx-rule),
+    color-mix(in srgb, var(--stx-glow) 40%, transparent),
+    var(--stx-rule),
+    transparent
+  );
+}
+
+.stx-study__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(28px, 4vw, 48px) clamp(16px, 3vw, 32px);
+  width: 100%;
+  animation: stx-rise 1s 0.22s ease-out both;
+}
+
+@media (max-width: 720px) {
+  .stx-study__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .stx-study__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stx-study__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  min-height: 110px;
+}
+
+.stx-study__caption {
+  margin: 0;
+  font-family: var(--stx-font-ui);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stx-mute);
+  text-align: center;
+}
+
+.stx-study__caption--hero {
+  font-size: 13px;
+  letter-spacing: 0.18em;
+}
+
+.stx-study__solo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  min-height: calc(100vh - 96px);
+  width: 100%;
+  animation: stx-rise 0.85s ease-out both;
+}
+
+.stx-study__solo--glyph {
+  gap: 36px;
+}
+
+@keyframes stx-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ——— WebGL canvas ——— */
+
+.stx-gl {
+  width: min(100%, 900px);
+  aspect-ratio: 900 / 280;
+  display: grid;
+  place-items: center;
+}
+
+.stx-gl__canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.stx-gl--fallback {
+  font-family: var(--stx-font-display);
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  letter-spacing: 0.08em;
+  color: var(--stx-ink);
+  text-align: center;
+}
+
+.stx-study__solo .stx-gl {
+  width: min(100%, 960px);
+  aspect-ratio: 960 / 360;
+}
+
+/* ——— CSS / SVG glyphs ——— */
+
+.stx-glyph {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--stx-font-display);
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  color: var(--stx-ink);
+}
+
+.stx-study__solo--glyph .stx-glyph {
+  font-size: clamp(3.5rem, 12vw, 7rem);
+}
+
+.stx-glyph__word {
+  margin: 0;
+}
+
+.stx-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* Flow: animated copper → sea-glass gradient clipped to glyphs */
+.stx-glyph--flow .stx-glyph__word {
+  background: linear-gradient(
+    110deg,
+    #c4894a 0%,
+    #ecd4a8 25%,
+    #6fc4b8 50%,
+    #ecd4a8 75%,
+    #c4894a 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: stx-flow 4.5s ease-in-out infinite;
+}
+
+@keyframes stx-flow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Warp / Melt: SVG displacement */
+.stx-glyph--warp .stx-glyph__word {
+  filter: url(#stx-warp);
+  color: var(--stx-ink-hot);
+}
+
+.stx-glyph--melt .stx-glyph__word {
+  filter: url(#stx-melt);
+  background: linear-gradient(180deg, #f4e6c8, #6fc4b8 70%, #3d7a72);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Chromatic aberration layers */
+.stx-glyph--chroma {
+  isolation: isolate;
+}
+
+.stx-glyph--chroma .stx-glyph__face {
+  position: relative;
+  z-index: 2;
+  color: var(--stx-ink-hot);
+  mix-blend-mode: lighten;
+}
+
+.stx-glyph--chroma .stx-glyph__layer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0.7;
+  animation: stx-chroma 2.8s ease-in-out infinite;
+}
+
+.stx-glyph--chroma .stx-glyph__layer--r {
+  color: #e07050;
+  mix-blend-mode: screen;
+  animation-name: stx-chroma-r;
+}
+
+.stx-glyph--chroma .stx-glyph__layer--g {
+  color: #50c090;
+  mix-blend-mode: screen;
+  animation-name: stx-chroma-g;
+}
+
+.stx-glyph--chroma .stx-glyph__layer--b {
+  color: #5090d0;
+  mix-blend-mode: screen;
+  animation-name: stx-chroma-b;
+}
+
+@keyframes stx-chroma-r {
+  0%,
+  100% {
+    transform: translate(-2px, 0);
+  }
+  50% {
+    transform: translate(-5px, 1px);
+  }
+}
+
+@keyframes stx-chroma-g {
+  0%,
+  100% {
+    transform: translate(0, 1px);
+  }
+  50% {
+    transform: translate(1px, -2px);
+  }
+}
+
+@keyframes stx-chroma-b {
+  0%,
+  100% {
+    transform: translate(2px, 0);
+  }
+  50% {
+    transform: translate(5px, -1px);
+  }
+}
+
+/* Grain mask: soft luminous fill with animated film grain */
+.stx-glyph--grain .stx-glyph__word {
+  position: relative;
+  color: transparent;
+  background:
+    linear-gradient(180deg, rgba(244, 230, 200, 0.95), rgba(111, 196, 184, 0.75)),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 0, 0, 0.15) 1px,
+      rgba(0, 0, 0, 0.15) 2px
+    );
+  background-size: 100% 100%, 100% 4px;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: stx-grain 1.2s steps(4) infinite;
+  filter: contrast(1.15);
+}
+
+@keyframes stx-grain {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  25% {
+    background-position: 0 0, 0 1px;
+  }
+  50% {
+    background-position: 0 0, 0 2px;
+  }
+  75% {
+    background-position: 0 0, 0 3px;
+  }
+  100% {
+    background-position: 0 0, 0 0;
+  }
+}
+
+/* Staggered per-glyph shimmer */
+.stx-glyph--stagger .stx-glyph__word {
+  display: flex;
+  gap: 0.02em;
+}
+
+.stx-glyph--stagger .stx-glyph__char {
+  display: inline-block;
+  background: linear-gradient(
+    180deg,
+    var(--stx-ink-hot),
+    var(--stx-glow) 55%,
+    var(--stx-ink)
+  );
+  background-size: 100% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: stx-glyph-bob 2.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.12s);
+}
+
+@keyframes stx-glyph-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+    background-position: 0 0%;
+    filter: brightness(1);
+  }
+  40% {
+    transform: translateY(-0.08em);
+    background-position: 0 100%;
+    filter: brightness(1.25);
+  }
+  70% {
+    transform: translateY(0.03em);
+    background-position: 0 40%;
+    filter: brightness(0.95);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stx-study__atmosphere,
+  .stx-glyph--flow .stx-glyph__word,
+  .stx-glyph--chroma .stx-glyph__layer,
+  .stx-glyph--grain .stx-glyph__word,
+  .stx-glyph--stagger .stx-glyph__char,
+  .stx-study__intro,
+  .stx-study__hero,
+  .stx-study__grid,
+  .stx-study__solo {
+    animation: none !important;
+  }
+
+  .stx-glyph--warp .stx-glyph__word,
+  .stx-glyph--melt .stx-glyph__word {
+    filter: none;
+  }
+}

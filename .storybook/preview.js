@@ -16,6 +16,11 @@ const preview = {
         order: [
           'Foundations',
           'Studies',
+          [
+            'Overview',
+            'Animation mesh gradient',
+            'Shader Type',
+          ],
           'Projects',
           [
             'Morning Brief',

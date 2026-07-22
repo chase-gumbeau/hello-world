@@ -16,7 +16,7 @@ export const Overview = {
         <div class="badge" aria-hidden="true">Studies</div>
         <h1 class="hello-world-title">Studies</h1>
         <p class="subtitle">
-          Explorations and experiments live here — add new stories under this section as you go.
+          Explorations and experiments live here — mesh gradient buttons, shader type on glyphs, and more.
         </p>
       </header>
     `;
