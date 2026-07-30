@@ -59,7 +59,8 @@ export function createScrollsHome({
 
   // Left layout: nav sits beside the frame on the canvas. Centered: nav inside frame.
   const listBlock = `<div class="scrolls-home__list" data-scrolls-home-list>${listHtml}</div>`;
-  const frameInner = layout === 'left' ? '' : listBlock;
+  const captionBlock = `<p class="scrolls-home__caption">Captured on Pixel phones</p>`;
+  const frameInner = (layout === 'left' ? '' : listBlock) + captionBlock;
 
   root.innerHTML = `
     <div class="scrolls-home__stage">
