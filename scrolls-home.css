@@ -136,6 +136,23 @@
   outline: none;
 }
 
+.scrolls-home__caption {
+  position: absolute;
+  left: 50%;
+  bottom: calc(56px / var(--app-stage-scale, var(--stage-scale, 1)));
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: Lato, system-ui, sans-serif;
+  font-size: calc(13px / var(--app-stage-scale, var(--stage-scale, 1)));
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: calc(1.6px / var(--app-stage-scale, var(--stage-scale, 1)));
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 /* Left-rail layout: destination list in the left gutter outside the frame,
    left-aligned and vertically centered. Frame stays empty in the center. */
 .scrolls-home.is-layout-left .scrolls-home__frame {
