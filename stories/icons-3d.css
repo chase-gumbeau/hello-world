@@ -1,0 +1,329 @@
+/**
+ * 3D Icons study — warm studio paper, soft product-shot shadows.
+ */
+
+.i3d-study {
+  --i3d-bg: #f3f0eb;
+  --i3d-bg-deep: #e6e0d7;
+  --i3d-ink: #1f1b17;
+  --i3d-mute: #71685d;
+  --i3d-rule: rgba(31, 27, 23, 0.1);
+  --i3d-font-display: 'Inter', system-ui, sans-serif;
+  --i3d-font-body: 'Lato', system-ui, sans-serif;
+  --i3d-size: 112px;
+  --i3d-rx: 0deg;
+  --i3d-ry: 0deg;
+  --i3d-px: 0;
+  --i3d-py: 0;
+
+  box-sizing: border-box;
+  min-height: 100vh;
+  margin: 0;
+  padding: clamp(28px, 5vw, 64px) clamp(16px, 4vw, 56px) 80px;
+  color: var(--i3d-ink);
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 0%, #fdfbf8 0%, transparent 65%),
+    linear-gradient(180deg, var(--i3d-bg), var(--i3d-bg-deep));
+  font-family: var(--i3d-font-body);
+}
+
+.i3d-study *,
+.i3d-study *::before,
+.i3d-study *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Header ---------- */
+
+.i3d-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px 48px;
+  max-width: 1120px;
+  margin: 0 auto 24px;
+}
+
+.i3d-header__copy {
+  flex: 1 1 340px;
+  max-width: 560px;
+}
+
+.i3d-eyebrow {
+  margin: 0 0 8px;
+  color: var(--i3d-mute);
+  font: 700 12px/1 var(--i3d-font-display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.i3d-title {
+  margin: 0;
+  font: 700 clamp(40px, 7vw, 72px) / 1 var(--i3d-font-display);
+  letter-spacing: -0.035em;
+}
+
+.i3d-lede {
+  margin: 16px 0 0;
+  color: var(--i3d-mute);
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+/* ---------- Sections ---------- */
+
+.i3d-section {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) 1fr;
+  gap: 24px 48px;
+  align-items: center;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 40px 0;
+  border-top: 1px solid var(--i3d-rule);
+}
+
+.i3d-section__index {
+  color: var(--i3d-mute);
+  font: 700 12px/1 var(--i3d-font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+}
+
+.i3d-section__title {
+  margin: 8px 0 10px;
+  font: 700 22px/1.2 var(--i3d-font-display);
+  letter-spacing: -0.015em;
+}
+
+.i3d-section__how {
+  margin: 0 0 12px;
+  color: var(--i3d-mute);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.i3d-section__cost {
+  display: inline-block;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(31, 27, 23, 0.06);
+  font: 700 11px/1.4 var(--i3d-font-display);
+  letter-spacing: 0.02em;
+}
+
+.i3d-section__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 28px;
+  justify-content: flex-start;
+}
+
+@media (max-width: 760px) {
+  .i3d-section {
+    grid-template-columns: 1fr;
+  }
+
+  .i3d-study {
+    --i3d-size: 88px;
+  }
+}
+
+/* ---------- Tile ---------- */
+
+.i3d-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+.i3d-tile__stage {
+  position: relative;
+  width: var(--i3d-size);
+  height: var(--i3d-size);
+  perspective: 520px;
+}
+
+/* Soft contact shadow under every icon. */
+.i3d-tile__stage::after {
+  content: '';
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: -6%;
+  height: 10%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(40, 28, 16, 0.22), transparent);
+  filter: blur(2px);
+  transform: translateX(calc(var(--i3d-px) * -6%));
+  pointer-events: none;
+}
+
+.i3d-tile__label {
+  color: var(--i3d-mute);
+  font: 700 11px/1 var(--i3d-font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.i3d-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ---------- 1. Extruded layers ---------- */
+
+.i3d-extrude {
+  position: absolute;
+  inset: 6%;
+  transform-style: preserve-3d;
+  /* Resting three-quarter angle so the extrusion reads before any pointer input. */
+  transform: rotateX(calc(var(--i3d-rx) + 12deg)) rotateY(calc(var(--i3d-ry) - 22deg));
+}
+
+.i3d-extrude__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ---------- 2. Clay ---------- */
+
+.i3d-clay {
+  position: absolute;
+  inset: 4%;
+  width: 92%;
+  height: 92%;
+  overflow: visible;
+  filter: drop-shadow(0 6px 8px rgba(60, 36, 20, 0.18));
+  transform: translate(calc(var(--i3d-px) * 3px), calc(var(--i3d-py) * 3px));
+}
+
+/* ---------- 3. Layered glass ---------- */
+
+.i3d-glass {
+  position: absolute;
+  inset: 0;
+}
+
+.i3d-glass__back {
+  position: absolute;
+  inset: 14% 10% 10% 14%;
+  border-radius: 30%;
+  background:
+    radial-gradient(circle at 30% 25%, color-mix(in oklab, var(--i3d-c) 55%, white), transparent 60%),
+    linear-gradient(145deg, var(--i3d-c), color-mix(in oklab, var(--i3d-c) 70%, #1b1220));
+  box-shadow: 0 10px 18px -8px color-mix(in oklab, var(--i3d-c) 60%, transparent);
+  transform: translate(calc(16% + var(--i3d-px) * -8px), calc(-14% + var(--i3d-py) * -8px)) rotate(10deg);
+}
+
+.i3d-glass__front {
+  position: absolute;
+  inset: 6%;
+  transform: translate(calc(-4% + var(--i3d-px) * 6px), calc(6% + var(--i3d-py) * 6px));
+  filter: drop-shadow(0 6px 10px rgba(30, 20, 40, 0.16));
+}
+
+.i3d-glass__pane {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.38) 60%, rgba(255, 255, 255, 0.55));
+  backdrop-filter: blur(9px) saturate(1.7);
+  -webkit-backdrop-filter: blur(9px) saturate(1.7);
+}
+
+.i3d-glass__edge {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ---------- 4. Raymarched SDF ---------- */
+
+.i3d-ray {
+  position: absolute;
+  inset: -8%;
+}
+
+.i3d-ray__canvas,
+.i3d-parachute__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.i3d-ray--fallback {
+  display: grid;
+  place-items: center;
+  color: var(--i3d-mute);
+  font: 700 11px/1.3 var(--i3d-font-display);
+  text-align: center;
+}
+
+/* ---------- Parachute hero ---------- */
+
+.i3d-parachute {
+  position: relative;
+  flex: 0 1 340px;
+  width: min(340px, 100%);
+  aspect-ratio: 1;
+  margin: 0;
+}
+
+.i3d-parachute__art {
+  position: absolute;
+  inset: 0;
+}
+
+.i3d-parachute::after {
+  content: '';
+  position: absolute;
+  left: 36%;
+  right: 36%;
+  bottom: 9%;
+  height: 5%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(60, 30, 90, 0.2), transparent);
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+.i3d-parachute--solo {
+  flex: none;
+  width: min(480px, 100%);
+}
+
+/* ---------- Solo ---------- */
+
+.i3d-study--solo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.i3d-study--solo .i3d-tile__stage {
+  perspective: 900px;
+}
+
+.i3d-solo__note {
+  margin: 0;
+  color: var(--i3d-mute);
+  font-size: 14px;
+}
+
+.i3d-solo__note strong {
+  color: var(--i3d-ink);
+  font-family: var(--i3d-font-display);
+}
