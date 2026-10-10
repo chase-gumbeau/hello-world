@@ -88,6 +88,14 @@ function normalizePalette(colors) {
 }
 
 /**
+ * @param {number[][]} a
+ * @param {number[][]} b
+ */
+function palettesSettled(a, b) {
+  return a.every((rgb, i) => rgb.every((v, j) => Math.abs(v - b[i][j]) < 0.5));
+}
+
+/**
  * @param {number[][]} from
  * @param {number[][]} to
  * @param {number} t
@@ -147,9 +155,17 @@ export function mountFrameGlow(root, frame) {
   let disposed = false;
   let startTime = performance.now();
 
+  function isDrifting() {
+    return !frame.classList.contains('is-destination');
+  }
+
+  function wake() {
+    if (!rafId && !disposed) rafId = requestAnimationFrame(tick);
+  }
+
   function writeAmbientAnchors(t) {
     // Slow independent orbits — only while on Home (not destination)
-    const drift = !frame.classList.contains('is-destination');
+    const drift = isDrifting();
     AMBIENT_BASE.forEach(([bx, by], i) => {
       let x = bx;
       let y = by;
@@ -166,7 +182,10 @@ export function mountFrameGlow(root, frame) {
     });
   }
 
+  // Runs continuously while Home drifts; on destinations it sleeps once the
+  // cursor and palette settle, and wakes on pointer / palette / class changes.
   function tick(now) {
+    rafId = 0;
     if (disposed) return;
 
     currentX += (targetX - currentX) * CURSOR_LERP;
@@ -183,7 +202,12 @@ export function mountFrameGlow(root, frame) {
 
     writeAmbientAnchors(now - startTime);
 
-    rafId = requestAnimationFrame(tick);
+    const settled =
+      !isDrifting() &&
+      Math.abs(targetX - currentX) < 0.0005 &&
+      Math.abs(targetY - currentY) < 0.0005 &&
+      palettesSettled(currentPalette, targetPalette);
+    if (!settled) rafId = requestAnimationFrame(tick);
   }
 
   function onPointerMove(event) {
@@ -191,11 +215,13 @@ export function mountFrameGlow(root, frame) {
     if (!rect.width || !rect.height) return;
     targetX = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
     targetY = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+    wake();
   }
 
   function onPointerLeave() {
     targetX = 0.5;
     targetY = 0.18;
+    wake();
   }
 
   /**
@@ -205,14 +231,19 @@ export function mountFrameGlow(root, frame) {
     if (!colors || colors.length === 0) {
       frame.classList.remove('is-peeking');
       targetPalette = normalizePalette(BW);
+      wake();
       return;
     }
     targetPalette = normalizePalette(colors);
     frame.classList.add('is-peeking');
+    wake();
   }
 
   root.addEventListener('pointermove', onPointerMove, { passive: true });
   root.addEventListener('pointerleave', onPointerLeave);
+  // Home ↔ destination toggles `is-destination`; restart drift when it clears.
+  const classObserver = new MutationObserver(wake);
+  classObserver.observe(frame, { attributes: true, attributeFilter: ['class'] });
   rafId = requestAnimationFrame(tick);
 
   return {
@@ -220,6 +251,7 @@ export function mountFrameGlow(root, frame) {
     dispose() {
       disposed = true;
       cancelAnimationFrame(rafId);
+      classObserver.disconnect();
       root.removeEventListener('pointermove', onPointerMove);
       root.removeEventListener('pointerleave', onPointerLeave);
       ambient.remove();

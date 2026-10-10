@@ -31,12 +31,13 @@ export function mountScrolls(root, { frameCount = 20 } = {}) {
   let velocity = 0;
   let rafId = 0;
   let disposed = false;
+  let stageScale = 1;
 
   function fitStage() {
     const width = root.clientWidth || window.innerWidth;
     const height = root.clientHeight || window.innerHeight;
-    const scale = Math.min(width / DESIGN_W, height / DESIGN_H);
-    root.style.setProperty('--stage-scale', String(scale));
+    stageScale = Math.min(width / DESIGN_W, height / DESIGN_H);
+    root.style.setProperty('--stage-scale', String(stageScale));
   }
 
   function setScroll(value, { immediate = false } = {}) {
@@ -45,16 +46,23 @@ export function mountScrolls(root, { frameCount = 20 } = {}) {
       scrollX = targetX;
       strip.style.setProperty('--scroll-x', `${scrollX}px`);
     }
+    if (!rafId && !disposed && scrollX !== targetX) {
+      rafId = requestAnimationFrame(tick);
+    }
   }
 
+  // Only runs while easing toward targetX; sleeps once settled.
   function tick() {
+    rafId = 0;
     if (disposed) return;
     scrollX += (targetX - scrollX) * 0.18;
     if (Math.abs(targetX - scrollX) < 0.1) {
       scrollX = targetX;
     }
     strip.style.setProperty('--scroll-x', `${scrollX}px`);
-    rafId = requestAnimationFrame(tick);
+    if (scrollX !== targetX) {
+      rafId = requestAnimationFrame(tick);
+    }
   }
 
   function onWheel(event) {
@@ -74,10 +82,9 @@ export function mountScrolls(root, { frameCount = 20 } = {}) {
 
   function onPointerMove(event) {
     if (!dragging) return;
-    const scale = Number.parseFloat(root.style.getPropertyValue('--stage-scale')) || 1;
     const dx = event.clientX - lastPointerX;
     lastPointerX = event.clientX;
-    velocity = dx / scale;
+    velocity = dx / (stageScale || 1);
     setScroll(targetX + velocity);
   }
 
@@ -123,7 +130,7 @@ export function mountScrolls(root, { frameCount = 20 } = {}) {
   stage.addEventListener('pointerleave', onPointerUp);
   window.addEventListener('keydown', onKeyDown);
 
-  rafId = requestAnimationFrame(tick);
+  strip.style.setProperty('--scroll-x', `${scrollX}px`);
 
   root.scrolls = {
     set(x, immediate = false) {

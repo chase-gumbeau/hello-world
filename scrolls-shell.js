@@ -42,6 +42,11 @@ function rewriteAssetPaths(html) {
   return html.replaceAll('./assets/', `${assetBase}assets/`);
 }
 
+/** Defer off-screen frame photos until the strip scrolls near them. */
+function lazyLoadImages(html) {
+  return html.replace(/<img\b(?![^>]*\bloading=)/g, '<img loading="lazy" decoding="async"');
+}
+
 /**
  * Build a horizontal scroll trip inside the shared stage/scrim/frame shell.
  *
@@ -55,7 +60,7 @@ export function createScrollExperience({ id, bodyHtml, frameCount, embedded = fa
   if (embedded) root.classList.add('is-embedded');
 
   let content = stripScrollShell(bodyHtml);
-  content = rewriteAssetPaths(content);
+  content = lazyLoadImages(rewriteAssetPaths(content));
   if (!embedded) {
     content = injectScrollShell(content, buildShellChrome());
   }
