@@ -286,7 +286,9 @@ export function createScrollsApp({ homeLayout = 'centered' } = {}) {
 
     Promise.all(finished).then(() => {
       if (prevLayer) {
-        prevLayer.firstElementChild?._scrollsHomeDispose?.();
+        const prevContent = prevLayer.firstElementChild;
+        prevContent?._scrollsHomeDispose?.();
+        prevContent?._scrollsDispose?.();
         prevLayer.remove();
       }
       current = { key, el: nextLayer };
@@ -346,6 +348,9 @@ export function createScrollsApp({ homeLayout = 'centered' } = {}) {
     root.removeEventListener('pointerover', onDestinationEnter);
     root.removeEventListener('pointerout', onDestinationLeave);
     hidePeekComposition();
+    const currentContent = current?.el.firstElementChild;
+    currentContent?._scrollsHomeDispose?.();
+    currentContent?._scrollsDispose?.();
     for (const tripRoot of peekCache.values()) {
       tripRoot._scrollsDispose?.();
     }
