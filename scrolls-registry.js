@@ -34,7 +34,7 @@ export const SCROLL_TRIPS = [
     title: 'Summer',
     frames: 20,
     storyExport: 'Summer',
-    heroImage: 'assets/scrolls/imgImage154.png',
+    heroImage: 'assets/scrolls/imgImage154.webp',
     mount: (options) => createScrolls(options),
   },
   {
@@ -43,7 +43,7 @@ export const SCROLL_TRIPS = [
     title: 'Mexico City',
     frames: 20,
     storyExport: 'MexicoCity',
-    heroImage: 'assets/scrolls-mexico-city/imgImage73.png',
+    heroImage: 'assets/scrolls-mexico-city/imgImage73.webp',
     mount: (options) => createMexicoCityScrolls(options),
   },
   {
@@ -52,7 +52,7 @@ export const SCROLL_TRIPS = [
     title: 'Puerto Rico',
     frames: 20,
     storyExport: 'PuertoRico',
-    heroImage: 'assets/scrolls-puerto-rico/imgImage32.png',
+    heroImage: 'assets/scrolls-puerto-rico/imgImage32.webp',
     mount: (options) => createPuertoRicoScrolls(options),
   },
   {
@@ -61,7 +61,7 @@ export const SCROLL_TRIPS = [
     title: 'Costa Rica',
     frames: 10,
     storyExport: 'CostaRica',
-    heroImage: 'assets/scrolls-costa-rica/imgImage23.png',
+    heroImage: 'assets/scrolls-costa-rica/imgImage23.webp',
     mount: (options) => createCostaRicaScrolls(options),
   },
   {
@@ -70,7 +70,7 @@ export const SCROLL_TRIPS = [
     title: '33',
     frames: 10,
     storyExport: 'ThirtyThree',
-    heroImage: 'assets/scrolls-33/img01-bg-strip.jpg',
+    heroImage: 'assets/scrolls-33/img01-bg-strip.webp',
     mount: (options) => createScrolls33(options),
   },
   {
@@ -79,7 +79,7 @@ export const SCROLL_TRIPS = [
     title: 'Guanajuato',
     frames: 20,
     storyExport: 'Guanajuato',
-    heroImage: 'assets/scrolls-guanajuato/imgImage67.png',
+    heroImage: 'assets/scrolls-guanajuato/imgImage67.webp',
     mount: (options) => createGuanajuatoScrolls(options),
   },
 ];
