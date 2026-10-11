@@ -1473,6 +1473,16 @@ function buildWorld() {
   return { pix: p, region, land, water, foam, ringPath, hits, chimneys, boats, outlines, fills };
 }
 
+/** The painted world (terrain + props) as a plain 384 × 240 canvas. */
+export function renderWorldBitmap() {
+  const world = getWorld();
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  canvas.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(world.pix.d), W, H), 0, 0);
+  return canvas;
+}
+
 // ---------------------------------------------------------------------------
 // DOM helpers + icons
 // ---------------------------------------------------------------------------
@@ -2567,6 +2577,15 @@ export function createDesignOsWorld(options = {}) {
   applyLayers();
   drawHover();
   raf = requestAnimationFrame(loop);
+  // rAF pauses in hidden documents; a timer makes sure the first layout still happens.
+  const mountPoll = () => {
+    if (mounted) return;
+    if (root.isConnected) {
+      mounted = true;
+      onMount();
+    } else setTimeout(mountPoll, 30);
+  };
+  setTimeout(mountPoll, 0);
 
   return root;
 }
