@@ -1,0 +1,1154 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&display=swap');
+
+/* Design OS Mini World — pixel UI chrome around the canvas world. */
+
+.dos {
+  --dos-ink: #181425;
+  --dos-night: #262b44;
+  --dos-sea: #124e89;
+  --dos-wood: #3e2731;
+  --dos-wood-2: #733e39;
+  --dos-wood-3: #b86f50;
+  --dos-paper: #ead4aa;
+  --dos-paper-2: #e4a672;
+  --dos-paper-3: #c28569;
+  --dos-text: #3e2731;
+  --dos-gold: #fee761;
+  --dos-amber: #feae34;
+  --dos-red: #e43b44;
+  --dos-pink: #f6757a;
+  --dos-blue: #0099db;
+  --dos-px: 3px;
+  --dos-font-pixel: 'Press Start 2P', ui-monospace, monospace;
+  --dos-font-body: 'Pixelify Sans', 'Lato', system-ui, sans-serif;
+  --accent: var(--dos-amber);
+
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(198, 243, 255, 0.16) 1px, transparent 1.5px) 0 0 / 22px 22px,
+    var(--dos-sea);
+  color: var(--dos-paper);
+  font-family: var(--dos-font-body);
+  -webkit-font-smoothing: none;
+  user-select: none;
+}
+
+.dos *,
+.dos *::before,
+.dos *::after {
+  box-sizing: border-box;
+}
+
+:where(.dos) button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.dos :focus-visible {
+  outline: 3px solid var(--dos-gold);
+  outline-offset: 3px;
+}
+
+:where(.dos) :is(h1, h2, h3, p) {
+  margin: 0;
+}
+
+/* Pixel frame: notched corners via four offset shadows. */
+.dos-px,
+.dos-plaque,
+.dos-tag,
+.dos-btn,
+.dos__layers,
+.dos-title {
+  box-shadow:
+    0 calc(var(--dos-px) * -1) 0 0 var(--edge, var(--dos-ink)),
+    0 var(--dos-px) 0 0 var(--edge, var(--dos-ink)),
+    calc(var(--dos-px) * -1) 0 0 0 var(--edge, var(--dos-ink)),
+    var(--dos-px) 0 0 0 var(--edge, var(--dos-ink)),
+    inset 0 var(--dos-px) 0 0 rgba(255, 255, 255, 0.14),
+    inset 0 calc(var(--dos-px) * -1) 0 0 rgba(0, 0, 0, 0.28);
+}
+
+/* ------------------------------------------------------------------ map */
+
+.dos__viewport {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  touch-action: none;
+}
+
+.dos__viewport:focus-visible {
+  outline-offset: -6px;
+}
+
+.dos.is-dragging .dos__viewport {
+  cursor: grabbing;
+}
+
+.dos__map {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  filter: drop-shadow(0 0 24px rgba(18, 78, 137, 0.6));
+}
+
+.dos__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.dos__overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.dos__overlay > * {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: auto;
+}
+
+/* Region plaques — wooden signposts above each land. */
+.dos-plaque {
+  --edge: var(--dos-ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 7px 5px 5px;
+  background: var(--dos-wood);
+  color: var(--dos-paper);
+  font-family: var(--dos-font-pixel);
+  font-size: 9px;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background-color 120ms;
+}
+
+.dos-plaque:hover,
+.dos-plaque.is-hover {
+  background: var(--dos-wood-2);
+}
+
+.dos-plaque.is-selected {
+  --edge: var(--accent);
+}
+
+.dos-plaque__n {
+  display: grid;
+  place-items: center;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 2px;
+  background: var(--accent);
+  color: var(--dos-ink);
+}
+
+.dos-plaque__q {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 2px;
+  font-size: 8px;
+}
+
+.dos-plaque__open {
+  color: var(--dos-gold);
+}
+
+.dos-plaque__wait {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--dos-pink);
+}
+
+.dos-pip {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: currentColor;
+  rotate: 45deg;
+  flex: none;
+}
+
+/* Landmark tags + hotspots */
+.dos-tag {
+  --edge: var(--dos-ink);
+  padding: 4px 6px;
+  background: var(--dos-night);
+  color: var(--dos-paper);
+  font-family: var(--dos-font-pixel);
+  font-size: 7px;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0.94;
+}
+
+.dos-tag:hover,
+.dos-tag.is-hover {
+  background: #3a4466;
+}
+
+.dos-tag.is-selected {
+  --edge: var(--accent);
+}
+
+.dos-hotspot {
+  transform-origin: 0 0;
+}
+
+.dos-hotspot:focus-visible {
+  outline: none;
+}
+
+.dos-quest,
+.dos-cone {
+  display: grid;
+  place-items: center;
+  animation: dos-bob 1.2s steps(2, end) infinite;
+}
+
+.dos-quest {
+  width: 18px;
+  height: 20px;
+  background: var(--dos-pink);
+  color: var(--dos-ink);
+  font-family: var(--dos-font-pixel);
+  font-size: 10px;
+  box-shadow:
+    0 -3px 0 0 var(--dos-ink),
+    0 3px 0 0 var(--dos-ink),
+    -3px 0 0 0 var(--dos-ink),
+    3px 0 0 0 var(--dos-ink);
+}
+
+.dos-cone {
+  width: 18px;
+  height: 18px;
+  opacity: 0.95;
+}
+
+@keyframes dos-bob {
+  0% {
+    translate: 0 0;
+  }
+  100% {
+    translate: 0 -3px;
+  }
+}
+
+.dos.hide-labels .dos-tag,
+.dos.hide-quests [data-layer='quests'],
+.dos.hide-blueprints [data-layer='blueprints'] {
+  display: none;
+}
+
+.dos.hide-labels .dos-plaque__name {
+  display: none;
+}
+
+/* Tooltip */
+.dos__tooltip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: 260px;
+  padding: 6px 8px;
+  background: var(--dos-ink);
+  color: var(--dos-gold);
+  font-size: 14px;
+  line-height: 1.2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 80ms;
+  box-shadow: 0 0 0 2px var(--dos-wood-2);
+  z-index: 6;
+}
+
+.dos__tooltip.is-visible {
+  opacity: 1;
+}
+
+.dos__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  translate: -50% 0;
+  padding: 6px 10px;
+  background: rgba(24, 20, 37, 0.82);
+  color: var(--dos-paper);
+  font-size: 14px;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 400ms;
+}
+
+.dos__hint.is-hidden {
+  opacity: 0;
+}
+
+.dos.has-panel .dos__hint {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ HUD */
+
+.dos__hud {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.dos__hud > * {
+  pointer-events: auto;
+}
+
+.dos-title {
+  --edge: var(--dos-ink);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  justify-items: start;
+  align-items: baseline;
+  column-gap: 10px;
+  row-gap: 6px;
+  padding: 8px 10px;
+  background: var(--dos-wood);
+}
+
+.dos .dos-title__name {
+  font-family: var(--dos-font-pixel);
+  font-size: 14px;
+  line-height: 1;
+  color: var(--dos-paper);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.dos-title__sub {
+  font-family: var(--dos-font-pixel);
+  font-size: 9px;
+  color: var(--dos-gold);
+  text-transform: uppercase;
+}
+
+.dos-title__stats {
+  grid-column: 1 / -1;
+  font-size: 14px;
+  color: #c0cbdc;
+}
+
+.dos__hud-actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.dos-btn {
+  --edge: var(--dos-ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 6px 10px;
+  background: var(--dos-wood);
+  color: var(--dos-paper);
+  font-family: var(--dos-font-pixel);
+  font-size: 8px;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.dos-btn:hover {
+  background: var(--dos-wood-2);
+}
+
+.dos-btn:active {
+  translate: 0 1px;
+}
+
+.dos-btn--icon {
+  justify-content: center;
+  width: 30px;
+  padding: 0;
+  font-size: 12px;
+}
+
+.dos-zoom {
+  display: flex;
+  gap: 6px;
+}
+
+.dos-count {
+  padding: 2px 4px;
+  background: var(--dos-gold);
+  color: var(--dos-ink);
+}
+
+/* Layers */
+.dos__layers {
+  --edge: var(--dos-ink);
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  margin: 0;
+  padding: 8px 10px 6px;
+  border: 0;
+  background: rgba(62, 39, 49, 0.94);
+  display: grid;
+  gap: 4px;
+  z-index: 4;
+}
+
+.dos__layers legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 4px;
+  padding: 0;
+  font-family: var(--dos-font-pixel);
+  font-size: 8px;
+  color: var(--dos-gold);
+  text-transform: uppercase;
+}
+
+.dos-layer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.1;
+  cursor: pointer;
+}
+
+.dos-layer input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.dos-layer__box {
+  width: 12px;
+  height: 12px;
+  background: var(--dos-ink);
+  box-shadow: inset 0 0 0 2px #5a6988;
+}
+
+.dos-layer input:checked + .dos-layer__box {
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 2px var(--dos-ink);
+}
+
+.dos-layer input:focus-visible + .dos-layer__box {
+  outline: 3px solid var(--dos-gold);
+  outline-offset: 2px;
+}
+
+.dos__sources {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  font-size: 13px;
+  color: #c0cbdc;
+  z-index: 3;
+}
+
+.dos__sources a {
+  color: var(--dos-gold);
+}
+
+.dos.has-panel .dos__sources {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ scroll */
+
+.dos-scroll {
+  --rod-h: 20px;
+  position: absolute;
+  top: 66px;
+  right: 36px;
+  bottom: 18px;
+  width: clamp(330px, 34vw, 460px);
+  z-index: 5;
+  color: var(--dos-text);
+  user-select: text;
+}
+
+.dos-scroll[hidden] {
+  display: none;
+}
+
+.dos-scroll__paper {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--rod-h) / 2);
+  bottom: calc(var(--rod-h) / 2);
+  background:
+    linear-gradient(90deg, var(--dos-paper-2) 0 6px, transparent 6px calc(100% - 6px), var(--dos-paper-2) calc(100% - 6px)),
+    var(--dos-paper);
+  box-shadow:
+    0 0 0 3px var(--dos-wood),
+    10px 12px 0 rgba(24, 20, 37, 0.35);
+}
+
+.dos-scroll__rod {
+  position: absolute;
+  left: -14px;
+  right: -14px;
+  height: var(--rod-h);
+  background: linear-gradient(
+    180deg,
+    var(--dos-wood-3) 0 25%,
+    var(--dos-wood-2) 25% 70%,
+    var(--dos-wood) 70%
+  );
+  box-shadow: 0 0 0 3px var(--dos-ink);
+}
+
+.dos-scroll__rod::before,
+.dos-scroll__rod::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  width: 9px;
+  height: calc(var(--rod-h) + 6px);
+  background: linear-gradient(180deg, var(--dos-gold) 0 30%, var(--dos-amber) 30% 75%, #d77643 75%);
+  box-shadow: 0 0 0 3px var(--dos-ink);
+}
+
+.dos-scroll__rod::before {
+  left: -9px;
+}
+
+.dos-scroll__rod::after {
+  right: -9px;
+}
+
+.dos-scroll__rod--top {
+  top: 0;
+}
+
+.dos-scroll__rod--bottom {
+  top: calc(100% - var(--rod-h));
+}
+
+.dos-scroll.is-unfurling .dos-scroll__paper {
+  animation: dos-unfurl-paper 520ms steps(13, end) both;
+}
+
+.dos-scroll.is-unfurling .dos-scroll__rod--bottom {
+  animation: dos-unfurl-rod 520ms steps(13, end) both;
+}
+
+.dos-scroll.is-unfurling .dos-scroll__body {
+  animation: dos-fade 260ms 300ms both;
+}
+
+.dos-scroll.is-rolling .dos-scroll__paper {
+  animation: dos-unfurl-paper 300ms steps(8, end) reverse both;
+}
+
+.dos-scroll.is-rolling .dos-scroll__rod--bottom {
+  animation: dos-unfurl-rod 300ms steps(8, end) reverse both;
+}
+
+@keyframes dos-unfurl-paper {
+  from {
+    clip-path: inset(0 -20px 100% -20px);
+  }
+  to {
+    clip-path: inset(0 -20px 0 -20px);
+  }
+}
+
+@keyframes dos-unfurl-rod {
+  from {
+    top: 0;
+  }
+  to {
+    top: calc(100% - var(--rod-h));
+  }
+}
+
+@keyframes dos-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dos-scroll__close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: var(--dos-wood);
+  color: var(--dos-paper) !important;
+  font-family: var(--dos-font-pixel);
+  font-size: 12px;
+  box-shadow:
+    0 -3px 0 0 var(--dos-ink),
+    0 3px 0 0 var(--dos-ink),
+    -3px 0 0 0 var(--dos-ink),
+    3px 0 0 0 var(--dos-ink);
+}
+
+.dos-scroll__close:hover {
+  background: var(--dos-wood-2);
+}
+
+.dos-scroll__body {
+  position: absolute;
+  inset: 12px 8px 12px 14px;
+  overflow-y: auto;
+  padding: 6px 14px 20px 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--dos-paper-3) transparent;
+  font-size: 16px;
+  line-height: 1.32;
+}
+
+.dos-scroll__body:focus {
+  outline: none;
+}
+
+.dos-scroll__head {
+  padding: 4px 40px 14px 0;
+  border-bottom: 3px solid var(--dos-paper-3);
+  margin-bottom: 4px;
+}
+
+.dos-eyebrow {
+  display: inline-block;
+  margin-bottom: 10px !important;
+  padding: 4px 6px;
+  background: var(--accent);
+  color: var(--dos-ink);
+  font-family: var(--dos-font-pixel);
+  font-size: 7px;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.dos .dos-scroll__title {
+  font-family: var(--dos-font-pixel);
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--dos-wood);
+}
+
+.dos-scroll__title:focus {
+  outline: none;
+}
+
+.dos-scroll__land {
+  margin-top: 6px !important;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--dos-wood-2);
+}
+
+.dos-scroll__sub {
+  margin-top: 4px !important;
+  font-size: 16px;
+  color: #5a4148;
+}
+
+.dos-lede {
+  margin: 12px 0 4px !important;
+  font-size: 16px;
+}
+
+.dos-core {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 12px 0 2px;
+  padding: 10px 12px;
+  background: var(--dos-wood);
+  color: var(--dos-paper);
+  font-size: 15px;
+}
+
+.dos-core--diamond {
+  background: #68386c;
+}
+
+.dos-core .dos-icon {
+  flex: none;
+  margin-top: 2px;
+}
+
+.dos-section {
+  padding: 12px 0 10px;
+  border-bottom: 3px dotted var(--dos-paper-3);
+}
+
+.dos-section:last-of-type {
+  border-bottom: 0;
+}
+
+.dos .dos-section__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--dos-font-pixel);
+  font-size: 9px;
+  line-height: 1.4;
+  color: var(--dos-wood);
+  text-transform: uppercase;
+}
+
+.dos-section__hint {
+  margin: 4px 0 6px !important;
+  font-size: 13px;
+  color: #7a5a55;
+}
+
+.dos-icon {
+  display: inline-flex;
+  flex: none;
+}
+
+.dos-icon svg {
+  display: block;
+}
+
+.dos-list {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+
+.dos-list li {
+  position: relative;
+  padding-left: 16px;
+}
+
+.dos-list li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.5em;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  box-shadow: 0 0 0 1px var(--dos-wood);
+}
+
+.dos-list li.is-fog,
+.dos-routes li.is-fog {
+  color: #6a5a62;
+  background: repeating-linear-gradient(135deg, rgba(139, 155, 180, 0.22) 0 4px, transparent 4px 8px);
+  outline: 2px dashed #8b9bb4;
+  outline-offset: 1px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.dos-fog-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 4px;
+  background: #5a6988;
+  color: #fff;
+  font-family: var(--dos-font-pixel);
+  font-size: 6px;
+  line-height: 1.6;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* Quests — sticky notes */
+.dos-stickies {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.dos-sticky {
+  padding: 8px 10px 10px;
+  background: var(--dos-gold);
+  color: var(--dos-ink);
+  box-shadow: 3px 4px 0 rgba(62, 39, 49, 0.35);
+  rotate: -0.6deg;
+}
+
+.dos-sticky:nth-child(even) {
+  rotate: 0.5deg;
+}
+
+.dos-sticky--wait {
+  background: var(--dos-pink);
+}
+
+.dos-sticky.is-highlight {
+  outline: 3px solid var(--dos-wood);
+  outline-offset: 2px;
+  animation: dos-flash 0.4s steps(2, end) 3;
+}
+
+@keyframes dos-flash {
+  50% {
+    outline-color: var(--dos-gold);
+  }
+}
+
+.dos-sticky__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 4px !important;
+}
+
+.dos-sticky__id,
+.dos-sticky__tag {
+  font-family: var(--dos-font-pixel);
+  font-size: 7px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.dos-sticky__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dos-sticky__tag--main {
+  padding: 2px 4px;
+  background: var(--dos-wood);
+  color: var(--dos-gold);
+}
+
+.dos-sticky__id {
+  padding: 2px 4px;
+  background: var(--dos-ink);
+  color: var(--dos-gold);
+}
+
+.dos-sticky__text {
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+/* Blueprints */
+.dos-blueprints {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.dos-blueprint {
+  padding: 10px 12px;
+  color: #fff;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px) 0 0 / 10px 10px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px) 0 0 / 10px 10px,
+    #124e89;
+  box-shadow: 0 0 0 3px #0b2f55;
+}
+
+.dos-blueprint.is-highlight {
+  outline: 3px solid var(--dos-gold);
+  outline-offset: 3px;
+}
+
+.dos-blueprint__kind {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-family: var(--dos-font-pixel);
+  font-size: 7px;
+  color: var(--dos-gold);
+  text-transform: uppercase;
+}
+
+.dos-blueprint__name {
+  margin-top: 6px !important;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.dos-blueprint__text {
+  margin-top: 4px !important;
+  font-size: 15px;
+}
+
+.dos-blueprint__surfaces {
+  margin-top: 6px !important;
+  font-size: 13px;
+  color: #c6f3ff;
+}
+
+/* Connections / chips */
+.dos-links,
+.dos-routes {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.dos-links li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: start;
+  font-size: 15px;
+}
+
+.dos-routes li {
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.3);
+  font-size: 15px;
+}
+
+.dos-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 6px;
+  background: var(--dos-wood);
+  color: var(--dos-paper) !important;
+  font-family: var(--dos-font-pixel);
+  font-size: 7px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.3);
+}
+
+button.dos-chip:hover {
+  background: var(--dos-wood-2);
+}
+
+.dos-chip__n {
+  display: grid;
+  place-items: center;
+  min-width: 12px;
+  height: 12px;
+  background: var(--accent);
+  color: var(--dos-ink);
+}
+
+.dos-chip--landmark {
+  box-shadow:
+    inset 3px 0 0 var(--accent),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.3);
+  padding-left: 8px;
+}
+
+/* Pantry shelves */
+.dos-shelves {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.dos-shelves li {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.dos-shelf {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 -3px 0 var(--dos-paper-3);
+  font-size: 14px;
+  line-height: 1.15;
+}
+
+.dos-shelf small {
+  font-size: 12px;
+  color: #6a4a45;
+}
+
+.dos-shelf__arrow {
+  align-self: center;
+  font-family: var(--dos-font-pixel);
+  font-size: 9px;
+}
+
+/* Quest log */
+.dos-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin: 12px 0 !important;
+  font-size: 14px;
+}
+
+.dos-legend__swatch {
+  width: 12px;
+  height: 12px;
+  background: var(--dos-gold);
+  box-shadow: 0 0 0 2px var(--dos-wood);
+}
+
+.dos-legend__swatch--wait {
+  margin-left: 6px;
+  background: var(--dos-pink);
+}
+
+.dos-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.dos-filter {
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.35);
+  font-family: var(--dos-font-pixel) !important;
+  font-size: 7px !important;
+  text-transform: uppercase;
+  box-shadow: inset 0 -3px 0 var(--dos-paper-3);
+}
+
+.dos-filter[aria-checked='true'] {
+  background: var(--dos-wood);
+  color: var(--dos-paper) !important;
+  box-shadow: none;
+}
+
+.dos-questlog__group {
+  padding: 12px 0 6px;
+}
+
+.dos .dos-questlog__head {
+  font-family: var(--dos-font-body);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Loop nav */
+.dos-scroll__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.dos-scroll__nav .dos-btn {
+  color: var(--dos-paper) !important;
+}
+
+.dos-scroll__loop {
+  margin-top: 10px !important;
+  font-size: 14px;
+  text-align: right;
+  color: #7a5a55;
+}
+
+/* ------------------------------------------------------------------ narrow */
+
+@media (max-width: 719px) {
+  .dos__hud {
+    left: 8px;
+    right: 8px;
+    top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .dos-title__stats {
+    font-size: 12px;
+  }
+
+  .dos__layers {
+    left: 8px;
+    bottom: 8px;
+    grid-template-columns: repeat(3, auto);
+    column-gap: 10px;
+  }
+
+  .dos__layers legend {
+    grid-column: 1 / -1;
+  }
+
+  .dos-layer {
+    font-size: 12px;
+  }
+
+  .dos__sources,
+  .dos__hint {
+    display: none;
+  }
+
+  .dos-scroll {
+    top: auto;
+    left: 18px;
+    right: 18px;
+    bottom: 10px;
+    width: auto;
+    height: 56%;
+  }
+
+  .dos.has-panel .dos__layers {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dos-quest,
+  .dos-cone,
+  .dos-sticky.is-highlight {
+    animation: none;
+  }
+}
+
+.dos[data-reduced-motion='true'] .dos-quest,
+.dos[data-reduced-motion='true'] .dos-cone {
+  animation: none;
+}
