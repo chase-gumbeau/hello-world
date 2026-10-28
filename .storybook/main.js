@@ -13,6 +13,10 @@ const config = {
     "@storybook/addon-mcp"
   ],
   "framework": "@storybook/html-vite",
+  "features": {
+    "sidebarOnboardingChecklist": false,
+    "menuOnboardingChecklist": false
+  },
   async viteFinal(config) {
     const { mergeConfig } = await import('vite');
     // GitHub Pages project site: https://chase-gumbeau.github.io/studies/

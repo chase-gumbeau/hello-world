@@ -1,0 +1,20 @@
+.tidbyt-stage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #111;
+}
+
+.tidbyt-display {
+  padding: 24px;
+  border-radius: 12px;
+  background: #050505;
+  box-shadow: 0 0 0 2px #222, 0 20px 60px rgb(0 0 0 / 0.6);
+}
+
+.tidbyt-display canvas {
+  display: block;
+  width: 640px;
+  max-width: calc(100vw - 80px);
+  height: auto;
+}
