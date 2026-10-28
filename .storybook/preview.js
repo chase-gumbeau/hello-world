@@ -58,11 +58,13 @@ const preview = {
     options: {
       storySort: {
         order: [
+          // Everything in one gallery, at the top.
+          'Gallery',
           'Foundations',
           'Studies',
           [
-            // Overview first, then sections alphabetically.
-            'Overview',
+            // The gallery first, then sections alphabetically.
+            'Gallery',
             '3D',
             'Color',
             'Compositions',
@@ -87,6 +89,7 @@ const preview = {
           ],
           'Projects',
           [
+            'Gallery',
             'Solari Board',
             'Scrolls',
             ['Home Left', '2025', '2024', '2023'],

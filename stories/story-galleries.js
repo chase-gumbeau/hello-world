@@ -2,7 +2,8 @@
  * Story galleries — galleries of this Storybook's own work, built on the gallery
  * template (./gallery-template.js). Each card previews a story and opens it; the
  * items are listed in ./story-gallery-items.mjs, and shown most recently updated
- * first. Studies and Projects each have one, as the first story in their section.
+ * first. Studies and Projects each have one, as the first story in their section,
+ * and the top-level Gallery shows both together.
  *
  * A card shows a screenshot of its story from story-previews/ (captured by
  * scripts/capture-story-previews.mjs, in CI on deploy or locally with
@@ -66,3 +67,26 @@ const preview = ({ title, story }) => {
 export const STUDIES_GALLERY = storyGallery(STUDIES);
 
 export const PROJECTS_GALLERY = storyGallery(PROJECTS);
+
+/**
+ * Everything in one gallery: every study and project, newest first. Its categories are
+ * each section's own, grouped under Studies and Projects (ids prefixed to keep them
+ * apart), so the Categories view reads Studies › 3D, Projects › Displays and so on.
+ */
+const grouped = ({ name, categories, items }) => {
+  const prefix = name.toLowerCase();
+  return {
+    categories: categories.map((cat) => ({ ...cat, id: `${prefix}-${cat.id}`, group: name })),
+    items: items.map((item) => ({ ...item, category: `${prefix}-${item.category}` })),
+  };
+};
+const allStudies = grouped(STUDIES);
+const allProjects = grouped(PROJECTS);
+
+export const ALL_GALLERY = storyGallery({
+  name: 'Gallery',
+  galleryStory: 'gallery--gallery',
+  noun: { one: 'piece', many: 'pieces' },
+  categories: [...allStudies.categories, ...allProjects.categories],
+  items: [...allStudies.items, ...allProjects.items],
+});

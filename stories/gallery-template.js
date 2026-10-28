@@ -47,7 +47,9 @@
  * @typedef {object} GalleryConfig
  * @property {string} name  Gallery name: tablist label and first breadcrumb.
  * @property {string} [className]  Extra root classes, e.g. 'm3-scope'.
- * @property {{id: string, title: string, summary: string}[]} categories
+ * @property {{id: string, title: string, summary: string, group?: string}[]} categories
+ *   Give categories a `group` to nest them under group headings in the Categories
+ *   view (e.g. Studies › 3D); groups appear in the order their categories do.
  * @property {Item[]} items  In display order.
  * @property {(id: string) => string} itemHref  Story URL for an item page,
  *   relative to iframe.html (`./?path=/story/...`).
@@ -237,17 +239,32 @@ function indexHtml(config) {
 }
 
 function categoriesHtml(config) {
-  return config.categories
-    .map(
-      (cat) => `
+  // One category's section; under a group heading it steps down a level.
+  const section = (cat, heading) => `
         <section class="gal__section" id="cat-${cat.id}" aria-labelledby="sec-${cat.id}">
           <header class="gal__section-head">
-            <h2 id="sec-${cat.id}">${cat.title}</h2>
+            <${heading} id="sec-${cat.id}">${cat.title}</${heading}>
             <p>${cat.summary}</p>
           </header>
           <div class="gal__masonry">${itemsIn(config, cat.id).map((i) => itemCard(config, i)).join('')}</div>
-        </section>`,
-    )
+        </section>`;
+
+  if (!config.categories.some((cat) => cat.group)) {
+    return config.categories.map((cat) => section(cat, 'h2')).join('');
+  }
+
+  // Grouped: each group's heading, then its categories.
+  const groups = [...new Set(config.categories.map((cat) => cat.group ?? ''))];
+  return groups
+    .map((group) => {
+      const id = `group-${group.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+      const cats = config.categories.filter((cat) => (cat.group ?? '') === group);
+      return `
+        <section class="gal__group" id="${id}" aria-labelledby="${id}-title">
+          <h2 class="gal__group-title" id="${id}-title">${group}</h2>
+          ${cats.map((cat) => section(cat, 'h3')).join('')}
+        </section>`;
+    })
     .join('');
 }
 
