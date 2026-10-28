@@ -1,0 +1,32 @@
+.mcat-communication-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: center;
+}
+
+.mcat-communication-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.mcat-communication-grow {
+  flex: 1 1 160px;
+}
+
+/* md-badge positions itself against its nearest positioned ancestor. */
+.mcat-communication-anchor {
+  position: relative;
+  display: inline-flex;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.mcat-communication-slot {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--md-sys-color-surface-container-highest);
+}

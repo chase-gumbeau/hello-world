@@ -1,0 +1,122 @@
+/* Navigation family demos: navigation bar, drawers, tabs, menus. Tokens only. */
+
+/* A small phone-like screen so the navigation bar reads as a bottom bar. */
+.mcat-navigation-phone {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+  height: 200px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--md-sys-color-surface);
+}
+
+.mcat-navigation-screen {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.mcat-navigation-phone md-navigation-bar {
+  flex: none;
+}
+
+/* Filled glyph for active-icon slots (Material Symbols FILL axis). */
+.mcat-navigation-filled {
+  font-variation-settings: 'FILL' 1;
+}
+
+/* Fixed-height positioned box that drawers live in. */
+.mcat-navigation-frame {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  max-width: 560px;
+  height: 300px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  --md-navigation-drawer-container-color: var(--md-sys-color-surface-container-low);
+  --md-navigation-drawer-container-width: 220px;
+  --md-navigation-drawer-modal-container-color: var(--md-sys-color-surface-container-low);
+  --md-navigation-drawer-modal-container-width: 240px;
+  --md-navigation-drawer-modal-scrim-color: var(--md-sys-color-scrim);
+  --md-navigation-drawer-modal-scrim-opacity: 0.32;
+  --md-list-container-color: transparent;
+}
+
+/* The modal drawer is absolutely positioned against the frame. */
+.mcat-navigation-frame-modal {
+  display: block;
+}
+
+.mcat-navigation-main {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.mcat-navigation-frame-modal .mcat-navigation-main {
+  align-items: center;
+  height: auto;
+  padding: 4px 16px 4px 4px;
+}
+
+.mcat-navigation-drawer-content {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+}
+
+.mcat-navigation-drawer-title {
+  padding: 8px 16px 4px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.mcat-navigation-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline-start: 16px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.mcat-navigation-drawer-content md-list {
+  padding: 0;
+}
+
+.mcat-navigation-drawer-content md-list-item {
+  border-radius: 28px;
+}
+
+/* Active destination: pill-shaped secondary-container indicator. */
+.mcat-navigation-active {
+  background: var(--md-sys-color-secondary-container);
+  --md-list-item-label-text-color: var(--md-sys-color-on-secondary-container);
+  --md-list-item-leading-icon-color: var(--md-sys-color-on-secondary-container);
+  --md-list-item-trailing-supporting-text-color: var(--md-sys-color-on-secondary-container);
+}
+
+.mcat-navigation-tabs {
+  width: 100%;
+  max-width: 480px;
+}
+
+/* Menus position against their anchor. */
+.mcat-navigation-anchor {
+  position: relative;
+  display: inline-block;
+}

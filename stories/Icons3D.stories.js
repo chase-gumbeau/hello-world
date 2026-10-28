@@ -3,7 +3,7 @@ import { ICONS, ICON_KEYS, createShowcase, createSolo } from './icons-3d.js';
 import { PARACHUTE_DEFAULTS, createParachuteHero, createParachuteSolo } from './parachute-3d.js';
 
 export default {
-  title: 'Studies/3D Icons',
+  title: 'Studies/3D/3D Icons',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

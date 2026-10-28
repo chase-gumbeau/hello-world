@@ -1,0 +1,78 @@
+.mcat-foundations-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  color: var(--md-sys-color-on-surface);
+}
+
+.mcat-foundations-gap {
+  gap: 16px;
+  padding: 8px;
+}
+
+.mcat-foundations-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--md-sys-color-on-surface);
+}
+
+.mcat-foundations-stack p {
+  margin: 0;
+}
+
+.mcat-foundations-primary { color: var(--md-sys-color-primary); }
+.mcat-foundations-error { color: var(--md-sys-color-error); }
+.mcat-foundations-muted { color: var(--md-sys-color-on-surface-variant); }
+
+/* md-ripple and md-focus-ring attach to this element. */
+.mcat-foundations-tile {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 160px;
+  height: 64px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font: var(--md-sys-typescale-label-large-weight, 500) var(--md-sys-typescale-label-large-size, 0.875rem) / 1.25rem var(--md-sys-typescale-label-large-font, Roboto, sans-serif);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  --md-focus-ring-shape: 12px;
+}
+
+.mcat-foundations-tile-round {
+  min-width: 0;
+  width: 64px;
+  padding: 0;
+  border-radius: 50%;
+  --md-focus-ring-shape: 50%;
+}
+
+/* md-elevation draws its shadow on this element. */
+.mcat-foundations-box {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  background: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
+}
+
+.mcat-foundations-lift {
+  width: 120px;
+  --md-elevation-level: 1;
+  outline: none;
+  cursor: pointer;
+}
+
+.mcat-foundations-lift:hover,
+.mcat-foundations-lift:focus-visible {
+  --md-elevation-level: 4;
+}

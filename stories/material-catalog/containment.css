@@ -1,0 +1,79 @@
+/* Containment family demos: cards, dialogs, dividers, lists. Tokens only. */
+
+.mcat-containment-card {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  color: var(--md-sys-color-on-surface);
+}
+
+.mcat-containment-card-small {
+  flex: 1 1 88px;
+  min-width: 88px;
+  color: var(--md-sys-color-on-surface);
+}
+
+.mcat-containment-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+}
+
+.mcat-containment-card-body h3,
+.mcat-containment-card-body p {
+  margin: 0;
+}
+
+.mcat-containment-muted {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.mcat-containment-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mcat-containment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.mcat-containment-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+.mcat-containment-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 360px;
+  color: var(--md-sys-color-on-surface);
+}
+
+.mcat-containment-stack p {
+  margin: 0;
+}
+
+.mcat-containment-surface {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 360px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--md-sys-color-surface);
+  --md-list-container-color: var(--md-sys-color-surface);
+}
+
+.mcat-containment-pad {
+  padding: 16px;
+}

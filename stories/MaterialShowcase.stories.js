@@ -1,49 +1,72 @@
 import { expect, userEvent, waitFor } from 'storybook/test';
 import './material-showcase.css';
+import { CATEGORIES, FAMILIES } from './material-catalog/index.js';
 import { createMaterialShowcase } from './material-showcase.js';
 
 export default {
   title: 'Foundations/Material Showcase',
-  tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
     docs: {
       description: {
         component:
-          'The shadcn/ui homepage component grid (ui.shadcn.com), rebuilt with Material 3 via Material Web.',
+          'Every Material Web component (including labs), laid out the shadcn/ui way: a Gallery masonry, an Index of categories and families, and the cards grouped by category. Each family has its own page under Components.',
       },
     },
   },
   render: (args) => createMaterialShowcase(args),
   argTypes: {
-    scheme: { control: 'inline-radio', options: ['light', 'dark'] },
+    view: { control: 'inline-radio', options: ['gallery', 'index', 'categories'] },
   },
 };
 
-export const Light = {
-  args: { scheme: 'light' },
+/** The default story: Gallery, Index and Categories live behind its top nav. */
+export const MaterialExplorer = {
+  name: 'Material Explorer',
+  args: { view: 'gallery' },
 };
 
-export const Dark = {
-  args: { scheme: 'dark' },
+// Interaction tests: hidden from the sidebar ('!dev') but still run by the test runner.
+
+export const SwitchesViews = {
+  name: 'Tabs switch views',
+  tags: ['!dev'],
+  args: { view: 'gallery' },
+  play: async ({ canvas, canvasElement }) => {
+    const indexTab = canvas.getByRole('tab', { name: 'Index' });
+    await userEvent.click(indexTab);
+    await waitFor(() => expect(indexTab).toHaveAttribute('aria-selected', 'true'));
+    const links = canvasElement.querySelectorAll('.msc__index a[data-family]');
+    await expect(links.length).toBe(FAMILIES.length);
+    await expect(links[0].getAttribute('href')).toContain('foundations-material-showcase-components--');
+
+    const categoriesTab = canvas.getByRole('tab', { name: 'Categories' });
+    await userEvent.click(categoriesTab);
+    await waitFor(() =>
+      expect(canvasElement.querySelectorAll('.msc__section').length).toBe(CATEGORIES.length),
+    );
+    await expect(canvasElement.querySelectorAll('.msc__family').length).toBe(FAMILIES.length);
+  },
 };
 
 export const OpensAlertDialog = {
   name: 'Alert dialog opens',
-  args: { scheme: 'light' },
+  tags: ['!dev'],
+  args: { view: 'gallery' },
   play: async ({ canvas, canvasElement }) => {
-    const dialog = canvasElement.querySelector('md-dialog');
+    const dialog = canvasElement.querySelector('[data-dialog="alert"]');
     dialog.quick = true; // skip open/close animations so the test doesn't depend on timing
     await userEvent.click(canvas.getByText('Alert Dialog'));
     await waitFor(() => expect(dialog.open).toBe(true));
-    await userEvent.click(canvas.getByText('Cancel'));
+    await userEvent.click(canvas.getByText('Cancel', { selector: '[data-close]' }));
     await waitFor(() => expect(dialog.open).toBe(false));
   },
 };
 
 export const SendsChatMessage = {
   name: 'Chat sends and resets',
-  args: { scheme: 'light' },
+  tags: ['!dev'],
+  args: { view: 'gallery' },
   play: async ({ canvas, canvasElement }) => {
     await userEvent.click(canvasElement.querySelector('[data-action="send"]'));
     const log = canvas.getByRole('log', { name: 'Conversation' });
@@ -58,7 +81,8 @@ export const SendsChatMessage = {
 
 export const SelectsNavItem = {
   name: 'Nav item selection',
-  args: { scheme: 'light' },
+  tags: ['!dev'],
+  args: { view: 'gallery' },
   play: async ({ canvas }) => {
     const reports = canvas.getByText('Reports').closest('md-list-item');
     await userEvent.click(reports);
