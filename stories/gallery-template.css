@@ -30,7 +30,6 @@
   justify-content: center;
   margin: 0 -16px;
   padding: 12px 16px;
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
   background: color-mix(in srgb, var(--md-sys-color-surface) 85%, transparent);
   backdrop-filter: blur(12px);
 }
