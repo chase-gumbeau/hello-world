@@ -1,7 +1,7 @@
 """
-Applet: Sigil
-Summary: Glowing sigil, centered
-Description: Shows a 32x32 sigil centered on the 64x32 display.
+Applet: Ultrahand Sigil
+Summary: Glowing Ultrahand sigil, centered
+Description: Shows a 32x32 Ultrahand sigil centered on the 64x32 display.
 Author: Chase Chenevert
 """
 
