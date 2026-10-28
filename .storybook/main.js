@@ -13,6 +13,9 @@ const config = {
     "@storybook/addon-mcp"
   ],
   "framework": "@storybook/html-vite",
+  // Screenshots for the Studies and Projects gallery cards (npm run previews; CI
+  // writes them into the build on deploy).
+  "staticDirs": [{ "from": "../story-previews", "to": "/story-previews" }],
   "features": {
     "sidebarOnboardingChecklist": false,
     "menuOnboardingChecklist": false

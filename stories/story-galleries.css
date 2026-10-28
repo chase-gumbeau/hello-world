@@ -11,7 +11,15 @@
   background: var(--md-sys-color-surface-container-lowest);
 }
 
-/* The story is laid out at 4x the card's size, then scaled down to fit. */
+/* A captured screenshot of the story (see scripts/capture-story-previews.mjs). */
+.sg-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* No screenshot: the live story, laid out at 4x the card's size, then scaled down. */
 .sg-preview iframe {
   position: absolute;
   inset: 0;

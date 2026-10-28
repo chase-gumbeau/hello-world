@@ -1,0 +1,21 @@
+.ascii-sigil {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #0b0b0b;
+}
+
+/* Sized so the grid fits within 80% of the frame's width and 88% of its height
+   (cells are 0.6em wide and 1.1em tall). */
+.ascii-sigil__art {
+  margin: 0;
+  color: #16f2a8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: min(calc(80vw / (var(--cols) * 0.6)), calc(88vh / (var(--rows, 50) * 1.1)));
+  line-height: 1.1;
+  text-shadow:
+    0 0 6px rgb(22 242 168 / 0.55),
+    0 0 18px rgb(22 242 168 / 0.25);
+  white-space: pre;
+  user-select: none;
+}
