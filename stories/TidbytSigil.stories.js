@@ -30,6 +30,9 @@ const hand = (x, y) => {
  */
 const centerColumn = (x, y) => x >= 11.9 && x <= 20.6 && y >= 9 && y <= 27.5;
 
+/** The display on screen, and the settings (all but color) it was built with. */
+let mounted = null;
+
 export default {
   title: 'Projects/Tidbyt/Ultrahand Sigil',
   parameters: {
@@ -58,20 +61,37 @@ export default {
       control: 'boolean',
       description: 'Smoke-like energy rising from bottom to top through the center column.',
     },
+    color: {
+      control: 'inline-radio',
+      options: ['cycle', 'green', 'red'],
+      description:
+        'Red crawls in from the outside toward the center in cracks; green sparkles back in, LED by LED, from the center outward. Each change takes 5s; cycle holds each color 8s, then changes.',
+    },
   },
-  args: { twinkle: true, zoom: false, size: 'start', hand: false, energy: false },
-  render: ({ twinkle, zoom, size, hand: moveHand, energy }) => {
+  args: { twinkle: true, zoom: false, size: 'start', hand: false, energy: false, color: 'cycle' },
+  render: (args, { id }) => {
+    const { color, ...settings } = args;
+    // When only the color changed, hand back the live display so it can animate the
+    // change; Storybook keeps an element it already shows instead of remounting it.
+    const key = JSON.stringify([id, settings]);
+    if (mounted?.key === key && mounted.stage.isConnected) {
+      mounted.display.setColor(color);
+      return mounted.stage;
+    }
+
+    const { twinkle, zoom, size, hand: moveHand, energy } = settings;
     const stage = document.createElement('div');
     stage.className = 'tidbyt-stage';
-    stage.append(
-      createTidbytDisplay(sigil, {
-        twinkle: twinkle ? flankingPanels : undefined,
-        hiRes: sigilSource,
-        zoom: zoom ? 'cycle' : size === 'zoomed' ? ZOOM_MAX : 1,
-        recede: moveHand ? { area: hand, center: HAND_CENTER } : undefined,
-        flow: energy ? centerColumn : undefined,
-      }),
-    );
+    const display = createTidbytDisplay(sigil, {
+      twinkle: twinkle ? flankingPanels : undefined,
+      hiRes: sigilSource,
+      zoom: zoom ? 'cycle' : size === 'zoomed' ? ZOOM_MAX : 1,
+      recede: moveHand ? { area: hand, center: HAND_CENTER } : undefined,
+      flow: energy ? centerColumn : undefined,
+      color,
+    });
+    stage.append(display);
+    mounted = { key, stage, display };
     return stage;
   },
 };
