@@ -1,3 +1,4 @@
+import './gallery-template.css';
 import './material-showcase.css';
 import { createFamilyPage } from './material-showcase.js';
 
