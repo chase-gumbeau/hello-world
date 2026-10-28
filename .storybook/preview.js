@@ -76,7 +76,7 @@ const preview = {
               'Ops / CS',
             ],
             'Scrolls',
-            ['Home', 'Home Left', '2025', '2024', '2023'],
+            ['Home Left', '2025', '2024', '2023'],
           ],
           '*',
         ],

@@ -39,7 +39,7 @@ Run this after regenerating a trip’s CSS, or when adding a new destination.
 3. **Mount module** — add `scrolls-<id>.js` that calls `createScrollExperience({ id, bodyHtml, frameCount, embedded })`.
 4. **Registry** — add an entry to `SCROLL_TRIPS` in [`scrolls-registry.js`](../scrolls-registry.js) (`id`, `year`, `title`, `frames`, `storyExport`, `heroImage`, `mount`).
 5. **Storybook** — export the trip from `stories/Scrolls{year}.stories.js` (or create that year file). Title pattern: `Projects/Scrolls/{year}`.
-6. **Verify** — `npm run scrolls:check-align`, then open **Projects → Scrolls → Home** and the year story; confirm the first frame kisses the white window’s left edge.
+6. **Verify** — `npm run scrolls:check-align`, then open **Projects → Scrolls → Home Left** and the year story; confirm the first frame kisses the white window’s left edge.
 
 ### Re-run an existing convert
 

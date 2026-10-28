@@ -2,24 +2,10 @@ import { createScrollsApp } from '../scrolls-app.js';
 
 export default {
   title: 'Projects/Scrolls',
-  tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
     backgrounds: { default: 'dark' },
   },
-};
-
-export const Home = {
-  name: 'Home',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Title / home screen rendered inside the Scrolls app shell with centered nav in the frame. Clicking a destination animates in place under the stable centered white frame/scrim.',
-      },
-    },
-  },
-  render: () => createScrollsApp({ homeLayout: 'centered' }),
 };
 
 export const HomeLeft = {
