@@ -26,28 +26,29 @@
   /* Dark sidebar glow: soft jade light drifting through the sidebar.
      The main glow comes from the Figma sidebar frame (circle r=143.8 centred
      at -17.5, -49.6 on a 100px-wide panel, #22BD85 fading to transparent);
-     three fainter glows sit lower down. Each position is a registered custom
+     three fainter glows drift beside it, all within the top quarter
+     (sizes are % of the sidebar height so centre + radius stays under 25%). Each position is a registered custom
      property, so the gradients can animate, each on its own slow loop.
      The sidebar column has no stable class, so it is found as the
      grandparent of the header. Dark only; still for reduced motion. */
   @property --glow-a-x { syntax: '<length-percentage>'; inherits: false; initial-value: -17.5%; }
   @property --glow-a-y { syntax: '<length-percentage>'; inherits: false; initial-value: -50px; }
   @property --glow-b-x { syntax: '<length-percentage>'; inherits: false; initial-value: 105%; }
-  @property --glow-b-y { syntax: '<length-percentage>'; inherits: false; initial-value: 34%; }
+  @property --glow-b-y { syntax: '<length-percentage>'; inherits: false; initial-value: 8%; }
   @property --glow-c-x { syntax: '<length-percentage>'; inherits: false; initial-value: -8%; }
-  @property --glow-c-y { syntax: '<length-percentage>'; inherits: false; initial-value: 66%; }
+  @property --glow-c-y { syntax: '<length-percentage>'; inherits: false; initial-value: 13%; }
   @property --glow-d-x { syntax: '<length-percentage>'; inherits: false; initial-value: 92%; }
-  @property --glow-d-y { syntax: '<length-percentage>'; inherits: false; initial-value: 98%; }
+  @property --glow-d-y { syntax: '<length-percentage>'; inherits: false; initial-value: 4%; }
 
   :root[data-theme='dark'] div:has(> div > .sidebar-header) {
     background-image:
       radial-gradient(ellipse 144% 144px at var(--glow-a-x) var(--glow-a-y),
         #22bd85 0%, rgb(15 87 61 / 0) 100%),
-      radial-gradient(ellipse 95% 240px at var(--glow-b-x) var(--glow-b-y),
+      radial-gradient(ellipse 95% 10% at var(--glow-b-x) var(--glow-b-y),
         rgb(34 189 133 / 0.2) 0%, rgb(15 87 61 / 0) 100%),
-      radial-gradient(ellipse 115% 280px at var(--glow-c-x) var(--glow-c-y),
+      radial-gradient(ellipse 115% 10% at var(--glow-c-x) var(--glow-c-y),
         rgb(34 189 133 / 0.14) 0%, rgb(15 87 61 / 0) 100%),
-      radial-gradient(ellipse 100% 220px at var(--glow-d-x) var(--glow-d-y),
+      radial-gradient(ellipse 100% 8% at var(--glow-d-x) var(--glow-d-y),
         rgb(34 189 133 / 0.1) 0%, rgb(15 87 61 / 0) 100%);
     background-repeat: no-repeat;
     animation:
@@ -63,18 +64,18 @@
   }
 
   @keyframes glow-b {
-    50% { --glow-b-x: 78%; --glow-b-y: 42%; }
-    100% { --glow-b-x: 96%; --glow-b-y: 26%; }
+    50% { --glow-b-x: 78%; --glow-b-y: 12%; }
+    100% { --glow-b-x: 96%; --glow-b-y: 6%; }
   }
 
   @keyframes glow-c {
-    50% { --glow-c-x: 22%; --glow-c-y: 58%; }
-    100% { --glow-c-x: 2%; --glow-c-y: 74%; }
+    50% { --glow-c-x: 22%; --glow-c-y: 15%; }
+    100% { --glow-c-x: 2%; --glow-c-y: 11%; }
   }
 
   @keyframes glow-d {
-    50% { --glow-d-x: 64%; --glow-d-y: 90%; }
-    100% { --glow-d-x: 84%; --glow-d-y: 104%; }
+    50% { --glow-d-x: 64%; --glow-d-y: 9%; }
+    100% { --glow-d-x: 84%; --glow-d-y: 2%; }
   }
 
   @media (prefers-reduced-motion: reduce) {
