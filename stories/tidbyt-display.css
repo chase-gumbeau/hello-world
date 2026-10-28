@@ -6,15 +6,16 @@
 }
 
 .tidbyt-display {
-  padding: 24px;
-  border-radius: 12px;
+  box-sizing: border-box;
+  width: 80%;
+  padding: clamp(12px, 2.5%, 32px);
+  border-radius: clamp(8px, 1.5vw, 20px);
   background: #050505;
   box-shadow: 0 0 0 2px #222, 0 20px 60px rgb(0 0 0 / 0.6);
 }
 
 .tidbyt-display canvas {
   display: block;
-  width: 640px;
-  max-width: calc(100vw - 80px);
+  width: 100%;
   height: auto;
 }
