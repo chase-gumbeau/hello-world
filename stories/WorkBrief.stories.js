@@ -429,6 +429,8 @@ export function createWorkBrief({ persona: personaId = 'supplier_csr' } = {}) {
 export default {
   title: 'Studies/Surfaces/Work Brief',
   tags: ['autodocs'],
+  // Helpers exported for reuse, not stories.
+  excludeStories: ['WORK_BRIEF_PERSONAS', 'personaFromId', 'createWorkBrief'],
   parameters: {
     layout: 'fullscreen',
     docs: {
