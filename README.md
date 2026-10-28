@@ -5,6 +5,7 @@ Personal playground for Storybook experiments, UI studies, and small projects.
 ## Projects
 
 - **[Scrolls](docs/scrolls.md)** — horizontal photo-scroll trips (home shell, shared frame, year-grouped destinations). Geometry, alignment checks, and how to add a trip are documented there.
+- **[Tidbyt](tidbyt/README.md)** — Pixlet apps for a 64×32 Tidbyt LED display. Separate from Storybook; needs `pixlet` on your `PATH`.
 
 ## Develop
 

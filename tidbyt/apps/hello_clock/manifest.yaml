@@ -1,0 +1,8 @@
+---
+id: hello-clock
+name: Hello Clock
+summary: Greeting and local time
+desc: Starter app for this workspace. Shows a time-of-day greeting and a clock with a blinking colon.
+author: Chase Chenevert
+fileName: hello_clock.star
+packageName: helloclock
