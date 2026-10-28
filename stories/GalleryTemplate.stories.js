@@ -5,7 +5,7 @@ import { EXAMPLE_GALLERY } from './gallery-template-example.js';
 import { createGallery } from './gallery-template.js';
 
 export default {
-  title: 'Studies/Surfaces/Gallery Template',
+  title: 'Foundations/Surface/Gallery Template',
   parameters: {
     layout: 'fullscreen',
     docs: {
@@ -40,7 +40,7 @@ export const SwitchesViews = {
     await waitFor(() => expect(indexTab).toHaveAttribute('aria-selected', 'true'));
     const links = canvasElement.querySelectorAll('.gal__index a[data-item]');
     await expect(links.length).toBe(items.length);
-    await expect(links[0].getAttribute('href')).toContain('studies-surfaces-gallery-template-items--');
+    await expect(links[0].getAttribute('href')).toContain('foundations-surface-gallery-template-items--');
 
     await userEvent.click(canvas.getByRole('tab', { name: 'Categories' }));
     await waitFor(() =>

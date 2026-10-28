@@ -10,7 +10,7 @@
  * To make a new gallery: define a GalleryConfig, render createGallery(config)
  * from one story, and give each item a story that renders
  * createGalleryPage(config, id). The Material Explorer (material-showcase.js)
- * and Studies/Surfaces/Gallery Template (GalleryTemplate.stories.js) are the
+ * and Foundations/Surface/Gallery Template (GalleryTemplate.stories.js) are the
  * two worked examples.
  *
  * @typedef {object} Variant
@@ -54,8 +54,9 @@
  * @property {{one: string, many: string}} [noun]  What an item is called
  *   ("family"/"families"). Defaults to item/items.
  * @property {{gallery: HeroCopy & {actions?: {label: string, view: string}[]},
- *   index: HeroCopy, categories: HeroCopy}} hero  Copy above each view.
+ *   index?: HeroCopy, categories: HeroCopy}} hero  Copy above each view.
  *   Gallery actions jump to another view; the first is filled, the rest tonal.
+ *   Leave out `index` for an Index view with no heading.
  * @property {string} [docsLabel]  Label for the item page's docs link.
  * @property {(() => string)[]} [compositions]  Extra masonry cards for the
  *   Gallery view, interleaved one per `compositionEvery` items.
@@ -156,6 +157,7 @@ function heroHtml(config, view) {
   const { hero, items, categories } = config;
   const noun = config.noun ?? { one: 'item', many: 'items' };
   if (view === 'index') {
+    if (!hero.index) return '';
     return `
       <header class="gal__hero gal__hero--compact">
         <h1>${hero.index.title}</h1>

@@ -8,7 +8,7 @@ import { createGalleryPage } from './gallery-template.js';
  * story id, so each export name must kebab-case to its item id (StatTiles → stat-tiles).
  */
 export default {
-  title: 'Studies/Surfaces/Gallery Template/Items',
+  title: 'Foundations/Surface/Gallery Template/Items',
   parameters: {
     layout: 'fullscreen',
   },
