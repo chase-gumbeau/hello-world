@@ -74,7 +74,6 @@ const preview = {
               'Catalog',
               'Ops / CS',
             ],
-            'Solari Board',
             'Scrolls',
             ['Home', 'Home Left', '2025', '2024', '2023'],
           ],

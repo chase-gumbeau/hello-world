@@ -168,7 +168,7 @@ function createSolo({ label = 'Hello world', variant = 'rotate' } = {}) {
 }
 
 export default {
-  title: 'Studies/Animation mesh gradient',
+  title: 'Studies/Motion/Animation mesh gradient',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
