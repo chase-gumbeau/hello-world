@@ -80,8 +80,56 @@ const SPARKLE_TURN = 0.06; // share of the change one LED takes to turn green
 const SPARKLE_FLASH = 0.035; // how long its flash lasts, as a share of the change
 const SPARKLE_BOOST = 1.3; // how bright the flash gets
 
-/** The sigil in red: each LED's green becomes its red, keeping brightness and highlights. */
-const toRed = (r, g, b) => [g, r * 0.5 + b * 0.15, r * 0.4 + b * 0.2];
+// Staged paths (purple): softness of each stage's front, and how long its glow lasts,
+// both as shares of the stage. Kept tight so a traced path reads as a moving head.
+const PATH_EDGE = 0.03;
+const PATH_GLOW = 0.04;
+
+/**
+ * An `order` for a staged path that follows curves: each point's order is how far
+ * along (0–1) a curve's head first passes within that curve's `width` of it, so the
+ * color travels along the curves and recolors what they pass over. Points no curve
+ * reaches get 1, so they change as their stage ends.
+ * @param {{at: (s: number) => [number, number], width: number}[]} curves  Each curve's
+ *   position at s (0–1) in image coordinates, and how far either side it recolors.
+ */
+export function traceOrder(curves, samples = 400) {
+  const points = curves.map((curve) =>
+    Array.from({ length: samples + 1 }, (_, k) => curve.at(k / samples)),
+  );
+  const memo = new Map(); // by point, quantized to a quarter image unit
+  return (x, y) => {
+    const key = `${Math.round(x * 4)},${Math.round(y * 4)}`;
+    let order = memo.get(key);
+    if (order === undefined) {
+      order = 1;
+      curves.forEach(({ width }, c) => {
+        const list = points[c];
+        for (let k = 0; k < list.length && k / samples < order; k++) {
+          if ((list[k][0] - x) ** 2 + (list[k][1] - y) ** 2 <= width ** 2) {
+            order = k / samples;
+            break;
+          }
+        }
+      });
+      memo.set(key, order);
+    }
+    return order;
+  };
+}
+
+/**
+ * Each color as a recoloring of the green art, keeping brightness and highlights:
+ * green is the image as drawn; red and purple move its green into their own hues.
+ */
+const PALETTE = {
+  green: (r, g, b) => [r, g, b],
+  red: (r, g, b) => [g, r * 0.5 + b * 0.15, r * 0.4 + b * 0.2],
+  purple: (r, g, b) => [g * 0.72 + r * 0.2, r * 0.35 + b * 0.1, g * 0.95 + r * 0.1],
+};
+
+// The order 'cycle' visits the colors in.
+const CYCLE = ['green', 'red', 'purple'];
 
 /**
  * Random cracks for one change to red, in staggered waves: when each sets out,
@@ -124,11 +172,35 @@ function onCrack(d, angle, pathAngle, tip, age) {
 }
 
 /**
- * How red an LED is mid-change, and how much the change brightens it.
- * `d` and `angle` place the LED around the image center; `p` is the change's
- * progress; `luck` is the LED's own random number, for when it sparkles.
+ * How far along a staged path the LED at image point (x, y) has changed. The first
+ * stage whose area holds it decides: within that stage's window of the change, the
+ * color spreads in the stage's `order` (0 first, 1 last) behind a glowing front.
  */
-function colorAt(change, d, angle, p, t, luck) {
+function pathAt(stages, x, y, p) {
+  for (const stage of stages) {
+    if (!stage.area(x, y)) continue;
+    const local = clamp01((p - stage.from) / (stage.to - stage.from));
+    const ahead = local * (1 + PATH_EDGE) - stage.order(x, y);
+    return {
+      amount: smoothstep(ahead / PATH_EDGE),
+      boost: 1 + 0.7 * Math.exp(-((ahead / PATH_GLOW) ** 2)),
+    };
+  }
+  return { amount: 0, boost: 1 };
+}
+
+/**
+ * How far an LED is from the old color to the new one mid-change, and how much the
+ * change brightens it. `d` and `angle` place the LED around the image center, and
+ * (x, y) in image coordinates; `p` is the change's progress; `luck` is the LED's own
+ * random number, for when it sparkles.
+ */
+function colorAt(change, { d, angle, x, y }, p, t, luck) {
+  if (change.to === 'purple' && change.path) {
+    // Along the art's own lines, stage by stage; anything off the path follows at the end.
+    const { amount, boost } = pathAt(change.path, x, y, p);
+    return { amount: Math.max(amount, smoothstep((p - 0.9) / 0.1)), boost };
+  }
   if (change.to === 'red') {
     // Outside in, like an infection: wave after wave of glowing cracks crawls toward
     // the center, forking as it goes and swelling until the veins merge.
@@ -149,17 +221,17 @@ function colorAt(change, d, angle, p, t, luck) {
     }
     // Any last specks take the color as the final cracks close in.
     red = Math.max(red, smoothstep((p - 0.88) / 0.12));
-    return { red, boost: 1 + 0.45 * fresh };
+    return { amount: red, boost: 1 + 0.45 * fresh };
   }
-  // Sparkle: each LED turns green at its own moment, flashing bright as it does.
-  // Moments lean slightly center-first, so the green still emerges from the middle.
+  // Sparkle (green, and purple without a path): each LED turns at its own moment,
+  // flashing bright as it does. Moments lean slightly center-first.
   const moment = luck * (1 - SPARKLE_LEAN) + Math.min(d, 1) * SPARKLE_LEAN;
   const since = p * (1 + SPARKLE_TURN * 2) - SPARKLE_TURN - moment * (1 - SPARKLE_TURN);
-  const green = smoothstep(since / SPARKLE_TURN + 0.5);
+  const turned = smoothstep(since / SPARKLE_TURN + 0.5);
   const flash = Math.exp(-((since / SPARKLE_FLASH) ** 2));
-  // Already-green LEDs keep glinting faintly until the change is done.
+  // Already-turned LEDs keep glinting faintly until the change is done.
   const glint = since > 0 ? 0.25 * (1 - p) * Math.max(0, Math.sin(t * 9 + luck * 40)) ** 8 : 0;
-  return { red: 1 - green, boost: 1 + SPARKLE_BOOST * flash + glint };
+  return { amount: turned, boost: 1 + SPARKLE_BOOST * flash + glint };
 }
 
 const smoothstep = (v) => {
@@ -216,17 +288,22 @@ const loadImage = (src) =>
  *   Behind it, each row of the area fills with its brightest LED.
  * @param {(x: number, y: number) => boolean} [opts.flow]  Area where smoke-like
  *   energy rises from bottom to top, in image coordinates (fractional).
- * @param {'green'|'red'|'cycle'} [opts.color]  'green' is the image as drawn. 'cycle'
- *   starts green, then alternates: hold COLOR_HOLD seconds, change, and repeat.
- * @returns {HTMLElement & {setColor: (color: 'green'|'red'|'cycle') => void}}  The
- *   display. setColor() animates to a new color over COLOR_CHANGE seconds: red
+ * @param {'green'|'red'|'purple'|'cycle'} [opts.color]  'green' is the image as
+ *   drawn. 'cycle' starts green, then steps through CYCLE: hold COLOR_HOLD seconds,
+ *   change, and repeat.
+ * @param {{area: (x: number, y: number) => boolean, order: (x: number, y: number) => number,
+ *   from: number, to: number}[]} [opts.purplePath]  Stages purple travels through,
+ *   in image coordinates: during its window (`from`–`to`, shares of the change) each
+ *   stage fills its area in `order` (0 first, 1 last). Without it, purple sparkles in.
+ * @returns {HTMLElement & {setColor: (color: 'green'|'red'|'purple'|'cycle') => void}}
+ *   The display. setColor() animates to a new color over COLOR_CHANGE seconds: red
  *   crawls in from the outside toward the center in cracks; green sparkles back in,
- *   LED by LED, leaning center-first. 'cycle' starts alternating from the current
- *   color.
+ *   LED by LED, leaning center-first; purple follows `purplePath`. 'cycle' starts
+ *   stepping from the current color.
  */
 export function createTidbytDisplay(
   src,
-  { size = 32, twinkle, hiRes: hiResSrc, zoom = 1, recede, flow, color = 'green' } = {},
+  { size = 32, twinkle, hiRes: hiResSrc, zoom = 1, recede, flow, color = 'green', purplePath } = {},
 ) {
   const wrap = document.createElement('div');
   wrap.className = 'tidbyt-display';
@@ -262,8 +339,8 @@ export function createTidbytDisplay(
   };
 
   /**
-   * Paints every LED. `light(i)` gives LED i's brightness scale and how red it is
-   * (0 = the image's own color, 1 = fully red).
+   * Paints every LED. `light(i)` gives LED i's brightness scale and its color: `amount`
+   * of the way from PALETTE color `from` to `to`.
    */
   const paint = (pixels, light) => {
     ctx.fillStyle = '#000';
@@ -274,12 +351,13 @@ export function createTidbytDisplay(
         const a = pixels[i * 4 + 3] / 255;
         let rgb = '#0c0c0c';
         if (a) {
-          const { glow, red } = light(i);
+          const { glow, from, to, amount } = light(i);
           const k = a * glow;
-          let [r, g, b] = [pixels[i * 4], pixels[i * 4 + 1], pixels[i * 4 + 2]];
-          if (red > 0) {
-            const [rr, rg, rb] = toRed(r, g, b);
-            [r, g, b] = [r + (rr - r) * red, g + (rg - g) * red, b + (rb - b) * red];
+          const art = [pixels[i * 4], pixels[i * 4 + 1], pixels[i * 4 + 2]];
+          let [r, g, b] = PALETTE[from](...art);
+          if (amount > 0) {
+            const [tr, tg, tb] = PALETTE[to](...art);
+            [r, g, b] = [r + (tr - r) * amount, g + (tg - g) * amount, b + (tb - b) * amount];
           }
           rgb = `rgb(${r * k} ${g * k} ${b * k})`;
         }
@@ -357,18 +435,24 @@ export function createTidbytDisplay(
 
   // The current color, the change in progress toward it (if any), and whether to
   // keep alternating, timed from when the color last settled.
-  let current = color === 'red' ? 'red' : 'green';
-  let change = null; // { to, start, cracks } with start in seconds
+  let current = PALETTE[color] ? color : 'green';
+  let change = null; // { from, to, start, cracks, path } with start in seconds
   let cycling = color === 'cycle';
   let settledAt = performance.now() / 1000;
 
-  /** How red LED i is at time t, and any brightening from the change. */
+  /** LED i's color at time t (see paint), and any brightening from the change. */
   const tint = (i, scale, t) => {
-    if (!change) return { red: current === 'red' ? 1 : 0, boost: 1 };
+    if (!change) return { from: current, to: current, amount: 0, boost: 1 };
     const p = clamp01((t - change.start) / COLOR_CHANGE);
     const [x, y] = toImage(i, scale);
-    const d = Math.hypot(x - size / 2, y - size / 2) / (size / 2);
-    return colorAt(change, d, Math.atan2(y - size / 2, x - size / 2), p, t, leds[i].luck);
+    const where = {
+      x,
+      y,
+      d: Math.hypot(x - size / 2, y - size / 2) / (size / 2),
+      angle: Math.atan2(y - size / 2, x - size / 2),
+    };
+    const { amount, boost } = colorAt(change, where, p, t, leds[i].luck);
+    return { from: change.from, to: change.to, amount, boost };
   };
 
   let draw = null; // set once the images load
@@ -376,8 +460,8 @@ export function createTidbytDisplay(
   const looping = Boolean(twinkle || recede || flow || zoom === 'cycle');
 
   const changeTo = (next, t) => {
+    change = { from: current, to: next, start: t, cracks: makeCracks(), path: purplePath };
     current = next;
-    change = { to: next, start: t, cracks: makeCracks() };
   };
 
   const tick = (now) => {
@@ -391,7 +475,7 @@ export function createTidbytDisplay(
       settledAt = t;
     }
     if (cycling && !change && t - settledAt >= COLOR_HOLD) {
-      changeTo(current === 'red' ? 'green' : 'red', t);
+      changeTo(CYCLE[(CYCLE.indexOf(current) + 1) % CYCLE.length], t);
     }
     draw(t);
     if (looping || change || cycling) requestAnimationFrame(tick);
@@ -432,7 +516,7 @@ export function createTidbytDisplay(
       const base = still ?? sample(hiRes, scale);
       const pixels = recede ? receded(base, hiRes ?? img, scale, recedeAt(t)) : base;
       paint(pixels, (i) => {
-        const { red, boost } = tint(i, scale, t);
+        const { from, to, amount, boost } = tint(i, scale, t);
         let glow = boost;
         if (flow) {
           const [x, y] = toImage(i, scale);
@@ -443,7 +527,7 @@ export function createTidbytDisplay(
           const s = 0.5 + 0.5 * Math.sin(t * leds[i].speed + leds[i].phase);
           glow *= Math.min(1.35, 0.7 + 0.65 * s ** 3);
         }
-        return { glow, red };
+        return { glow, from, to, amount };
       });
     };
     draw(performance.now() / 1000);
