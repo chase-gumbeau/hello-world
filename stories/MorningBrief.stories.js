@@ -584,7 +584,7 @@ function createMorningBriefConcept2() {
 }
 
 export default {
-  title: 'Projects/Morning Brief',
+  title: 'Studies/Surfaces/Morning Brief',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

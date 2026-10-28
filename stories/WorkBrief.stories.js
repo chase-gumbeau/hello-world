@@ -427,7 +427,7 @@ export function createWorkBrief({ persona: personaId = 'supplier_csr' } = {}) {
 }
 
 export default {
-  title: 'Projects/Work Brief',
+  title: 'Studies/Surfaces/Work Brief',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
