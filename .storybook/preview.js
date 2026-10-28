@@ -83,6 +83,7 @@ const preview = {
             'Compositions',
             'Motion',
             '3D',
+            'Worlds',
           ],
           'Projects',
           [
