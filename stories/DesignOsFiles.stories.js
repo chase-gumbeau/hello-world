@@ -7,7 +7,7 @@ import { createDesignOsFiles } from './design-os-files.js';
  * Windows 3.1 desktop. Drive C: is the Design OS; stages are directories.
  */
 export default {
-  title: 'Projects/Design OS File Manager',
+  title: 'Projects/Windows file manager',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

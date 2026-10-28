@@ -9,7 +9,7 @@ import { LANDMARKS, STAGES } from './design-os-world-data.js';
  * landmarks = cross-cutting lanes, quests = the gap register.
  */
 export default {
-  title: 'Projects/Design OS Mini World',
+  title: 'Projects/MapleStory world',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
