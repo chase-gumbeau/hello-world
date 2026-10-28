@@ -7,6 +7,13 @@ const themes = { light: lightTheme, dark: darkTheme };
 // takes over from there.
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+// manager-head.html keys the dark sidebar glow off this attribute.
+const setScheme = (scheme) => {
+  document.documentElement.dataset.theme = scheme;
+};
+
+setScheme(prefersDark ? 'dark' : 'light');
+
 addons.setConfig({
   theme: prefersDark ? darkTheme : lightTheme,
 });
@@ -14,7 +21,10 @@ addons.setConfig({
 addons.register('studies/theme-sync', (api) => {
   const sync = ({ globals }) => {
     const theme = themes[globals?.theme];
-    if (theme) api.setOptions({ theme });
+    if (theme) {
+      setScheme(globals.theme);
+      api.setOptions({ theme });
+    }
   };
 
   api.on('setGlobals', sync);
