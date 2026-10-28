@@ -1,4 +1,4 @@
-# GitNewb
+# Studies
 
 Personal playground for Storybook experiments, UI studies, and small projects.
 

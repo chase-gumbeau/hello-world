@@ -15,7 +15,7 @@ const config = {
   "framework": "@storybook/html-vite",
   async viteFinal(config) {
     const { mergeConfig } = await import('vite');
-    // GitHub Pages project site: https://chase-gumbeau.github.io/hello-world/
+    // GitHub Pages project site: https://chase-gumbeau.github.io/studies/
     const base = process.env.STORYBOOK_BASE || '/';
     return mergeConfig(config, {
       base,
