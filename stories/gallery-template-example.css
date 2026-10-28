@@ -1,0 +1,104 @@
+/*
+ * Gallery template example — styles for the example surfaces only. The gallery
+ * shell comes from gallery-template.css.
+ */
+
+.gex-card {
+  display: block;
+  padding: 16px;
+  --md-outlined-card-container-shape: 16px;
+}
+
+.gex-card h3,
+.gex-sheet h3,
+.gex-empty h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+.gex-card p,
+.gex-sheet p,
+.gex-empty p {
+  margin: 0 0 8px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.gex-card md-text-button {
+  margin-left: -12px;
+}
+
+.gex-sheet {
+  padding: 24px;
+  border-radius: 24px;
+  background: var(--md-sys-color-surface-container-high);
+}
+
+.gex-callout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font-size: 14px;
+  line-height: 20px;
+  --md-icon-size: 20px;
+}
+
+.gex-callout--warn {
+  background: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+
+.gex-stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.gex-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.gex-stat__label {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.gex-stat__value {
+  font: 400 28px/36px var(--md-ref-typeface-brand);
+}
+
+.gex-stat__delta {
+  color: var(--md-sys-color-primary);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.gex-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--md-sys-color-on-surface-variant);
+  --md-icon-size: 36px;
+}
+
+.gex-empty h3 {
+  margin-top: 8px;
+  color: var(--md-sys-color-on-surface);
+}

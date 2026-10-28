@@ -1,4 +1,5 @@
 import { expect, userEvent, waitFor } from 'storybook/test';
+import './gallery-template.css';
 import './material-showcase.css';
 import { CATEGORIES, FAMILIES } from './material-catalog/index.js';
 import { createMaterialShowcase } from './material-showcase.js';
@@ -36,16 +37,16 @@ export const SwitchesViews = {
     const indexTab = canvas.getByRole('tab', { name: 'Index' });
     await userEvent.click(indexTab);
     await waitFor(() => expect(indexTab).toHaveAttribute('aria-selected', 'true'));
-    const links = canvasElement.querySelectorAll('.msc__index a[data-family]');
+    const links = canvasElement.querySelectorAll('.gal__index a[data-item]');
     await expect(links.length).toBe(FAMILIES.length);
     await expect(links[0].getAttribute('href')).toContain('foundations-material-showcase-components--');
 
     const categoriesTab = canvas.getByRole('tab', { name: 'Categories' });
     await userEvent.click(categoriesTab);
     await waitFor(() =>
-      expect(canvasElement.querySelectorAll('.msc__section').length).toBe(CATEGORIES.length),
+      expect(canvasElement.querySelectorAll('.gal__section').length).toBe(CATEGORIES.length),
     );
-    await expect(canvasElement.querySelectorAll('.msc__family').length).toBe(FAMILIES.length);
+    await expect(canvasElement.querySelectorAll('.gal__item').length).toBe(FAMILIES.length);
   },
 };
 
