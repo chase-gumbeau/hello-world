@@ -1,0 +1,449 @@
+/*
+ * Material Showcase — shadcn/ui homepage grid rebuilt with Material 3 (Material Web).
+ * Light tokens come from material-theme.css; .msc--dark swaps to the M3 baseline dark scheme.
+ */
+
+.msc--dark {
+  --md-sys-color-primary: #d0bcff;
+  --md-sys-color-on-primary: #381e72;
+  --md-sys-color-primary-container: #4f378b;
+  --md-sys-color-on-primary-container: #eaddff;
+  --md-sys-color-secondary: #ccc2dc;
+  --md-sys-color-on-secondary: #332d41;
+  --md-sys-color-secondary-container: #4a4458;
+  --md-sys-color-on-secondary-container: #e8def8;
+  --md-sys-color-tertiary: #efb8c8;
+  --md-sys-color-on-tertiary: #492532;
+  --md-sys-color-tertiary-container: #633b48;
+  --md-sys-color-on-tertiary-container: #ffd8e4;
+  --md-sys-color-error: #f2b8b5;
+  --md-sys-color-on-error: #601410;
+  --md-sys-color-error-container: #8c1d18;
+  --md-sys-color-on-error-container: #f9dedc;
+  --md-sys-color-background: #141218;
+  --md-sys-color-on-background: #e6e0e9;
+  --md-sys-color-surface: #141218;
+  --md-sys-color-on-surface: #e6e0e9;
+  --md-sys-color-surface-variant: #49454f;
+  --md-sys-color-on-surface-variant: #cac4d0;
+  --md-sys-color-outline: #938f99;
+  --md-sys-color-outline-variant: #49454f;
+  --md-sys-color-surface-dim: #141218;
+  --md-sys-color-surface-bright: #3b383e;
+  --md-sys-color-surface-container-lowest: #0f0d13;
+  --md-sys-color-surface-container-low: #1d1b20;
+  --md-sys-color-surface-container: #211f26;
+  --md-sys-color-surface-container-high: #2b2930;
+  --md-sys-color-surface-container-highest: #36343b;
+  --md-sys-color-inverse-surface: #e6e0e9;
+  --md-sys-color-inverse-on-surface: #322f35;
+  --md-sys-color-inverse-primary: #6750a4;
+}
+
+.msc {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 64px 16px 48px;
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-ref-typeface-plain);
+}
+
+.msc *,
+.msc *::before,
+.msc *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Hero ---------- */
+
+.msc__hero {
+  max-width: 640px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+
+.msc__hero md-assist-chip {
+  margin-bottom: 16px;
+}
+
+.msc__hero h1 {
+  margin: 0 0 12px;
+  font: 400 36px/44px var(--md-ref-typeface-brand);
+}
+
+.msc__hero p {
+  margin: 0 0 24px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 18px;
+  line-height: 28px;
+}
+
+.msc__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ---------- Grid ---------- */
+
+.msc__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.msc__col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+@media (min-width: 760px) {
+  .msc__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.msc__card {
+  --md-elevated-card-container-color: var(--md-sys-color-surface-container-low);
+  --md-outlined-card-container-color: var(--md-sys-color-surface-container-low);
+  --md-filled-card-container-color: var(--md-sys-color-surface-container-highest);
+  --md-elevated-card-container-shape: 28px;
+  --md-outlined-card-container-shape: 28px;
+  --md-filled-card-container-shape: 28px;
+  display: block;
+  padding: 20px;
+}
+
+.msc__card-title {
+  margin: 0 0 4px;
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 400;
+}
+
+.msc__card-sub {
+  margin: 0 0 16px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* ---------- Controls card ---------- */
+
+.msc__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.msc__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.msc__row--between {
+  justify-content: space-between;
+}
+
+.msc__controls md-outlined-text-field,
+.msc__controls md-filled-text-field {
+  width: 100%;
+}
+
+.msc__toggles {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.msc__split {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.msc__split md-filled-tonal-button {
+  --md-filled-tonal-button-container-shape-start-end: 4px;
+  --md-filled-tonal-button-container-shape-end-end: 4px;
+}
+
+.msc__split md-filled-tonal-icon-button {
+  --md-filled-tonal-icon-button-container-shape: 4px;
+  border-radius: 4px 20px 20px 4px;
+  overflow: hidden;
+}
+
+/* ---------- Nav list cards ---------- */
+
+.msc__nav-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 420px) {
+  .msc__nav-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.msc__nav {
+  padding: 12px 8px;
+}
+
+.msc__nav-label {
+  margin: 4px 12px 4px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.msc__nav md-list {
+  --md-list-container-color: transparent;
+  padding: 0;
+}
+
+.msc__nav md-list-item {
+  --md-list-item-one-line-container-height: 44px;
+  --md-list-item-top-space: 6px;
+  --md-list-item-bottom-space: 6px;
+  --md-list-item-leading-space: 12px;
+  --md-list-item-trailing-space: 12px;
+  --md-list-item-label-text-size: 14px;
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.msc__nav md-list-item[data-current] {
+  background: var(--md-sys-color-secondary-container);
+  --md-list-item-label-text-color: var(--md-sys-color-on-secondary-container);
+  --md-list-item-leading-icon-color: var(--md-sys-color-on-secondary-container);
+  --md-list-item-label-text-weight: 700;
+}
+
+/* ---------- Savings ---------- */
+
+.msc__goal {
+  --md-filled-card-container-color: var(--md-sys-color-surface-container-high);
+  --md-filled-card-container-shape: 16px;
+  display: block;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.msc__goal-kicker {
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.msc__goal-amount {
+  margin: 4px 0 12px;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 400;
+}
+
+.msc__goal md-linear-progress {
+  width: 100%;
+  --md-linear-progress-track-shape: 4px;
+  --md-linear-progress-track-height: 8px;
+  --md-linear-progress-active-indicator-height: 8px;
+}
+
+.msc__goal--tertiary md-linear-progress {
+  --md-linear-progress-active-indicator-color: var(--md-sys-color-tertiary);
+}
+
+.msc__goal-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 14px;
+}
+
+.msc__goal-meta strong {
+  color: var(--md-sys-color-on-surface);
+}
+
+.msc__warn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 0;
+  color: var(--md-sys-color-error);
+  font-size: 14px;
+}
+
+/* ---------- QR ---------- */
+
+.msc__qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 20px;
+  text-align: center;
+}
+
+.msc__qr-code {
+  width: 172px;
+  height: 172px;
+  padding: 14px;
+  margin-bottom: 24px;
+  border-radius: 20px;
+  background: #fff;
+}
+
+.msc__qr-code svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.msc__qr .msc__card-sub {
+  max-width: 260px;
+  margin-bottom: 0;
+}
+
+/* ---------- Chat ---------- */
+
+.msc__chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 460px;
+  padding: 0;
+}
+
+.msc__chat-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 12px 16px 20px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.msc__chat-head .msc__card-sub {
+  margin: 0;
+}
+
+.msc__chat-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.msc__chat-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.msc__chat-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.msc__chat-empty .msc__card-sub {
+  max-width: 240px;
+  margin: 0;
+}
+
+.msc__bubble {
+  align-self: flex-end;
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 20px 20px 4px 20px;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.msc__composer {
+  margin: 0 12px 12px;
+  padding: 4px 4px 8px;
+  border-radius: 24px;
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.msc__composer md-filled-text-field {
+  width: 100%;
+  --md-filled-text-field-container-color: transparent;
+  --md-filled-text-field-active-indicator-height: 0;
+  --md-filled-text-field-hover-active-indicator-height: 0;
+  --md-filled-text-field-focus-active-indicator-height: 0;
+}
+
+.msc__composer-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+/* ---------- Settings list ---------- */
+
+.msc__crumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 14px;
+}
+
+.msc__crumbs li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.msc__crumbs md-icon {
+  --md-icon-size: 18px;
+}
+
+.msc__crumbs [aria-current] {
+  color: var(--md-sys-color-on-surface);
+  font-weight: 700;
+}
+
+.msc__settings {
+  --md-list-container-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+}
+
+.msc__settings md-list-item {
+  --md-list-item-label-text-weight: 700;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--md-sys-color-surface-container-high);
+}

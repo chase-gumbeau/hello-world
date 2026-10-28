@@ -1,0 +1,47 @@
+/*
+ * Dark overrides for Storybook's docs pages (autodocs + MDX).
+ * Story canvases are themed by the tokens in material-theme.css / style.css;
+ * the docs chrome is styled by Storybook itself, so it needs a nudge here.
+ */
+:root[data-theme='dark'] {
+  --docs-bg: #161312;
+  --docs-text: #e8e1de;
+  --docs-muted: #b8afab;
+  --docs-border: #4a4340;
+  --docs-surface: #211d1c;
+  --docs-link: #3ee0a4;
+}
+
+:root[data-theme='dark'] body,
+:root[data-theme='dark'] .sbdocs-wrapper,
+:root[data-theme='dark'] .sbdocs-content {
+  background: var(--docs-bg);
+  color: var(--docs-text);
+}
+
+:root[data-theme='dark'] .sbdocs :is(h1, h2, h3, h4, h5, h6, p, li, td, th, label, summary) {
+  color: var(--docs-text);
+}
+
+:root[data-theme='dark'] .sbdocs :is(a, a:visited) {
+  color: var(--docs-link);
+}
+
+:root[data-theme='dark'] .sbdocs :is(table, tr, td, th) {
+  border-color: var(--docs-border);
+  background-color: transparent;
+}
+
+:root[data-theme='dark'] .sbdocs :is(pre, code) {
+  background: var(--docs-surface);
+  border-color: var(--docs-border);
+  color: var(--docs-text);
+}
+
+:root[data-theme='dark'] .docblock-source,
+:root[data-theme='dark'] .docblock-argstable,
+:root[data-theme='dark'] .docs-story {
+  background: var(--docs-bg);
+  border-color: var(--docs-border);
+  box-shadow: none;
+}

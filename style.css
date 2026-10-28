@@ -151,3 +151,14 @@ ol {
   display: block;
   margin: 14px 0;
 }
+
+/* Dark scheme (Storybook toolbar Theme switcher) */
+:root[data-theme='dark'] {
+  --bg: #161312;
+  --surface: #211d1c;
+  --surface-strong: #2b2725;
+  --text: #e8e1de;
+  --muted: #b8afab;
+  --border: #4a4340;
+  --accent: #3ee0a4;
+}

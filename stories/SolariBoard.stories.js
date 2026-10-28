@@ -2,7 +2,7 @@ import './solari-board.css';
 import { createSolariBoard } from './solari-board.js';
 
 export default {
-  title: 'Projects/Solari Board',
+  title: 'Studies/Motion/Solari Board',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
