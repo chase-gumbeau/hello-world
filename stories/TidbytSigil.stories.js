@@ -13,7 +13,6 @@ const flankingPanels = (x, y) => {
 
 export default {
   title: 'Projects/Tidbyt/Ultrahand Sigil',
-  tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
   },

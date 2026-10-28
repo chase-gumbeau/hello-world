@@ -222,6 +222,11 @@
   column-gap: 40px;
 }
 
+/* No hero above it (hero.index left out of the config). */
+.gal__panel > .gal__index:first-child {
+  margin-top: 48px;
+}
+
 .gal__index-group {
   margin-bottom: 36px;
   break-inside: avoid;
