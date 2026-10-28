@@ -1,5 +1,5 @@
 {
-  "name": "helloworld2",
+  "name": "studies",
   "version": "1.0.0",
   "description": "Welcome to my first GitHub project! 👋",
   "main": "index.js",
@@ -17,16 +17,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chase-gumbeau/GitNewb.git"
+    "url": "git+https://github.com/chase-gumbeau/studies.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/chase-gumbeau/GitNewb/issues"
+    "url": "https://github.com/chase-gumbeau/studies/issues"
   },
-  "homepage": "https://github.com/chase-gumbeau/GitNewb#readme",
+  "homepage": "https://github.com/chase-gumbeau/studies#readme",
   "devDependencies": {
     "@chromatic-com/storybook": "^5.2.1",
     "@storybook/addon-a11y": "10.6.0",
