@@ -232,7 +232,8 @@
 /* No hero above it (that view's copy left out of the config). */
 .gal__panel > .gal__masonry:first-child,
 .gal__panel > .gal__index:first-child,
-.gal__panel > .gal__section:first-child {
+.gal__panel > .gal__section:first-child,
+.gal__panel > .gal__group:first-child {
   margin-top: 48px;
 }
 
@@ -305,9 +306,27 @@
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
 }
 
-.gal__section-head h2 {
+.gal__section-head :is(h2, h3) {
   margin: 0 0 4px;
   font: 400 28px/36px var(--md-ref-typeface-brand);
+}
+
+/* Category groups (Categories view): a larger heading over its categories, whose
+   own headings step down in size beneath it. */
+.gal__group {
+  max-width: 1200px;
+  margin: 0 auto 72px;
+  scroll-margin-top: 72px;
+}
+
+.gal__group-title {
+  margin: 0 0 28px;
+  font: 400 40px/48px var(--md-ref-typeface-brand);
+}
+
+.gal__group .gal__section-head h3 {
+  font-size: 22px;
+  line-height: 28px;
 }
 
 .gal__section-head p {
