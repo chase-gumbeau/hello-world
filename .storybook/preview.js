@@ -61,7 +61,12 @@ const preview = {
           'Foundations',
           'Studies',
           [
+            // Overview first, then sections alphabetically.
             'Overview',
+            '3D',
+            'Color',
+            'Compositions',
+            'Motion',
             'Surfaces',
             [
               'Morning Brief',
@@ -76,13 +81,8 @@ const preview = {
                 'Catalog',
                 'Ops / CS',
               ],
-              'Dashboards',
             ],
-            'Color',
             'Typography',
-            'Compositions',
-            'Motion',
-            '3D',
             'Worlds',
           ],
           'Projects',
