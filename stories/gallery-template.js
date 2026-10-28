@@ -14,7 +14,8 @@
  * two worked examples.
  *
  * @typedef {object} Variant
- * @property {string} label  Short name shown above the preview ("Disabled", "With icons").
+ * @property {string} [label]  Short name shown above the preview ("Disabled", "With icons").
+ *   Leave it out on a card that needs none.
  * @property {string} html   Markup for the live preview; also shown as the code sample.
  *   Write `{id}` wherever a document-unique id is needed (`id="menu-{id}"`,
  *   `data-open="menu-{id}"`): the shell replaces it per render, and strips
@@ -53,10 +54,10 @@
  * @property {(view: string) => string} viewHref  Story URL for the gallery on a view.
  * @property {{one: string, many: string}} [noun]  What an item is called
  *   ("family"/"families"). Defaults to item/items.
- * @property {{gallery: HeroCopy & {actions?: {label: string, view: string}[]},
- *   index?: HeroCopy, categories: HeroCopy}} hero  Copy above each view.
+ * @property {{gallery?: HeroCopy & {actions?: {label: string, view: string}[]},
+ *   index?: HeroCopy, categories?: HeroCopy}} [hero]  Copy above each view.
  *   Gallery actions jump to another view; the first is filled, the rest tonal.
- *   Leave out `index` for an Index view with no heading.
+ *   Leave out a view's copy (or `hero` altogether) for no heading there.
  * @property {string} [docsLabel]  Label for the item page's docs link.
  * @property {(() => string)[]} [compositions]  Extra masonry cards for the
  *   Gallery view, interleaved one per `compositionEvery` items.
@@ -132,7 +133,7 @@ function wireOpeners(root) {
 function demoHtml(variant) {
   return `
     <div class="gal__demo">
-      <p class="gal__demo-label">${variant.label}</p>
+      ${variant.label ? `<p class="gal__demo-label">${variant.label}</p>` : ''}
       <div class="gal__demo-body">${liveHtml(variant.html)}</div>
     </div>`;
 }
@@ -154,7 +155,7 @@ function itemCard(config, item) {
 /* ---------- Views ---------- */
 
 function heroHtml(config, view) {
-  const { hero, items, categories } = config;
+  const { hero = {}, items, categories } = config;
   const noun = config.noun ?? { one: 'item', many: 'items' };
   if (view === 'index') {
     if (!hero.index) return '';
@@ -165,6 +166,7 @@ function heroHtml(config, view) {
       </header>`;
   }
   if (view === 'categories') {
+    if (!hero.categories) return '';
     return `
       <header class="gal__hero gal__hero--compact">
         <h1>${hero.categories.title}</h1>
@@ -174,6 +176,7 @@ function heroHtml(config, view) {
         </nav>
       </header>`;
   }
+  if (!hero.gallery) return '';
   const counts = `${items.length} ${noun.many} · ${categories.length} categories`;
   const actions = (hero.gallery.actions ?? [])
     .map(({ label, view: to }, i) => {

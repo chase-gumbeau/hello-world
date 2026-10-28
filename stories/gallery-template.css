@@ -30,7 +30,6 @@
   justify-content: center;
   margin: 0 -16px;
   padding: 12px 16px;
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
   background: color-mix(in srgb, var(--md-sys-color-surface) 85%, transparent);
   backdrop-filter: blur(12px);
 }
@@ -117,13 +116,21 @@
 
 .gal__card {
   --md-elevated-card-container-color: var(--md-sys-color-surface-container-low);
-  --md-outlined-card-container-color: var(--md-sys-color-surface-container-low);
+  /* Gallery cards sit straight on the page: no fill, no outline. */
+  --md-outlined-card-container-color: transparent;
+  --md-outlined-card-outline-width: 0;
   --md-filled-card-container-color: var(--md-sys-color-surface-container-highest);
-  --md-elevated-card-container-shape: 28px;
-  --md-outlined-card-container-shape: 28px;
-  --md-filled-card-container-shape: 28px;
+  --md-elevated-card-container-shape: 16px;
+  --md-outlined-card-container-shape: 16px;
+  --md-filled-card-container-shape: 16px;
   display: block;
   padding: 20px;
+}
+
+/* Outlined cards inside a gallery card (in previews) keep their usual fill and outline. */
+.gal__card md-outlined-card:not(.gal__card) {
+  --md-outlined-card-container-color: var(--md-sys-color-surface-container-low);
+  --md-outlined-card-outline-width: 1px;
 }
 
 .gal__card-title {
@@ -222,8 +229,10 @@
   column-gap: 40px;
 }
 
-/* No hero above it (hero.index left out of the config). */
-.gal__panel > .gal__index:first-child {
+/* No hero above it (that view's copy left out of the config). */
+.gal__panel > .gal__masonry:first-child,
+.gal__panel > .gal__index:first-child,
+.gal__panel > .gal__section:first-child {
   margin-top: 48px;
 }
 
@@ -400,7 +409,7 @@
   padding: 32px 24px;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-bottom: 0;
-  border-radius: 16px 16px 0 0;
+  border-radius: 10px 10px 0 0;
   background: var(--md-sys-color-surface-container-lowest);
 }
 
@@ -420,7 +429,7 @@
   padding: 16px;
   overflow-x: auto;
   border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 0 10px 10px;
   background: var(--md-sys-color-surface-container);
   color: var(--md-sys-color-on-surface);
   font: 13px/20px ui-monospace, SFMono-Regular, Menlo, monospace;

@@ -4,3 +4,6 @@ dist/
 debug-storybook.log
 *.log
 .tmp-*.png
+story-previews/*
+!story-previews/.gitkeep
+stories/story-updates.json

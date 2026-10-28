@@ -133,19 +133,6 @@ export const EXAMPLE_GALLERY = {
   // Relative to iframe.html, so they work under the /studies/ Pages base too.
   itemHref: (id) => `./?path=/story/foundations-surface-gallery-template-items--${id}`,
   viewHref: (view) => `./?path=/story/foundations-surface-gallery-template--gallery&args=view:${view}`,
-  hero: {
-    gallery: {
-      title: 'A template for galleries',
-      body: 'Define categories, items and variants in one config; the template builds the Gallery, Index, Categories and a page per item.',
-      actions: [
-        { label: 'Browse the index', view: 'index' },
-        { label: 'View by category', view: 'categories' },
-      ],
-    },
-    categories: {
-      title: 'Categories',
-      body: 'The same cards, grouped under their category.',
-    },
-  },
+  // No hero: every view opens straight onto its content.
   compositions: [overviewCard],
 };

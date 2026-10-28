@@ -20,6 +20,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history, so scripts/story-updates.mjs can date the gallery items.
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -39,6 +42,19 @@ jobs:
         run: |
           mkdir -p storybook-static/assets
           cp -R assets/scrolls* storybook-static/assets/
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Screenshots for the Studies and Projects gallery cards, taken from this build
+      # so they always match what's published. The build expects to live at /studies/,
+      # so it's served from a folder of that name.
+      - name: Capture gallery story previews
+        run: |
+          mkdir -p .site && ln -s "$PWD/storybook-static" .site/studies
+          python3 -m http.server 8080 --directory .site > /dev/null 2>&1 &
+          sleep 2
+          node scripts/capture-story-previews.mjs http://localhost:8080/studies/ storybook-static/story-previews
 
       - name: Add Jekyll bypass
         run: touch storybook-static/.nojekyll
