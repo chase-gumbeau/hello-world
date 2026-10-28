@@ -1,9 +1,21 @@
 /**
  * Android 17 button animation study — glowing capsule variants from Figma.
  * Effects: rotate, bottom, left & right, top & bottom, combination, warp.
+ *
+ * Every button sits on a drifting mesh of soft color, then layers its own glows on
+ * top. Each layer moves on its own period (deliberately not multiples of each
+ * other) and eases rather than ticking linearly, so the motion never visibly
+ * repeats and reads as organic rather than mechanical.
  */
 
+/* Animatable custom properties, so gradients can move smoothly. */
 @property --a17-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --a17-angle-2 {
   syntax: '<angle>';
   initial-value: 0deg;
   inherits: false;
@@ -15,12 +27,51 @@
   inherits: false;
 }
 
+@property --a17-x {
+  syntax: '<percentage>';
+  initial-value: 50%;
+  inherits: false;
+}
+
+@property --a17-y {
+  syntax: '<percentage>';
+  initial-value: 50%;
+  inherits: false;
+}
+
+@property --a17-x2 {
+  syntax: '<percentage>';
+  initial-value: 50%;
+  inherits: false;
+}
+
+@property --a17-y2 {
+  syntax: '<percentage>';
+  initial-value: 50%;
+  inherits: false;
+}
+
+@property --a17-x3 {
+  syntax: '<percentage>';
+  initial-value: 50%;
+  inherits: false;
+}
+
+@property --a17-y3 {
+  syntax: '<percentage>';
+  initial-value: 50%;
+  inherits: false;
+}
+
 .a17-study {
   --a17-bg: #042f2f;
   --a17-ring: #008876;
   --a17-glow: #00dbcc;
   --a17-glow-mid: #0a948c;
   --a17-glow-dim: rgba(20, 77, 75, 0);
+  /* A cooler cyan and a pale mint, for depth in the drifting mesh. */
+  --a17-accent: #2fc8ff;
+  --a17-mint: #9dffe6;
   --a17-label: #16baaa;
   --a17-text: #ffffff;
   --a17-font-display: 'Lato', sans-serif;
@@ -199,9 +250,65 @@
   white-space: nowrap;
 }
 
-/* ——— Rotate: traveling border beam ——— */
+/* Glow layers are styled on their own: each only exists in the buttons that use it,
+   so the combination picks up every one. */
 
-.a17-btn--rotate .a17-btn__glow--beam {
+/* ——— Mesh: three soft blobs drifting under every variant ——— */
+
+/* Each blob wanders its own path on its own period, so they keep re-blending. */
+.a17-btn__glow--mesh {
+  inset: -30%;
+  background:
+    radial-gradient(38% 70% at var(--a17-x) var(--a17-y), color-mix(in srgb, var(--a17-glow) 60%, transparent), transparent 70%),
+    radial-gradient(34% 80% at var(--a17-x2) var(--a17-y2), color-mix(in srgb, var(--a17-accent) 45%, transparent), transparent 70%),
+    radial-gradient(44% 60% at var(--a17-x3) var(--a17-y3), color-mix(in srgb, var(--a17-mint) 32%, transparent), transparent 72%);
+  filter: blur(12px) saturate(1.15);
+  mix-blend-mode: screen;
+  opacity: 0.5;
+  animation:
+    a17-wander-1 9.7s ease-in-out infinite alternate,
+    a17-wander-2 13.3s ease-in-out infinite alternate,
+    a17-wander-3 7.1s ease-in-out infinite alternate,
+    a17-breathe 6.3s ease-in-out infinite;
+}
+
+@keyframes a17-wander-1 {
+  0% { --a17-x: 18%; --a17-y: 30%; }
+  35% { --a17-x: 46%; --a17-y: 72%; }
+  70% { --a17-x: 70%; --a17-y: 40%; }
+  100% { --a17-x: 34%; --a17-y: 58%; }
+}
+
+@keyframes a17-wander-2 {
+  0% { --a17-x2: 82%; --a17-y2: 64%; }
+  40% { --a17-x2: 58%; --a17-y2: 28%; }
+  75% { --a17-x2: 30%; --a17-y2: 62%; }
+  100% { --a17-x2: 66%; --a17-y2: 46%; }
+}
+
+@keyframes a17-wander-3 {
+  0% { --a17-x3: 50%; --a17-y3: 80%; }
+  50% { --a17-x3: 40%; --a17-y3: 22%; }
+  100% { --a17-x3: 62%; --a17-y3: 60%; }
+}
+
+@keyframes a17-breathe {
+  0%,
+  100% {
+    opacity: 0.38;
+  }
+  45% {
+    opacity: 0.62;
+  }
+  70% {
+    opacity: 0.48;
+  }
+}
+
+/* ——— Rotate: a traveling border beam that surges and settles ——— */
+
+/* Easing each lap makes the beam accelerate and slow, like it's being pushed. */
+.a17-btn__glow--beam {
   inset: -1px;
   background: conic-gradient(
     from var(--a17-angle),
@@ -209,16 +316,17 @@
     transparent 50deg,
     color-mix(in srgb, var(--a17-glow) 15%, transparent) 90deg,
     var(--a17-glow) 130deg,
-    color-mix(in srgb, var(--a17-glow) 15%, transparent) 170deg,
-    transparent 210deg,
+    color-mix(in srgb, var(--a17-mint) 40%, transparent) 150deg,
+    color-mix(in srgb, var(--a17-glow) 15%, transparent) 175deg,
+    transparent 215deg,
     transparent 360deg
   );
   filter: blur(6px);
   opacity: 0.95;
-  animation: a17-spin 2.8s linear infinite;
+  animation: a17-spin 3.4s cubic-bezier(0.55, 0.1, 0.45, 0.9) infinite;
 }
 
-.a17-btn--rotate .a17-btn__glow--beam-sharp {
+.a17-btn__glow--beam-sharp {
   inset: 0;
   padding: var(--a17-border);
   background: conic-gradient(
@@ -226,7 +334,8 @@
     transparent 0deg,
     transparent 70deg,
     var(--a17-glow) 115deg,
-    transparent 160deg,
+    var(--a17-mint) 125deg,
+    transparent 165deg,
     transparent 360deg
   );
   -webkit-mask:
@@ -237,8 +346,23 @@
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  animation: a17-spin 2.8s linear infinite;
+  animation: a17-spin 3.4s cubic-bezier(0.55, 0.1, 0.45, 0.9) infinite;
   filter: blur(0.4px);
+}
+
+/* A wide, faint beam turning slowly the other way underneath. */
+.a17-btn__glow--beam-counter {
+  inset: -2px;
+  background: conic-gradient(
+    from var(--a17-angle-2),
+    transparent 0deg,
+    color-mix(in srgb, var(--a17-accent) 35%, transparent) 70deg,
+    transparent 160deg,
+    transparent 360deg
+  );
+  filter: blur(9px);
+  opacity: 0.6;
+  animation: a17-spin-back 7.9s ease-in-out infinite;
 }
 
 @keyframes a17-spin {
@@ -247,140 +371,186 @@
   }
 }
 
-/* ——— Bottom: rising / sweeping bottom fill glow ——— */
+@keyframes a17-spin-back {
+  from {
+    --a17-angle-2: 360deg;
+  }
+  to {
+    --a17-angle-2: 0deg;
+  }
+}
 
-.a17-btn--bottom .a17-btn__glow--bottom {
+/* ——— Bottom: two tides on different periods ——— */
+
+/* The main tide rises and falls unevenly... */
+.a17-btn__glow--bottom {
   background: linear-gradient(
     to top,
     var(--a17-glow) 0%,
     color-mix(in srgb, var(--a17-glow) 55%, transparent) 28%,
     var(--a17-glow-dim) var(--a17-bottom-stop)
   );
-  opacity: 0.85;
-  animation: a17-bottom-sweep 2.6s ease-in-out infinite;
+  opacity: 0.8;
+  animation: a17-bottom-tide 4.3s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
-@keyframes a17-bottom-sweep {
+@keyframes a17-bottom-tide {
   0%,
   100% {
-    --a17-bottom-stop: 88%;
-    opacity: 0.45;
+    --a17-bottom-stop: 86%;
+    opacity: 0.42;
   }
-  35% {
-    --a17-bottom-stop: 42%;
-    opacity: 0.95;
+  30% {
+    --a17-bottom-stop: 40%;
+    opacity: 0.92;
   }
-  55% {
-    --a17-bottom-stop: 22%;
-    opacity: 0.7;
+  48% {
+    --a17-bottom-stop: 26%;
+    opacity: 0.72;
   }
-  75% {
-    --a17-bottom-stop: 55%;
+  72% {
+    --a17-bottom-stop: 58%;
     opacity: 0.55;
   }
 }
 
-/* ——— Left & right: end-cap glows ——— */
-
-.a17-btn--sides .a17-btn__glow--sides {
+/* ...while a swell's crest drifts side to side along the bottom. */
+.a17-btn__glow--bottom-swell {
+  inset: 0 -10%;
   background: radial-gradient(
-    ellipse 42% 120% at var(--a17-side-x, 0%) 50%,
-    var(--a17-glow) 0%,
-    color-mix(in srgb, var(--a17-glow-mid) 55%, transparent) 38%,
-    var(--a17-glow-dim) 72%
+    46% 70% at var(--a17-x) 100%,
+    color-mix(in srgb, var(--a17-mint) 70%, transparent) 0%,
+    color-mix(in srgb, var(--a17-glow) 40%, transparent) 40%,
+    transparent 72%
   );
-  animation: a17-sides-pulse 2.4s ease-in-out infinite;
+  filter: blur(4px);
+  mix-blend-mode: screen;
+  animation:
+    a17-drift-x 6.7s ease-in-out infinite alternate,
+    a17-breathe 3.1s ease-in-out infinite;
 }
 
-.a17-btn--sides .a17-btn__glow--sides-mirror {
-  background: radial-gradient(
-    ellipse 42% 120% at calc(100% - var(--a17-side-x, 0%)) 50%,
-    var(--a17-glow) 0%,
-    color-mix(in srgb, var(--a17-glow-mid) 55%, transparent) 38%,
-    var(--a17-glow-dim) 72%
-  );
-  animation: a17-sides-pulse 2.4s ease-in-out infinite;
+@keyframes a17-drift-x {
+  0% { --a17-x: 22%; }
+  45% { --a17-x: 64%; }
+  100% { --a17-x: 80%; }
 }
 
-@keyframes a17-sides-pulse {
+/* ——— Left & right: end glows on their own rhythms ——— */
+
+/* Out of step with each other, each drifting a little up and down. */
+.a17-btn__glow--side-left,
+.a17-btn__glow--side-right {
+  filter: blur(1px);
+  mix-blend-mode: screen;
+}
+
+.a17-btn__glow--side-left {
+  background: radial-gradient(
+    ellipse 30% 95% at 0% var(--a17-y),
+    var(--a17-glow) 0%,
+    color-mix(in srgb, var(--a17-glow-mid) 50%, transparent) 45%,
+    transparent 70%
+  );
+  animation:
+    a17-pulse-a 2.9s cubic-bezier(0.45, 0, 0.55, 1) infinite,
+    a17-drift-y 5.3s ease-in-out infinite alternate;
+}
+
+.a17-btn__glow--side-right {
+  background: radial-gradient(
+    ellipse 30% 95% at 100% var(--a17-y),
+    var(--a17-glow) 0%,
+    color-mix(in srgb, var(--a17-accent) 40%, transparent) 45%,
+    transparent 70%
+  );
+  animation:
+    a17-pulse-b 3.7s cubic-bezier(0.45, 0, 0.55, 1) infinite,
+    a17-drift-y 4.1s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes a17-drift-y {
+  0% { --a17-y: 36%; }
+  100% { --a17-y: 64%; }
+}
+
+/* Two pulse shapes, so paired layers don't flash in sync. */
+@keyframes a17-pulse-a {
   0%,
   100% {
     opacity: 0.35;
-    filter: blur(2px);
   }
-  50% {
-    opacity: 0.95;
-    filter: blur(0.5px);
+  40% {
+    opacity: 1;
+  }
+  65% {
+    opacity: 0.6;
   }
 }
 
-/* Static dual-end look matching Figma resting frame + soft pulse */
-.a17-btn--sides .a17-btn__glow--sides-static {
-  background:
-    radial-gradient(
-      ellipse 28% 95% at 0% 50%,
-      var(--a17-glow) 0%,
-      color-mix(in srgb, var(--a17-glow-mid) 50%, transparent) 45%,
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 28% 95% at 100% 50%,
-      var(--a17-glow) 0%,
-      color-mix(in srgb, var(--a17-glow-mid) 50%, transparent) 45%,
-      transparent 70%
-    );
-  animation: a17-opacity-breathe 2.4s ease-in-out infinite;
-}
-
-/* ——— Top & bottom: edge glows ——— */
-
-.a17-btn--edges .a17-btn__glow--edges {
-  background:
-    radial-gradient(
-      ellipse 95% 38% at 50% 0%,
-      var(--a17-glow) 0%,
-      color-mix(in srgb, var(--a17-glow-mid) 50%, transparent) 45%,
-      transparent 72%
-    ),
-    radial-gradient(
-      ellipse 95% 38% at 50% 100%,
-      var(--a17-glow) 0%,
-      color-mix(in srgb, var(--a17-glow-mid) 50%, transparent) 45%,
-      transparent 72%
-    );
-  animation: a17-opacity-breathe 2.2s ease-in-out infinite;
-}
-
-@keyframes a17-opacity-breathe {
+@keyframes a17-pulse-b {
   0%,
   100% {
-    opacity: 0.4;
+    opacity: 0.45;
   }
-  50% {
+  30% {
+    opacity: 0.7;
+  }
+  60% {
     opacity: 1;
   }
 }
 
-/* ——— Combination: stacked layers ——— */
+/* ——— Top & bottom: edge glows traveling past each other ——— */
 
-.a17-btn--combo .a17-btn__glow--beam,
-.a17-btn--combo .a17-btn__glow--beam-sharp {
-  animation-duration: 3.2s;
+.a17-btn__glow--edge-top,
+.a17-btn__glow--edge-bottom {
+  mix-blend-mode: screen;
+}
+
+.a17-btn__glow--edge-top {
+  background: radial-gradient(
+    ellipse 70% 40% at var(--a17-x) 0%,
+    var(--a17-glow) 0%,
+    color-mix(in srgb, var(--a17-glow-mid) 50%, transparent) 45%,
+    transparent 72%
+  );
+  animation:
+    a17-drift-x 4.9s ease-in-out infinite alternate,
+    a17-pulse-a 3.3s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.a17-btn__glow--edge-bottom {
+  background: radial-gradient(
+    ellipse 70% 40% at var(--a17-x) 100%,
+    var(--a17-glow) 0%,
+    color-mix(in srgb, var(--a17-accent) 40%, transparent) 45%,
+    transparent 72%
+  );
+  animation:
+    a17-drift-x 6.1s ease-in-out infinite alternate-reverse,
+    a17-pulse-b 2.7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+/* ——— Combination: every layer, rebalanced so they don't muddy ——— */
+
+.a17-btn--combo .a17-btn__glow--mesh {
+  opacity: 0.45;
 }
 
 .a17-btn--combo .a17-btn__glow--bottom {
-  opacity: 0.7;
-  animation-duration: 3.2s;
+  animation-duration: 5.1s;
 }
 
-.a17-btn--combo .a17-btn__glow--sides-static {
-  opacity: 0.55;
-  animation-duration: 3.2s;
+.a17-btn--combo .a17-btn__glow--bottom-swell {
+  opacity: 0.6;
 }
 
-.a17-btn--combo .a17-btn__glow--edges {
-  opacity: 0.5;
-  animation-duration: 3.2s;
+.a17-btn--combo .a17-btn__glow--side-left,
+.a17-btn--combo .a17-btn__glow--side-right,
+.a17-btn--combo .a17-btn__glow--edge-top,
+.a17-btn--combo .a17-btn__glow--edge-bottom {
+  filter: blur(2px) opacity(0.55);
 }
 
 .a17-btn--combo .a17-btn__ring {
@@ -388,14 +558,25 @@
     0 0 18px color-mix(in srgb, var(--a17-glow) 55%, transparent),
     0 0 36px color-mix(in srgb, var(--a17-glow) 25%, transparent),
     inset 0 0 14px color-mix(in srgb, var(--a17-glow) 18%, transparent);
+  animation: a17-ring-glow 5.7s ease-in-out infinite;
 }
 
-/* ——— Warp: energy distortion on the ring ——— */
+@keyframes a17-ring-glow {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.18);
+  }
+}
+
+/* ——— Warp: a slowly shifting distortion over the drifting mesh ——— */
 
 .a17-btn--warp .a17-btn__ring {
   border-color: var(--a17-glow);
   filter: url(#a17-warp-filter);
-  animation: a17-warp-jitter 1.8s linear infinite;
+  animation: a17-pulse-a 4.7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
 .a17-btn--warp .a17-btn__glow--warp {
@@ -404,24 +585,15 @@
   border: calc(var(--a17-border) + 1px) solid color-mix(in srgb, var(--a17-glow) 70%, transparent);
   filter: url(#a17-warp-filter) blur(1.5px);
   opacity: 0.75;
-  animation: a17-warp-jitter 1.8s linear infinite reverse;
+  animation: a17-pulse-b 6.1s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
-@keyframes a17-warp-jitter {
-  0% {
-    opacity: 0.85;
-  }
-  25% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-  75% {
-    opacity: 0.95;
-  }
-  100% {
-    opacity: 0.85;
+/* ——— Reduced motion: glows hold still at their resting look ——— */
+
+@media (prefers-reduced-motion: reduce) {
+  .a17-btn__glow,
+  .a17-btn__ring {
+    animation: none !important;
   }
 }
 

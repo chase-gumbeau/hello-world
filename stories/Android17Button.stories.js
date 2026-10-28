@@ -10,10 +10,14 @@ const WARP_FILTER_SVG = `
         seed="7"
         result="noise"
       >
+        <!-- Slow, eased drift between noise shapes, on a period that never lines up
+             with the displacement's, so the ring's warp keeps changing character. -->
         <animate
           attributeName="baseFrequency"
-          dur="1.8s"
-          values="0.018 0.08;0.045 0.14;0.012 0.055;0.018 0.08"
+          dur="5.3s"
+          values="0.018 0.08;0.034 0.12;0.014 0.06;0.026 0.1;0.018 0.08"
+          calcMode="spline"
+          keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1"
           repeatCount="indefinite"
         />
       </feTurbulence>
@@ -26,8 +30,10 @@ const WARP_FILTER_SVG = `
       >
         <animate
           attributeName="scale"
-          dur="1.8s"
-          values="2;10;5;2"
+          dur="3.7s"
+          values="3;8;4.5;9.5;3"
+          calcMode="spline"
+          keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1"
           repeatCount="indefinite"
         />
       </feDisplacementMap>
@@ -56,23 +62,25 @@ function createButton({ label, variant, size = 'md' }) {
   btn.className = `a17-btn a17-btn--${size} a17-btn--${variantClass}`;
   btn.setAttribute('aria-label', label);
 
-  const layers = [];
+  const glow = (name) => `<span class="a17-btn__glow a17-btn__glow--${name}" aria-hidden="true"></span>`;
+
+  // Every variant sits on a drifting mesh of soft color, then adds its own layers.
+  const layers = [glow('mesh')];
 
   if (variant === 'rotate' || variant === 'combo') {
-    layers.push('<span class="a17-btn__glow a17-btn__glow--beam" aria-hidden="true"></span>');
-    layers.push('<span class="a17-btn__glow a17-btn__glow--beam-sharp" aria-hidden="true"></span>');
+    layers.push(glow('beam-counter'), glow('beam'), glow('beam-sharp'));
   }
   if (variant === 'bottom' || variant === 'combo') {
-    layers.push('<span class="a17-btn__glow a17-btn__glow--bottom" aria-hidden="true"></span>');
+    layers.push(glow('bottom'), glow('bottom-swell'));
   }
   if (variant === 'sides' || variant === 'combo') {
-    layers.push('<span class="a17-btn__glow a17-btn__glow--sides-static" aria-hidden="true"></span>');
+    layers.push(glow('side-left'), glow('side-right'));
   }
   if (variant === 'edges' || variant === 'combo') {
-    layers.push('<span class="a17-btn__glow a17-btn__glow--edges" aria-hidden="true"></span>');
+    layers.push(glow('edge-top'), glow('edge-bottom'));
   }
   if (variant === 'warp') {
-    layers.push('<span class="a17-btn__glow a17-btn__glow--warp" aria-hidden="true"></span>');
+    layers.push(glow('warp'));
   }
 
   btn.innerHTML = `

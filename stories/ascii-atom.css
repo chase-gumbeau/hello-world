@@ -1,0 +1,84 @@
+/**
+ * ASCII atom study — the atom logo in characters, on warm paper.
+ */
+
+.atom-study {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  min-height: 100vh;
+  margin: 0;
+  padding: 32px 16px;
+  background: var(--atom-bg, #f3f0eb);
+  color: var(--atom-ink, #1f1b17);
+  font-family: 'Lato', system-ui, sans-serif;
+}
+
+.atom-stage {
+  width: min(480px, 86vw);
+  container-type: inline-size;
+}
+
+/* The grid fills its stage's width: cells are 0.6em wide, so the font scales with it.
+   Rows are set so the grid comes out square. */
+.ascii-atom {
+  margin: 0;
+  color: var(--atom-ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: calc(100cqw / (var(--cols) * 0.6));
+  line-height: 1.1;
+  white-space: pre;
+  user-select: none;
+}
+
+.ascii-atom__e {
+  color: var(--atom-electron);
+  font-weight: 700;
+}
+
+/* ---------- Chrome ---------- */
+
+.atom-replay {
+  padding: 8px 18px;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.atom-replay:hover {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.atom-sizes {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 40px;
+}
+
+.atom-size {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+/* Every size shares one width, so the coarser grids show bigger characters. */
+.atom-size__stage {
+  width: 220px;
+  container-type: inline-size;
+}
+
+.atom-size figcaption {
+  font-size: 12px;
+  opacity: 0.6;
+}

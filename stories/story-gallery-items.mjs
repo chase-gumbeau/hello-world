@@ -61,12 +61,12 @@ export const STUDIES = {
       story: 'studies-motion-ascii-sigil--animated',
     },
     {
-      id: 'atom-logo',
-      files: ['stories/AtomLogo.stories.js', 'stories/atom-logo.*'],
-      title: 'Atom Logo',
+      id: 'ascii-atom',
+      files: ['stories/AsciiAtom.stories.js', 'stories/ascii-atom.*'],
+      title: 'ASCII Atom',
       category: 'motion',
-      summary: 'An animated atom mark, by day and by night.',
-      story: 'studies-motion-atom-logo--animated',
+      summary: 'The atom logo in characters: orbits draw on, electrons trail as they spin.',
+      story: 'studies-motion-ascii-atom--animated',
     },
     {
       id: 'morning-brief',
