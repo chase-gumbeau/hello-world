@@ -1,0 +1,63 @@
+/* Selection catalog layouts. Tokens only. */
+.mcat-selection-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+}
+
+.mcat-selection-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.mcat-selection-stack > md-filled-select,
+.mcat-selection-stack > md-outlined-select,
+.mcat-selection-stack > md-slider {
+  width: 100%;
+}
+
+.mcat-selection-pair {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--md-sys-color-on-surface);
+  font: inherit;
+}
+
+.mcat-selection-pair--between {
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.mcat-selection-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  color: var(--md-sys-color-on-surface);
+}
+
+.mcat-selection-group legend {
+  padding: 0;
+  margin-bottom: 4px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.mcat-selection-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-size: 12px;
+  font-weight: 500;
+}
