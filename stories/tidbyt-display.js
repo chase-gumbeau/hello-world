@@ -10,7 +10,8 @@ const ZOOM_IN = 5;
 const ZOOM_HOLD_IN = 2.5;
 const ZOOM_OUT = 5;
 const ZOOM_PERIOD = ZOOM_HOLD_OUT + ZOOM_IN + ZOOM_HOLD_IN + ZOOM_OUT;
-export const ZOOM_MAX = 1.8;
+// Zoomed in, the art's visible edge (98.5% of its width) meets both ends of the board.
+export const ZOOM_MAX = 2.03;
 
 // Recede cycle, in seconds: shown, move back and dissolve, gone, move in and appear.
 const RECEDE_HOLD_SHOWN = 2.5;
@@ -70,13 +71,34 @@ function flowAt(x, y, t) {
 // of the image's radius.
 const COLOR_CHANGE = 5;
 const COLOR_HOLD = 8; // pause between changes when cycling
+
+// Blinks: how long one takes, in seconds, and the wait between them.
+const BLINK = 0.75;
+const BLINK_GAP = [2.5, 6];
+const BLINK_DOUBLE = 0.25; // chance a blink is quickly followed by another
+const BLINK_DARK = [0, 0, 0, 0]; // unlit, filling in behind the lid
+
+/** How closed a blink is `u` (0–1) of the way through: quick to close, slower to open. */
+const blinkShape = (u) => (u < 0.4 ? smoothstep(u / 0.4) : u < 0.5 ? 1 : 1 - smoothstep((u - 0.5) / 0.5));
+
+// Artwork changes (setArt): how long the morph takes, in seconds, how much it opens
+// center-first rather than in random blotches, and the softness of its edge.
+const MORPH = 2.6;
+const MORPH_LEAN = 0.45;
+const MORPH_EDGE = 0.12;
 const CRACK_WAVES = 5; // waves of cracks the red infection sends in
 const CRACKS_PER_WAVE = 8;
 const CRACK_WAVE_GAP = 0.11; // share of the change between waves
 const CRACK_CRAWL = 0.5; // share of the change one crack takes to reach the center
 const CRACK_SWELL = 0.15; // how fast a crack thickens once it's in, so veins merge
-const SPARKLE_LEAN = 0.35; // how much green sparkles center-first rather than at random
-const SPARKLE_TURN = 0.06; // share of the change one LED takes to turn green
+// Green: radial pulses from the center, each leaving what it passes greener.
+const PULSE_LEVELS = [0.25, 0.45, 0.65, 0.85, 1]; // how green each pulse leaves things
+const PULSE_GAP = 0.15; // share of the change between pulses
+const PULSE_SPEED = 2.9; // radius (share of the image's) a pulse covers per whole change
+const PULSE_LOBES = 6; // petals in each pulse's cymatic front
+const PULSE_EDGE = 0.05; // softness of a pulse's front
+const SPARKLE_LEAN = 0.35; // how much a sparkle change leans center-first rather than random
+const SPARKLE_TURN = 0.06; // share of the change one LED takes to turn
 const SPARKLE_FLASH = 0.035; // how long its flash lasts, as a share of the change
 const SPARKLE_BOOST = 1.3; // how bright the flash gets
 
@@ -86,10 +108,34 @@ const PATH_EDGE = 0.03;
 const PATH_GLOW = 0.04;
 
 /**
+ * A curve for traceOrder() through `points` (image coordinates) in order, traveled
+ * at an even speed along its length, recoloring `width` either side.
+ */
+export function polyline(points, width) {
+  const lengths = points.slice(1).map((p, k) => Math.hypot(p[0] - points[k][0], p[1] - points[k][1]));
+  const total = lengths.reduce((sum, l) => sum + l, 0);
+  return {
+    width,
+    at: (s) => {
+      let left = s * total;
+      for (let k = 0; k < lengths.length; k++) {
+        if (left <= lengths[k] || k === lengths.length - 1) {
+          const f = lengths[k] ? Math.min(1, left / lengths[k]) : 0;
+          const [a, b] = [points[k], points[k + 1]];
+          return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+        }
+        left -= lengths[k];
+      }
+      return points[points.length - 1];
+    },
+  };
+}
+
+/**
  * An `order` for a staged path that follows curves: each point's order is how far
  * along (0–1) a curve's head first passes within that curve's `width` of it, so the
  * color travels along the curves and recolors what they pass over. Points no curve
- * reaches get 1, so they change as their stage ends.
+ * reaches get 1, and fade in quietly as their stage ends.
  * @param {{at: (s: number) => [number, number], width: number}[]} curves  Each curve's
  *   position at s (0–1) in image coordinates, and how far either side it recolors.
  */
@@ -180,7 +226,10 @@ function pathAt(stages, x, y, p) {
   for (const stage of stages) {
     if (!stage.area(x, y)) continue;
     const local = clamp01((p - stage.from) / (stage.to - stage.from));
-    const ahead = local * (1 + PATH_EDGE) - stage.order(x, y);
+    const order = stage.order(x, y);
+    // Points off the path (order 1) fade in quietly over the stage's last stretch.
+    if (order >= 1) return { amount: smoothstep((local - 0.7) / 0.3), boost: 1 };
+    const ahead = local * (1 + PATH_EDGE) - order;
     return {
       amount: smoothstep(ahead / PATH_EDGE),
       boost: 1 + 0.7 * Math.exp(-((ahead / PATH_GLOW) ** 2)),
@@ -223,7 +272,25 @@ function colorAt(change, { d, angle, x, y }, p, t, luck) {
     red = Math.max(red, smoothstep((p - 0.88) / 0.12));
     return { amount: red, boost: 1 + 0.45 * fresh };
   }
-  // Sparkle (green, and purple without a path): each LED turns at its own moment,
+  if (change.to === 'green') {
+    // Center out, cymatic: pulse after pulse rings out from the middle, its front
+    // breathing in petals that shift each time, and each leaves what it passes
+    // greener than the last until everything is green.
+    let amount = 0;
+    let crest = 0;
+    PULSE_LEVELS.forEach((level, k) => {
+      const age = p - k * PULSE_GAP;
+      if (age <= 0) return;
+      const shape = 1 + 0.08 * Math.cos(PULSE_LOBES * angle + k * 0.9) * Math.cos(t * 3 + k);
+      const past = age * PULSE_SPEED - d * shape; // how far the front is beyond this LED
+      amount = Math.max(amount, level * smoothstep(past / PULSE_EDGE));
+      crest = Math.max(crest, Math.exp(-((past / 0.07) ** 2)));
+    });
+    // A faint standing ripple between pulses, fading out as the change settles.
+    const ripple = 0.12 * (1 - p) * Math.cos(d * 24 - t * 8) * amount;
+    return { amount, boost: 1 + 0.55 * crest + ripple };
+  }
+  // Sparkle (a color with no path of its own): each LED turns at its own moment,
   // flashing bright as it does. Moments lean slightly center-first.
   const moment = luck * (1 - SPARKLE_LEAN) + Math.min(d, 1) * SPARKLE_LEAN;
   const since = p * (1 + SPARKLE_TURN * 2) - SPARKLE_TURN - moment * (1 - SPARKLE_TURN);
@@ -288,6 +355,11 @@ const loadImage = (src) =>
  *   Behind it, each row of the area fills with its brightest LED.
  * @param {(x: number, y: number) => boolean} [opts.flow]  Area where smoke-like
  *   energy rises from bottom to top, in image coordinates (fractional).
+ * @param {{top: number, upperLid: number, lid: number, left: number, right: number}} [opts.blink]
+ *   An eye that blinks now and then, in image coordinates: within the almond from
+ *   `left` to `right` that rises from the lower `lid` to `top`, the upper lid (from
+ *   `top` down to `upperLid`, lashes and all) slides down over the still eye, melting
+ *   into the lower lid so a shut eye shows only the lower lashes, then rises again.
  * @param {'green'|'red'|'purple'|'cycle'} [opts.color]  'green' is the image as
  *   drawn. 'cycle' starts green, then steps through CYCLE: hold COLOR_HOLD seconds,
  *   change, and repeat.
@@ -295,15 +367,18 @@ const loadImage = (src) =>
  *   from: number, to: number}[]} [opts.purplePath]  Stages purple travels through,
  *   in image coordinates: during its window (`from`–`to`, shares of the change) each
  *   stage fills its area in `order` (0 first, 1 last). Without it, purple sparkles in.
- * @returns {HTMLElement & {setColor: (color: 'green'|'red'|'purple'|'cycle') => void}}
+ * @returns {HTMLElement & {setColor: (color: 'green'|'red'|'purple'|'cycle') => void,
+ *   setArt: (art: {src: string, hiRes?: string, twinkle?, recede?, flow?, purplePath?}) => void}}
  *   The display. setColor() animates to a new color over COLOR_CHANGE seconds: red
- *   crawls in from the outside toward the center in cracks; green sparkles back in,
- *   LED by LED, leaning center-first; purple follows `purplePath`. 'cycle' starts
- *   stepping from the current color.
+ *   crawls in from the outside toward the center in cracks; green rings out from the
+ *   center in cymatic pulses, each leaving things greener; purple follows
+ *   `purplePath`. 'cycle' starts stepping from the current color. setArt() morphs to
+ *   new artwork over MORPH seconds, in organic blotches that open center-first, and
+ *   switches to its effects.
  */
 export function createTidbytDisplay(
   src,
-  { size = 32, twinkle, hiRes: hiResSrc, zoom = 1, recede, flow, color = 'green', purplePath } = {},
+  { size = 32, twinkle, hiRes: hiResSrc, zoom = 1, recede, flow, blink, color = 'green', purplePath } = {},
 ) {
   const wrap = document.createElement('div');
   wrap.className = 'tidbyt-display';
@@ -371,7 +446,7 @@ export function createTidbytDisplay(
 
   // Each LED gets its own twinkle speed and phase so they never pulse in step,
   // its own point in the dissolve so the receding area breaks up as a scatter, and
-  // its own moment to sparkle green.
+  // its own moment to sparkle in a color with no path of its own.
   const leds = Array.from({ length: COLS * ROWS }, () => ({
     speed: 1.2 + Math.random() * 2.2,
     phase: Math.random() * Math.PI * 2,
@@ -455,9 +530,105 @@ export function createTidbytDisplay(
     return { from: change.from, to: change.to, amount, boost };
   };
 
-  let draw = null; // set once the images load
+  // The next blink's start, in seconds, scheduled at irregular, natural intervals.
+  const blinkGap = () => BLINK_GAP[0] + Math.random() * (BLINK_GAP[1] - BLINK_GAP[0]);
+  let nextBlink = performance.now() / 1000 + 1 + Math.random() * 2;
+
+  /** How closed the eye is at time t (0 open, 1 shut), moving the schedule along. */
+  const blinkAt = (t) => {
+    if (t > nextBlink + BLINK) {
+      nextBlink = Math.max(nextBlink + BLINK, t) + (Math.random() < BLINK_DOUBLE ? 0.12 : blinkGap());
+    }
+    return t < nextBlink ? 0 : blinkShape((t - nextBlink) / BLINK);
+  };
+
+  /**
+   * `pixels` with the eye `shut` of the way closed: the upper lid slides down over the
+   * still eye toward the lower lid, the dark above the eye filling in behind it, and
+   * melts into the lower lid as it arrives.
+   */
+  const blinked = (pixels, scale, shut) => {
+    if (shut <= 0) return pixels;
+    const { top, upperLid, lid, left, right } = blink;
+    const drop = (lid - upperLid) * shut; // how far the upper lid has come down
+    // Over the second half of its travel the upper lid melts into the dark, so a shut
+    // eye shows only the lower lid and its lashes.
+    const fade = smoothstep((shut - 0.5) / 0.5);
+    const out = new Uint8ClampedArray(pixels);
+    const rowOf = (y) => Math.min(ROWS - 1, Math.max(0, Math.round((y - size / 2) * scale + ROWS / 2 - 0.5)));
+    for (let i = 0; i < COLS * ROWS; i++) {
+      const [x, y] = toImage(i, scale);
+      // Only within the eye's almond (the upper half of an oval resting on the lid),
+      // and only where the lid now is or has passed.
+      const dx = (x - (left + right) / 2) / ((right - left) / 2);
+      const dy = (lid - y) / (lid - top + 0.5);
+      if (y >= upperLid + drop || dx * dx + dy * dy > 1) continue;
+      const fromY = y - drop; // the lid's own pixels, carried down
+      const at = (rowOf(fromY) * COLS + (i % COLS)) * 4;
+      const lidPixel = fromY < top - 0.5 ? BLINK_DARK : pixels.subarray(at, at + 4);
+      for (let c = 0; c < 4; c++) out[i * 4 + c] = lidPixel[c] + (BLINK_DARK[c] - lidPixel[c]) * fade;
+    }
+    return out;
+  };
+
+  // The artwork on screen, and the morph in progress from the previous one (if any).
+  let art = null; // { img, hiRes, stills } once loaded
+  let morph = null; // { from: art, start } with start in seconds
   let running = false;
-  const looping = Boolean(twinkle || recede || flow || zoom === 'cycle');
+  const cycle = zoom === 'cycle' && Boolean(hiResSrc);
+  const fixedScale = hiResSrc && !cycle ? zoom : 1;
+  const looping = () => Boolean(twinkle || recede || flow || blink || cycle);
+
+  /** An artwork's pixels at `scale`: crisp native art at full size, hiRes when zoomed. */
+  const frameOf = (a, scale) => {
+    if (cycle) return sample(a.hiRes, scale);
+    if (!a.stills.has(scale)) a.stills.set(scale, sample(scale === 1 ? a.img : a.hiRes, scale));
+    return a.stills.get(scale);
+  };
+
+  /**
+   * The old artwork giving way to the new one `p` of the way through a morph: in
+   * blotches of noise that lean center-first, behind a softly glowing edge.
+   */
+  const morphed = (from, to, scale, p) => {
+    const out = new Uint8ClampedArray(to);
+    const glow = new Float32Array(COLS * ROWS).fill(1);
+    for (let i = 0; i < COLS * ROWS; i++) {
+      const [x, y] = toImage(i, scale);
+      const d = Math.min(1, Math.hypot(x - size / 2, y - size / 2) / (size / 2));
+      const due = noise(x * 0.3 + morph.seed, y * 0.3) * (1 - MORPH_LEAN) + d * MORPH_LEAN;
+      const ahead = p * (1 + MORPH_EDGE) - due;
+      const a = smoothstep(ahead / MORPH_EDGE);
+      for (let c = 0; c < 4; c++) out[i * 4 + c] = from[i * 4 + c] + (to[i * 4 + c] - from[i * 4 + c]) * a;
+      glow[i] = 1 + 0.6 * Math.exp(-((ahead / 0.05) ** 2));
+    }
+    return { pixels: out, glow };
+  };
+
+  const draw = (t) => {
+    const scale = cycle ? zoomAt(t) : fixedScale;
+    let base = frameOf(art, scale);
+    let edge = null;
+    if (morph) {
+      ({ pixels: base, glow: edge } = morphed(frameOf(morph.from, scale), base, scale, (t - morph.start) / MORPH));
+    }
+    let pixels = recede ? receded(base, art.hiRes ?? art.img, scale, recedeAt(t)) : base;
+    if (blink) pixels = blinked(pixels, scale, blinkAt(t));
+    paint(pixels, (i) => {
+      const { from, to, amount, boost } = tint(i, scale, t);
+      let glow = boost * (edge ? edge[i] : 1);
+      if (flow) {
+        const [x, y] = toImage(i, scale);
+        if (flow(x, y)) glow *= flowAt(x, y, t);
+      }
+      if (twinkle && twinkles(i, scale)) {
+        // Mostly a gentle dip, with a brief brighter peak: s³ keeps peaks short.
+        const s = 0.5 + 0.5 * Math.sin(t * leds[i].speed + leds[i].phase);
+        glow *= Math.min(1.35, 0.7 + 0.65 * s ** 3);
+      }
+      return { glow, from, to, amount };
+    });
+  };
 
   const changeTo = (next, t) => {
     change = { from: current, to: next, start: t, cracks: makeCracks(), path: purplePath };
@@ -474,16 +645,17 @@ export function createTidbytDisplay(
       change = null;
       settledAt = t;
     }
+    if (morph && t - morph.start >= MORPH) morph = null;
     if (cycling && !change && t - settledAt >= COLOR_HOLD) {
       changeTo(CYCLE[(CYCLE.indexOf(current) + 1) % CYCLE.length], t);
     }
     draw(t);
-    if (looping || change || cycling) requestAnimationFrame(tick);
+    if (looping() || change || morph || cycling) requestAnimationFrame(tick);
     else running = false;
   };
 
   const start = () => {
-    if (draw && !running) {
+    if (art && !running) {
       running = true;
       requestAnimationFrame(tick);
     }
@@ -503,36 +675,34 @@ export function createTidbytDisplay(
     start();
   };
 
-  const needsHiRes = (zoom !== 1 || recede) && hiResSrc;
-  Promise.all([loadImage(src), needsHiRes && loadImage(hiResSrc)]).then(([img, hiRes]) => {
-    const cycle = hiRes && zoom === 'cycle';
-    const fixedScale = hiRes && !cycle ? zoom : 1;
-    // Full-size art stays the crisp native image; zoomed art comes from hiRes.
-    const source = fixedScale === 1 && !cycle ? img : hiRes;
-    const still = cycle ? null : sample(source, fixedScale);
+  const loadArt = (artSrc, artHiRes) =>
+    Promise.all([loadImage(artSrc), artHiRes && loadImage(artHiRes)]).then(([img, hiRes]) => ({
+      img,
+      hiRes,
+      stills: new Map(),
+    }));
 
-    draw = (t) => {
-      const scale = cycle ? zoomAt(t) : fixedScale;
-      const base = still ?? sample(hiRes, scale);
-      const pixels = recede ? receded(base, hiRes ?? img, scale, recedeAt(t)) : base;
-      paint(pixels, (i) => {
-        const { from, to, amount, boost } = tint(i, scale, t);
-        let glow = boost;
-        if (flow) {
-          const [x, y] = toImage(i, scale);
-          if (flow(x, y)) glow *= flowAt(x, y, t);
-        }
-        if (twinkle && twinkles(i, scale)) {
-          // Mostly a gentle dip, with a brief brighter peak: s³ keeps peaks short.
-          const s = 0.5 + 0.5 * Math.sin(t * leds[i].speed + leds[i].phase);
-          glow *= Math.min(1.35, 0.7 + 0.65 * s ** 3);
-        }
-        return { glow, from, to, amount };
-      });
-    };
+  // Art changes apply in the order they were asked for.
+  let ready = loadArt(src, hiResSrc).then((loaded) => {
+    art = loaded;
     draw(performance.now() / 1000);
     start();
   });
+
+  /**
+   * Swaps in new artwork, morphing to it over MORPH seconds, along with the effects
+   * that belong to it. Options as for createTidbytDisplay; effects left out turn off.
+   */
+  wrap.setArt = (next) => {
+    ready = ready
+      .then(() => loadArt(next.src, next.hiRes))
+      .then((loaded) => {
+        morph = { from: art, start: performance.now() / 1000, seed: Math.random() * 50 };
+        art = loaded;
+        ({ twinkle, recede, flow, blink, purplePath } = next);
+        start();
+      });
+  };
 
   return wrap;
 }
