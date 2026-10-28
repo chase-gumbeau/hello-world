@@ -150,18 +150,6 @@
   width: 100%;
 }
 
-.scrolls-app__nav .scrolls-home__sep {
-  margin: var(--menu-sep-gap, 18px) 0;
-  font-size: var(--menu-year-size, 15px);
-  text-align: left;
-}
-
-.scrolls-app__nav .scrolls-home__year {
-  font-size: var(--menu-year-size, 15px);
-  letter-spacing: var(--menu-year-tracking, 2.4px);
-  text-align: left;
-}
-
 .scrolls-app__nav .scrolls-home__city {
   font-size: var(--menu-city-size, 24px);
   text-align: left;
@@ -192,8 +180,6 @@
   align-items: center;
 }
 
-.scrolls-app.is-compact.is-home-left .scrolls-app__nav .scrolls-home__sep,
-.scrolls-app.is-compact.is-home-left .scrolls-app__nav .scrolls-home__year,
 .scrolls-app.is-compact.is-home-left .scrolls-app__nav .scrolls-home__city {
   text-align: center;
 }

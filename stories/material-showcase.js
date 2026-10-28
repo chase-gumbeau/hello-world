@@ -306,24 +306,7 @@ const MATERIAL_GALLERY = {
   itemHref: (id) => `./?path=/story/foundations-material-showcase-components--${id}`,
   viewHref: (view) => `./?path=/story/foundations-material-showcase--material-explorer&args=view:${view}`,
   docsLabel: 'Material 3 guidelines',
-  hero: {
-    gallery: {
-      title: 'The Foundation for your Design System',
-      body: 'Every Material Web component, built on Material 3 tokens. Open any card to learn its variants, attributes and markup.',
-      actions: [
-        { label: 'Browse the index', view: 'index' },
-        { label: 'View by category', view: 'categories' },
-      ],
-    },
-    index: {
-      title: 'Index',
-      body: 'Every Material Web component by category. Each family opens its own page with live variants and copyable markup.',
-    },
-    categories: {
-      title: 'Categories',
-      body: 'The same cards, grouped the way the Material 3 guidelines group them.',
-    },
-  },
+  // No hero: every view opens straight onto its content.
   compositions: COMPOSITIONS,
   wireGallery: wireCompositions,
 };
