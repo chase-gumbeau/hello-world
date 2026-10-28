@@ -80,8 +80,9 @@ const preview = {
             ],
             'Color',
             'Typography',
+            'Compositions',
             'Motion',
-            '3D Icons',
+            '3D',
           ],
           'Projects',
           [

@@ -2,7 +2,7 @@ import './atom-logo.css';
 import { ATOM_DEFAULTS, createAtomSizes, createAtomSolo } from './atom-logo.js';
 
 export default {
-  title: 'Studies/Atom Logo',
+  title: 'Studies/Motion/Atom Logo',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
