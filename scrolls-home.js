@@ -36,31 +36,21 @@ export function createScrollsHome({
   root.dataset.layout = layout;
   root.setAttribute('aria-label', 'Scrolls home');
 
-  const yearGroups = getScrollTripsByYear();
-  const listHtml = yearGroups
-    .map(
-      ({ year, trips }, index) => `
-            ${
-              index > 0
-                ? `<p class="scrolls-home__sep" aria-hidden="true">·</p>`
-                : ''
-            }
+  // Every trip in one list, newest year first.
+  const trips = getScrollTripsByYear().flatMap(({ trips: yearTrips }) => yearTrips);
+  const listHtml = `
             <div class="scrolls-home__section">
-              <p class="scrolls-home__year">${year}</p>
               ${trips
                 .map(
                   (trip) =>
                     `<a class="scrolls-home__city" href="#" data-destination="${trip.id}">${trip.title}</a>`
                 )
                 .join('\n              ')}
-            </div>`
-    )
-    .join('\n            ');
+            </div>`;
 
   // Left layout: nav sits beside the frame on the canvas. Centered: nav inside frame.
   const listBlock = `<div class="scrolls-home__list" data-scrolls-home-list>${listHtml}</div>`;
-  const captionBlock = `<p class="scrolls-home__caption">Captured on Pixel phones</p>`;
-  const frameInner = (layout === 'left' ? '' : listBlock) + captionBlock;
+  const frameInner = layout === 'left' ? '' : listBlock;
 
   root.innerHTML = `
     <div class="scrolls-home__stage">

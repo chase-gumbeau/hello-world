@@ -31,18 +31,13 @@ export function computeStageScale(width, height) {
 }
 
 /**
- * Screen-space menu tokens — track viewport width so type/spacing scale
- * smoothly instead of fighting the stage transform.
- * @param {number} width
+ * Screen-space menu tokens, set on the app so the stage transform doesn't shrink
+ * them. Type holds at a fixed 12px.
  */
-export function computeMenuTokens(width) {
-  const unit = Math.min(Math.max(width / 960, 0.7), 1.2);
+export function computeMenuTokens() {
   return {
-    citySize: Math.max(18, 24 * unit),
-    yearSize: Math.max(12, 15 * unit),
+    citySize: 12,
     stackGap: 8,
-    sepGap: Math.max(12, 18 * unit),
-    yearTracking: Math.max(1.6, 2.4 * unit),
   };
 }
 
@@ -65,12 +60,9 @@ export function applyStageVars(
   }
 
   if (setMenuTokens) {
-    const menu = computeMenuTokens(width);
+    const menu = computeMenuTokens();
     el.style.setProperty('--menu-city-size', `${menu.citySize.toFixed(2)}px`);
-    el.style.setProperty('--menu-year-size', `${menu.yearSize.toFixed(2)}px`);
     el.style.setProperty('--menu-stack-gap', `${menu.stackGap.toFixed(2)}px`);
-    el.style.setProperty('--menu-sep-gap', `${menu.sepGap.toFixed(2)}px`);
-    el.style.setProperty('--menu-year-tracking', `${menu.yearTracking.toFixed(2)}px`);
   }
 
   el.classList.toggle('is-compact', isCompact);
