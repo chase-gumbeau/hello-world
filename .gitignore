@@ -7,3 +7,4 @@ debug-storybook.log
 story-previews/*
 !story-previews/.gitkeep
 stories/story-updates.json
+tidbyt/**/frames.rgb
