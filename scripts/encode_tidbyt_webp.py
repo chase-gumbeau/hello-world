@@ -1,5 +1,5 @@
 """Encodes raw 64x32 frames from capture-tidbyt-sigil.mjs as a looping animated WebP
-the Tidbyt can show (pixlet push <device> <file>.webp).
+the Tidbyt can show (see tidbyt/README.md for pushing it).
 
 Usage: python3 scripts/encode_tidbyt_webp.py <frames.rgb> <out.webp> [frame ms] [quality]
 Encodes lossless unless given a quality (1-100) to encode lossy.

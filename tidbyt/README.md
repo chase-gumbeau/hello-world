@@ -11,18 +11,20 @@ Art for a [Tidbyt](https://tidbyt.com) (64x32 LED display), previewed in Storybo
 
 ## Push the animation
 
-Pushing goes through Tidbyt's cloud, so it works from any computer with
-[Pixlet](https://github.com/tidbyt/pixlet) installed (`brew install tidbyt/tidbyt/pixlet`):
+The Tidbyt runs [Tronbyt](https://github.com/tronbyt/server) firmware and talks to a
+self-hosted Tronbyt server instead of Tidbyt's cloud. With the server running
+(`brew install tronbyt-server && brew services start tronbyt-server`), push the WebP
+with the device's API key from its Edit Device page:
 
 ```bash
-pixlet login                # once; or pass --api-token from the Tidbyt app
-pixlet devices              # find your device ID
-pixlet push --installation-id sigil <device id> tidbyt/sigil/sigil.webp
+curl -X POST "http://<server>:8000/v0/devices/<device id>/push" \
+  -H "Authorization: Bearer <api key>" -H "Content-Type: application/json" \
+  -d "{\"installationID\": \"sigil\", \"image\": \"$(base64 -i tidbyt/sigil/sigil.webp)\", \"background\": false}"
 ```
 
-With `--installation-id` the sigil joins the app rotation and stays until you remove
-it; without it, it shows once. The device gives each app about 15 seconds before
-moving on, so pin it in the Tidbyt app (long-press) to watch the whole cycle.
+`installationID` keeps the sigil in the app rotation; the server answers
+`WebP received.` The device gives each app its cycle time (15 seconds by default)
+before moving on, so pin it or raise the cycle time in Tronbyt to watch the whole loop.
 
 ## Re-record after changing the story
 
