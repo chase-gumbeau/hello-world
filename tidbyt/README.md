@@ -8,18 +8,26 @@ Art for a [Tidbyt](https://tidbyt.com) (64x32 LED display), previewed in Storybo
   hand and energy on, cycling green → red → purple), recorded LED by LED from
   Storybook. It loops one whole color cycle, 39 seconds at 20 fps, encoded lossless
   (about 1.8 MB) because lossy WebP smears single-LED color at this size.
+- `sigil/sigil-tidbyt.webp` is the version that fits a Tidbyt Gen 1 (349 KB): every
+  other frame, played at 20 fps, so the same full color cycle loops in 19.5 seconds,
+  encoded lossy at quality 80.
 
 ## Push the animation
 
 The Tidbyt runs [Tronbyt](https://github.com/tronbyt/server) firmware and talks to a
 self-hosted Tronbyt server instead of Tidbyt's cloud. With the server running
 (`brew install tronbyt-server && brew services start tronbyt-server`), push the WebP
-with the device's API key from its Edit Device page:
+with the device's API key from its Edit Device page.
+
+Tidbyt Gen 1 firmware rejects any image over 460,000 bytes and shows a "mind explode"
+graphic instead, so push `sigil-tidbyt.webp`, not the 1.8 MB `sigil.webp`. Tronbyt
+server releases after 2.5.2 split oversized animations into chunks, which should let
+the full-size file play.
 
 ```bash
 curl -X POST "http://<server>:8000/v0/devices/<device id>/push" \
   -H "Authorization: Bearer <api key>" -H "Content-Type: application/json" \
-  -d "{\"installationID\": \"sigil\", \"image\": \"$(base64 -i tidbyt/sigil/sigil.webp)\", \"background\": false}"
+  -d "{\"installationID\": \"sigil\", \"image\": \"$(base64 -i tidbyt/sigil/sigil-tidbyt.webp)\", \"background\": false}"
 ```
 
 `installationID` keeps the sigil in the app rotation; the server answers
