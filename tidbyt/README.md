@@ -11,6 +11,9 @@ Art for a [Tidbyt](https://tidbyt.com) (64x32 LED display), previewed in Storybo
 - `sigil/sigil-tidbyt.webp` is the version that fits a Tidbyt Gen 1 (349 KB): every
   other frame, played at 20 fps, so the same full color cycle loops in 19.5 seconds,
   encoded lossy at quality 80.
+- `vision/vision.webp` is the animated **Vision** story (the blinking eye, cycling
+  green → red → purple), recorded the same way: 39 seconds at 20 fps, lossless. The
+  eye leaves most of the board dark, so it fits a Tidbyt Gen 1 as is (312 KB).
 
 ## Push the animation
 
@@ -30,7 +33,8 @@ curl -X POST "http://<server>:8000/v0/devices/<device id>/push" \
   -d "{\"installationID\": \"sigil\", \"image\": \"$(base64 -i tidbyt/sigil/sigil-tidbyt.webp)\", \"background\": false}"
 ```
 
-`installationID` keeps the sigil in the app rotation; the server answers
+Push `tidbyt/vision/vision.webp` the same way with `"installationID": "vision"`.
+`installationID` keeps each animation in the app rotation; the server answers
 `WebP received.` The device gives each app its cycle time (15 seconds by default)
 before moving on, so pin it or raise the cycle time in Tronbyt to watch the whole loop.
 
@@ -39,6 +43,7 @@ before moving on, so pin it or raise the cycle time in Tronbyt to watch the whol
 ```bash
 npm run storybook                       # in one terminal
 npm run tidbyt:sigil                    # in another: capture, then encode
+npm run tidbyt:vision                   # or the Vision story
 ```
 
 `scripts/capture-tidbyt-sigil.mjs` steps the story on a fake clock and reads each
