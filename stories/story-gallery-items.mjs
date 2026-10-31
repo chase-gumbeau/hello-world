@@ -15,6 +15,7 @@ export const STUDIES = {
     { id: 'color', title: 'Color', summary: 'Palettes, contrast and color systems.' },
     { id: 'compositions', title: 'Compositions', summary: 'Layouts that bring several studies together.' },
     { id: 'motion', title: 'Motion', summary: 'Animated marks and gradients.' },
+    { id: 'sound', title: 'Sound', summary: 'Images and light played as music.' },
     { id: 'surfaces', title: 'Surfaces', summary: 'Full pages built for a reader, like daily briefs.' },
     { id: 'typography', title: 'Typography', summary: 'Type scales, pairings and specimens.' },
     { id: 'worlds', title: 'Worlds', summary: 'Explorable scenes and the places in them.' },
@@ -67,6 +68,14 @@ export const STUDIES = {
       category: 'motion',
       summary: 'The atom logo in characters: orbits draw on, electrons trail as they spin.',
       story: 'studies-motion-ascii-atom--animated',
+    },
+    {
+      id: 'light-and-sound',
+      files: ['stories/LightSound.stories.js', 'stories/light-sound.*', 'assets/light-and-sound/**'],
+      title: 'Light and Sound',
+      category: 'sound',
+      summary: 'The Crab Nebula played as music: hue to pitch, harmony from colour, time from how you look.',
+      story: 'studies-sound-light-and-sound--crab-nebula',
     },
     {
       id: 'morning-brief',
