@@ -1,0 +1,14 @@
+{
+  "source": "https://www.videogameschronicle.com/guide/upcoming-game-release-dates-schedule/",
+  "captured": "2026-10-31",
+  "games": [
+    { "date": "2026-11-05", "title": "The Legend of Zelda: Ocarina of Time", "short": "Zelda: Ocarina of Time", "platforms": ["Switch 2"] },
+    { "date": "2026-11-05", "title": "Edge of Memories", "platforms": ["PS5", "Xbox", "PC"] },
+    { "date": "2026-11-05", "title": "Marvel's Guardians of the Galaxy Encore Edition", "short": "Guardians of the Galaxy", "platforms": ["Switch 2"] },
+    { "date": "2026-11-06", "title": "Stellar Blade", "platforms": ["Switch 2"] },
+    { "date": "2026-11-12", "title": "Metaphor: ReFantazio", "platforms": ["Switch 2"] },
+    { "date": "2026-11-12", "title": "Pikmin 4: Nintendo Switch 2 Edition + Dandori Academy", "short": "Pikmin 4", "platforms": ["Switch 2"] },
+    { "date": "2026-11-12", "title": "Sonic Pico Park", "platforms": ["PC", "PS5", "Xbox", "Switch 2", "Switch"] },
+    { "date": "2026-11-19", "title": "Grand Theft Auto VI", "short": "GTA VI", "platforms": ["PS5", "Xbox"] }
+  ]
+}

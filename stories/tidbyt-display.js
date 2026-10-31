@@ -330,6 +330,41 @@ function recedeAt(t) {
   return 1 - easeInOut(p / RECEDE_IN);
 }
 
+/** Lights the LED at column x, row y in `rgb` (any CSS color). */
+const drawLed = (ctx, x, y, rgb) => {
+  ctx.fillStyle = rgb;
+  ctx.beginPath();
+  ctx.arc(x * PITCH + PITCH / 2, y * PITCH + PITCH / 2, PITCH * 0.42, 0, Math.PI * 2);
+  ctx.fill();
+};
+
+/**
+ * A bare 64x32 display that shows whole frames as given, LED for LED, for apps drawn
+ * frame by frame (like a Pixlet render) rather than from one piece of art.
+ * @returns {HTMLElement & {show: (pixels: Uint8ClampedArray) => void}}  The display.
+ *   show() lights each LED from a 64x32 RGBA frame; clear pixels stay unlit.
+ */
+export function createLedDisplay() {
+  const wrap = document.createElement('div');
+  wrap.className = 'tidbyt-display';
+  const canvas = document.createElement('canvas');
+  canvas.width = COLS * PITCH;
+  canvas.height = ROWS * PITCH;
+  wrap.append(canvas);
+  const ctx = canvas.getContext('2d');
+
+  wrap.show = (pixels) => {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < COLS * ROWS; i++) {
+      const lit = pixels[i * 4 + 3];
+      const rgb = lit ? `rgb(${pixels[i * 4]} ${pixels[i * 4 + 1]} ${pixels[i * 4 + 2]})` : '#0c0c0c';
+      drawLed(ctx, i % COLS, Math.floor(i / COLS), rgb);
+    }
+  };
+  return wrap;
+}
+
 const loadImage = (src) =>
   new Promise((resolve, reject) => {
     const img = new Image();
@@ -436,10 +471,7 @@ export function createTidbytDisplay(
           }
           rgb = `rgb(${r * k} ${g * k} ${b * k})`;
         }
-        ctx.fillStyle = rgb;
-        ctx.beginPath();
-        ctx.arc(x * PITCH + PITCH / 2, y * PITCH + PITCH / 2, PITCH * 0.42, 0, Math.PI * 2);
-        ctx.fill();
+        drawLed(ctx, x, y, rgb);
       }
     }
   };
