@@ -18,6 +18,7 @@
     "scrolls:convert:mexico-city": "python3 scripts/convert_mexico_city.py",
     "scrolls:convert:costa-rica": "python3 scripts/convert_costa_rica.py",
     "scrolls:convert:puerto-rico": "python3 scripts/convert_puerto_rico.py",
+    "tidbyt:games:check": "python3 scripts/sync_tidbyt_games.py && node scripts/check_tidbyt_games.mjs",
     "tidbyt:sigil": "node scripts/capture-tidbyt-sigil.mjs && python3 scripts/encode_tidbyt_webp.py tidbyt/sigil/frames.rgb tidbyt/sigil/sigil.webp"
   },
   "repository": {

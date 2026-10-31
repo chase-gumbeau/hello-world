@@ -131,6 +131,14 @@ export const PROJECTS = {
       story: 'projects-tidbyt-ultrahand-sigil--seal',
     },
     {
+      id: 'upcoming-games',
+      files: ['stories/TidbytGames.stories.js', 'stories/tidbyt-games.js', 'tidbyt/games/**'],
+      title: 'Upcoming Games',
+      category: 'displays',
+      summary: 'A Tidbyt ticker of the PS5 and Switch 2 games coming out in the next 30 days.',
+      story: 'projects-tidbyt-upcoming-games--next-thirty-days',
+    },
+    {
       id: 'scrolls',
       files: ['stories/Scrolls*.stories.js', 'scrolls*', 'assets/scrolls*/**'],
       title: 'Scrolls',
