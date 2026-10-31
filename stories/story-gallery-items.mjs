@@ -139,6 +139,14 @@ export const PROJECTS = {
       story: 'projects-tidbyt-upcoming-games--next-thirty-days',
     },
     {
+      id: 'playstation',
+      files: ['stories/TidbytPsn.stories.js', 'stories/tidbyt-psn.js', 'tidbyt/psn/**'],
+      title: 'PlayStation',
+      category: 'displays',
+      summary: 'A Tidbyt app showing the game you played last and the latest trophy you earned.',
+      story: 'projects-tidbyt-playstation--last-played-and-trophy',
+    },
+    {
       id: 'scrolls',
       files: ['stories/Scrolls*.stories.js', 'scrolls*', 'assets/scrolls*/**'],
       title: 'Scrolls',

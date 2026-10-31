@@ -40,7 +40,7 @@ const shortPlatforms = (names) => {
 };
 
 /** '#3cf' or '#33ccff' as [r, g, b]. */
-const rgbOf = (hex) => {
+export const rgbOf = (hex) => {
   const h = hex.slice(1);
   const full = h.length === 3 ? [...h].map((c) => c + c).join('') : h;
   return [0, 2, 4].map((k) => parseInt(full.slice(k, k + 2), 16));
@@ -80,13 +80,13 @@ export function parseBdf(text) {
 }
 
 /** An RGBA image `w` x `h`, all unlit. */
-const image = (w, h) => ({ w, h, data: new Uint8ClampedArray(w * h * 4) });
+export const image = (w, h) => ({ w, h, data: new Uint8ClampedArray(w * h * 4) });
 
-const textWidth = (font, text) =>
+export const textWidth = (font, text) =>
   [...text].reduce((sum, ch) => sum + (font.glyphs.get(ch.codePointAt(0))?.advance ?? 0), 0);
 
 /** Draws `text` with its top-left at (x, y), as Pixlet's render.Text does. */
-function drawText(img, font, text, color, x, y) {
+export function drawText(img, font, text, color, x, y) {
   const [r, g, b] = rgbOf(color);
   const baseline = y + font.ascent;
   let dot = x;
@@ -110,7 +110,7 @@ function drawText(img, font, text, color, x, y) {
 }
 
 /** Copies `src` onto `dst` with its top-left at (x, y), clipped to `dst`. */
-function blit(dst, src, x, y) {
+export function blit(dst, src, x, y) {
   for (let sy = 0; sy < src.h; sy++) {
     const dy = y + sy;
     if (dy < 0 || dy >= dst.h) continue;
