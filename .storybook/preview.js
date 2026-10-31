@@ -69,6 +69,7 @@ const preview = {
             'Color',
             'Compositions',
             'Motion',
+            'Sound',
             'Surfaces',
             [
               'Morning Brief',
