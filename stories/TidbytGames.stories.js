@@ -18,7 +18,7 @@ export default {
     today: {
       control: 'text',
       description:
-        'The day the ticker looks ahead from (YYYY-MM-DD). It lists the games releasing in the 30 days from then, from the release dates captured in tidbyt/games/games.json.',
+        'The day the ticker looks ahead from (YYYY-MM-DD). It lists the PS5 and Switch 2 games releasing in the 30 days from then, from the release dates captured in tidbyt/games/games.json.',
     },
   },
   args: {

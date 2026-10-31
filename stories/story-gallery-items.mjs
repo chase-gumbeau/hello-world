@@ -135,7 +135,7 @@ export const PROJECTS = {
       files: ['stories/TidbytGames.stories.js', 'stories/tidbyt-games.js', 'tidbyt/games/**'],
       title: 'Upcoming Games',
       category: 'displays',
-      summary: 'A Tidbyt ticker of the video games coming out in the next 30 days.',
+      summary: 'A Tidbyt ticker of the PS5 and Switch 2 games coming out in the next 30 days.',
       story: 'projects-tidbyt-upcoming-games--next-thirty-days',
     },
     {

@@ -51,13 +51,16 @@ installed.
 
 ## Upcoming Games
 
-`games/upcoming_games.star` scrolls the video games coming out in the next 30 days,
-grouped by release date: the date and how many days off it is, then each game's title
-over the platforms it's on. The count in the corner is how many games are coming.
+`games/upcoming_games.star` scrolls the PS5 and Switch 2 games coming out in the next
+30 days, grouped by release date: the date and how many days off it is, then each
+game's title over which of the two it's on (PS5, SW2). Games only on other platforms
+are left out; `WANTED` in the app (and in `stories/tidbyt-games.js`) picks the
+platforms. The count in the corner is how many games are coming.
 
 - **Live dates** come from [RAWG](https://rawg.io/apidocs): get a free API key there
   and set it as the app's *RAWG API key* in Tronbyt. The app takes RAWG's most
-  followed games releasing in the window (12 by default, set by *Games to look at*)
+  followed games releasing in the window on those platforms (up to 12, set by *Games
+  to show*)
   and caches the answer for 6 hours.
 - **Without a key** (or when RAWG can't be reached) it shows the snapshot bundled in
   the app, copied from `games/games.json`: release dates captured from

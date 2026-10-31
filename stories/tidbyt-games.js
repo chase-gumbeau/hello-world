@@ -16,6 +16,7 @@ const DATE_GAP = 14; // between dates
 const BODY_TOP = 9; // header, a gap, the divider and another gap above the ticker
 const BODY_HEIGHT = 22;
 const WINDOW_DAYS = 30;
+const GAMES_SHOWN = 12; // the app's default "Games to show"
 
 /** How long each LED step of the scroll shows, in ms, as in the app. */
 export const FRAME_MS = 40;
@@ -39,9 +40,15 @@ const PLATFORMS = [
   ['Android', 'AND'],
 ];
 
+// The platforms the ticker follows: only games out on at least one show, and only these
+// are listed under each title (as WANTED in the app).
+const WANTED = ['PS5', 'SW2'];
+
 const shortPlatforms = (names) => {
   const out = [];
-  for (const [long, short] of PLATFORMS) if (names.includes(long) && !out.includes(short)) out.push(short);
+  for (const [long, short] of PLATFORMS) {
+    if (names.includes(long) && WANTED.includes(short) && !out.includes(short)) out.push(short);
+  }
   return out.join(' ');
 };
 
@@ -133,8 +140,9 @@ const dayNumber = (date) => Date.UTC(...date.split('-').map((v, k) => (k === 1 ?
 const isoOf = (day) => new Date(day * 86400000).toISOString().slice(0, 10);
 
 /**
- * The games out from `today` through the next WINDOW_DAYS, each with the title the
- * display shows (its `short` one if it has it).
+ * The games out on a WANTED platform from `today` through the next WINDOW_DAYS, at
+ * most GAMES_SHOWN of them, each with the title the display shows (its `short` one if
+ * it has it).
  * @param {{date: string, title: string, short?: string, platforms: string[]}[]} games
  * @param {string} today  YYYY-MM-DD.
  */
@@ -142,7 +150,8 @@ export function upcoming(games, today) {
   const start = today;
   const end = isoOf(dayNumber(today) + WINDOW_DAYS);
   return games
-    .filter((g) => g.date >= start && g.date <= end)
+    .filter((g) => g.date >= start && g.date <= end && shortPlatforms(g.platforms))
+    .slice(0, GAMES_SHOWN)
     .map((g) => ({ date: g.date, title: g.short ?? g.title, platforms: g.platforms }));
 }
 

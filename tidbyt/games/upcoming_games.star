@@ -1,8 +1,8 @@
 """
 Applet: Upcoming Games
 Summary: Games out in the next 30 days
-Description: A ticker of video games releasing in the next 30 days, grouped by release
-date, with how many days away each date is and the platforms each game is out on.
+Description: A ticker of PS5 and Switch 2 games releasing in the next 30 days, grouped
+by release date, with how many days away each date is and the platforms each game is out on.
 Release dates come live from RAWG (rawg.io) with an API key, and otherwise from the
 snapshot bundled below.
 Author: Chase Chenevert
@@ -64,16 +64,20 @@ PLATFORMS = [
     ("Android", "AND"),
 ]
 
+# The platforms the ticker follows: only games out on at least one show, and only these
+# are listed under each title.
+WANTED = ["PS5", "SW2"]
+
 def short_platforms(names):
-    """The platforms a game is out on, short and in a steady order, without repeats."""
+    """The wanted platforms a game is out on, short and in a steady order, without repeats."""
     out = []
     for long, short in PLATFORMS:
-        if long in names and short not in out:
+        if long in names and short in WANTED and short not in out:
             out.append(short)
     return " ".join(out)
 
-def fetch_rawg(key, start, end, count):
-    """The `count` most followed games on RAWG releasing from `start` to `end`, or None."""
+def fetch_rawg(key, start, end):
+    """RAWG's most followed games releasing from `start` to `end`, most followed first, or None."""
     resp = http.get(
         "https://api.rawg.io/api/games",
         params = {
@@ -81,7 +85,8 @@ def fetch_rawg(key, start, end, count):
             "dates": "%s,%s" % (start, end),
             "ordering": "-added",
             "exclude_additions": "true",
-            "page_size": str(count),
+            # Plenty, so enough are left once other platforms' games are dropped.
+            "page_size": "40",
         },
         ttl_seconds = 6 * 3600,
     )
@@ -198,10 +203,15 @@ def main(config):
 
     games = None
     if config.get("rawg_key"):
-        games = fetch_rawg(config.get("rawg_key"), start_s, end_s, int(config.get("count", "12")))
+        games = fetch_rawg(config.get("rawg_key"), start_s, end_s)
     if games == None:
         games = SNAPSHOT
-    games = [g for g in games if g["date"] >= start_s and g["date"] <= end_s]
+    games = [
+        g
+        for g in games
+        if g["date"] >= start_s and g["date"] <= end_s and short_platforms(g["platforms"])
+    ]
+    games = games[:int(config.get("count", "12"))]
 
     if not games:
         body = render.Box(
@@ -243,8 +253,8 @@ def get_schema():
             ),
             schema.Dropdown(
                 id = "count",
-                name = "Games to look at",
-                desc = "How many of RAWG's most followed upcoming games to consider.",
+                name = "Games to show",
+                desc = "At most how many of RAWG's most followed upcoming games to show.",
                 icon = "gamepad",
                 default = "12",
                 options = [
