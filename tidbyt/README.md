@@ -5,6 +5,8 @@ Storybook under **Projects → Tidbyt**.
 
 - `games/upcoming_games.star` is the **Upcoming Games** ticker, a live Pixlet app
   (below).
+- `psn/playstation.star` is the **PlayStation** app: your last played game and latest
+  trophy, from your PlayStation Network profile (below).
 - `sigil/sigil.star` is a still Pixlet app: the 32x32 sigil centered on the board.
 - `sigil/sigil.webp` is the animated **Ultrahand Sigil** story (Seal, with twinkle,
   hand and energy on, cycling green → red → purple), recorded LED by LED from
@@ -89,4 +91,46 @@ the app, the story or the snapshot, check they still agree:
 
 ```bash
 npm run tidbyt:games:check   # syncs the snapshot into the app, renders it, compares every frame
+```
+
+## PlayStation
+
+`psn/playstation.star` shows two screens from your PlayStation Network profile, six
+seconds each (longer while a long name scrolls by):
+
+- **Played:** the cover art of the game you played last, its title, your total play
+  time and how long ago you played it.
+- **Trophy:** a cup in the grade's color (bronze, silver, gold, platinum), the name of
+  the trophy you earned last, its game and how long ago.
+
+It signs in to PSN the way the PlayStation app does, with a refresh token made from
+your NPSSO. Neither belongs in this repo: keep them in Tronbyt's app settings only.
+
+1. Sign in at [playstation.com](https://www.playstation.com), then open
+   <https://ca.account.sony.com/api/v1/ssocookie> in the same browser and copy the
+   64-character `npsso` value.
+2. Run `python3 scripts/psn_token.py`, paste the NPSSO when it asks (it isn't
+   echoed), and copy the refresh token it prints.
+3. Set that as the app's *PSN refresh token* in Tronbyt.
+
+The refresh token lasts about two months; when it runs out the app reads "SIGN IN
+AGAIN", so repeat the steps. Pixlet can't make the NPSSO trade itself, because PSN
+answers it with a redirect to the PlayStation app's own URL scheme. The app caches
+its sign-in for 50 minutes, your games and trophies for 15, and cover art and trophy
+names for a day. Renders are small (about 20 KB).
+
+Render it once with the token to try it, or with the sample profile to see it
+without one:
+
+```bash
+pixlet render tidbyt/psn/playstation.star refresh_token=<token> -o /tmp/psn.webp
+pixlet render tidbyt/psn/playstation.star sample="$(cat tidbyt/psn/sample.json)" -o /tmp/psn.webp
+```
+
+The Storybook story (`stories/TidbytPsn.stories.js`) draws the sample profile LED for
+LED, with the gamepad in place of cover art. After changing the app or the story,
+check they still agree:
+
+```bash
+npm run tidbyt:psn:check   # renders the sample in Pixlet and compares every frame
 ```
