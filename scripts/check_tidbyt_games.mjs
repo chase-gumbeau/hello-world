@@ -3,7 +3,7 @@
  * tidbyt/games/upcoming_games.star on a fixed date and compares every frame, LED for
  * LED, with the story's.
  *
- *   node scripts/check_tidbyt_games.mjs [YYYY-MM-DD]
+ *   node scripts/check_tidbyt_games.mjs [YYYY-MM-DD]   (default: the snapshot's capture date)
  *
  * Needs pixlet on PATH (or PIXLET) and python3 with Pillow to read the WebP.
  */
@@ -13,7 +13,8 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { createTicker, parseBdf, upcoming } from '../stories/tidbyt-games.js';
 
-const today = process.argv[2] ?? '2026-10-31';
+const { captured, games } = JSON.parse(readFileSync('tidbyt/games/games.json', 'utf8'));
+const today = process.argv[2] ?? captured;
 const dir = mkdtempSync(path.join(tmpdir(), 'tidbyt-games-'));
 const webp = path.join(dir, 'games.webp');
 const raw = path.join(dir, 'games.rgba');
@@ -33,7 +34,6 @@ with open(sys.argv[2], 'wb') as out:
 
 const pixlet = readFileSync(raw);
 const font = (name) => parseBdf(readFileSync(`tidbyt/games/fonts/${name}.bdf`, 'utf8'));
-const { games } = JSON.parse(readFileSync('tidbyt/games/games.json', 'utf8'));
 const ticker = createTicker(upcoming(games, today), today, { tb8: font('tb-8'), tomThumb: font('tom-thumb') });
 
 const size = 64 * 32 * 4;

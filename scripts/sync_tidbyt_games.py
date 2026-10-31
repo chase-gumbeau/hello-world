@@ -15,7 +15,7 @@ games = json.loads(GAMES.read_text())["games"]
 lines = ["SNAPSHOT = ["]
 for game in games:
     entry = {"date": game["date"], "title": game.get("short", game["title"]), "platforms": game["platforms"]}
-    lines.append("    %s," % json.dumps(entry, ensure_ascii=False).replace('": ', '": '))
+    lines.append("    %s," % json.dumps(entry, ensure_ascii=False))
 lines.append("]")
 
 app = APP.read_text()

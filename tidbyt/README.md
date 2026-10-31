@@ -5,7 +5,6 @@ Storybook under **Projects → Tidbyt**.
 
 - `games/upcoming_games.star` is the **Upcoming Games** ticker, a live Pixlet app
   (below).
-
 - `sigil/sigil.star` is a still Pixlet app: the 32x32 sigil centered on the board.
 - `sigil/sigil.webp` is the animated **Ultrahand Sigil** story (Seal, with twinkle,
   hand and energy on, cycling green → red → purple), recorded LED by LED from
@@ -52,16 +51,15 @@ installed.
 ## Upcoming Games
 
 `games/upcoming_games.star` scrolls the PS5 and Switch 2 games coming out in the next
-30 days, grouped by release date: the date and how many days off it is, then each
-game's title over which of the two it's on (PS5, SW2). Games only on other platforms
-are left out; `WANTED` in the app (and in `stories/tidbyt-games.js`) picks the
-platforms. Titles wider than 48 LEDs wrap to two lines, so more fits on screen; the ticker takes the whole display to make room.
+30 days across the whole display, grouped by release date: the date and how many days
+off it is, then each game's title over which of the two it's on (PS5, SW2). Titles
+wider than 48 LEDs wrap to two lines. Games on neither are left out; `PLATFORMS` in
+the app (and in `stories/tidbyt-games.js`) sets which platforms count.
 
 - **Live dates** come from [RAWG](https://rawg.io/apidocs): get a free API key there
   and set it as the app's *RAWG API key* in Tronbyt. The app takes RAWG's most
   followed games releasing in the window on those platforms (up to 12, set by *Games
-  to show*)
-  and caches the answer for 6 hours.
+  to show*) and caches the answer for 6 hours.
 - **Without a key** (or when RAWG can't be reached) it shows the snapshot bundled in
   the app, copied from `games/games.json`: release dates captured from
   [VGC's release schedule](https://www.videogameschronicle.com/guide/upcoming-game-release-dates-schedule/)
@@ -69,9 +67,9 @@ platforms. Titles wider than 48 LEDs wrap to two lines, so more fits on screen; 
   date the ticker reads "NOTHING DATED".
 
 The scroll moves a LED every 40 ms and plays once through each time the app comes up
-(`show_full_animation`), so a full list takes about 25–30 seconds. Raise the app's
-display time in Tronbyt to match. Renders stay small (about 130 KB for eight games),
-well under the Gen 1's 460,000-byte limit.
+(`show_full_animation`), so the snapshot's eight games take about 20 seconds. Raise
+the app's display time in Tronbyt to match. Renders stay small (about 110 KB for eight
+games), well under the Gen 1's 460,000-byte limit.
 
 Add the app in Tronbyt from the `.star` file (Add App → upload), or render once and
 push it like the sigil:
@@ -85,7 +83,8 @@ curl -X POST "http://<server>:8000/v0/devices/<device id>/push" \
 ```
 
 The Storybook story (`stories/TidbytGames.stories.js`) draws the same ticker LED for
-LED from `games/games.json`, with Pixlet's own fonts (`games/fonts/`). After changing
+LED from `games/games.json`, with Pixlet's own fonts (`games/fonts/`; tb-8 is cut to
+Latin-1 and common punctuation). After changing
 the app, the story or the snapshot, check they still agree:
 
 ```bash

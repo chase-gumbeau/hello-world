@@ -1,11 +1,10 @@
 """
 Applet: Upcoming Games
-Summary: Games out in the next 30 days
+Summary: PS5 and Switch 2 games out soon
 Description: A ticker of PS5 and Switch 2 games releasing in the next 30 days, grouped
-by release date, with how many days away each date is and the platforms each game is out on.
-Long titles wrap to two lines, so more games fit on screen at once.
-Release dates come live from RAWG (rawg.io) with an API key, and otherwise from the
-snapshot bundled below.
+by release date, with how many days away each date is and which of the two each game
+is out on. Long titles wrap to two lines. Release dates come live from RAWG (rawg.io)
+with an API key, and otherwise from the snapshot bundled below.
 Author: Chase Chenevert
 """
 
@@ -50,32 +49,21 @@ SNAPSHOT = [
 ]
 # END SNAPSHOT
 
-# Short platform names, in the order they're listed, for RAWG's names and the snapshot's.
+# The platforms the ticker follows, by RAWG's names and the snapshot's, with the short
+# name listed under each title, in the order they're listed. Games on none of them are
+# left out; add a line here to follow another.
 PLATFORMS = [
     ("PlayStation 5", "PS5"),
     ("PS5", "PS5"),
-    ("PlayStation 4", "PS4"),
-    ("Xbox Series S/X", "XBOX"),
-    ("Xbox", "XBOX"),
     ("Nintendo Switch 2", "SW2"),
     ("Switch 2", "SW2"),
-    ("Nintendo Switch", "SW"),
-    ("Switch", "SW"),
-    ("PC", "PC"),
-    ("macOS", "MAC"),
-    ("iOS", "IOS"),
-    ("Android", "AND"),
 ]
 
-# The platforms the ticker follows: only games out on at least one show, and only these
-# are listed under each title.
-WANTED = ["PS5", "SW2"]
-
 def short_platforms(names):
-    """The wanted platforms a game is out on, short and in a steady order, without repeats."""
+    """The followed platforms a game is out on, short and in a steady order, without repeats."""
     out = []
     for long, short in PLATFORMS:
-        if long in names and short in WANTED and short not in out:
+        if long in names and short not in out:
             out.append(short)
     return " ".join(out)
 

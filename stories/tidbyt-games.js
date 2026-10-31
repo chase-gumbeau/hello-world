@@ -22,31 +22,19 @@ export const FRAME_MS = 40;
 
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
-// Short platform names, in the order they're listed (as PLATFORMS in the app).
+// The platforms the ticker follows, with their short names, in the order they're
+// listed (as PLATFORMS in the app). Games on none of them are left out.
 const PLATFORMS = [
   ['PlayStation 5', 'PS5'],
   ['PS5', 'PS5'],
-  ['PlayStation 4', 'PS4'],
-  ['Xbox Series S/X', 'XBOX'],
-  ['Xbox', 'XBOX'],
   ['Nintendo Switch 2', 'SW2'],
   ['Switch 2', 'SW2'],
-  ['Nintendo Switch', 'SW'],
-  ['Switch', 'SW'],
-  ['PC', 'PC'],
-  ['macOS', 'MAC'],
-  ['iOS', 'IOS'],
-  ['Android', 'AND'],
 ];
-
-// The platforms the ticker follows: only games out on at least one show, and only these
-// are listed under each title (as WANTED in the app).
-const WANTED = ['PS5', 'SW2'];
 
 const shortPlatforms = (names) => {
   const out = [];
   for (const [long, short] of PLATFORMS) {
-    if (names.includes(long) && WANTED.includes(short) && !out.includes(short)) out.push(short);
+    if (names.includes(long) && !out.includes(short)) out.push(short);
   }
   return out.join(' ');
 };
@@ -139,7 +127,7 @@ const dayNumber = (date) => Date.UTC(...date.split('-').map((v, k) => (k === 1 ?
 const isoOf = (day) => new Date(day * 86400000).toISOString().slice(0, 10);
 
 /**
- * The games out on a WANTED platform from `today` through the next WINDOW_DAYS, at
+ * The games out on a followed platform from `today` through the next WINDOW_DAYS, at
  * most GAMES_SHOWN of them, each with the title the display shows (its `short` one if
  * it has it).
  * @param {{date: string, title: string, short?: string, platforms: string[]}[]} games
