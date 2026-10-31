@@ -4,8 +4,6 @@
 const COLS = 64;
 const ROWS = 32;
 
-const HEADER = '#3cf';
-const DIVIDER = '#234';
 const DATE = '#fb0';
 const DAYS = '#a60';
 const TITLE = '#fff';
@@ -13,8 +11,9 @@ const PLATFORM = '#778';
 
 const GAME_GAP = 8; // between games on the same date
 const DATE_GAP = 14; // between dates
-const BODY_TOP = 9; // header, a gap, the divider and another gap above the ticker
-const BODY_HEIGHT = 22;
+// Titles wider than this, in LEDs, wrap to two lines (as WRAP_WIDTH in the app).
+const WRAP_WIDTH = 48;
+const LINE_HEIGHT = 8; // tb-8's
 const WINDOW_DAYS = 30;
 const GAMES_SHOWN = 12; // the app's default "Games to show"
 
@@ -162,6 +161,20 @@ export function upcoming(games, today) {
  *   one loop of the scroll takes, and frame f's 64x32 RGBA pixels.
  */
 export function createTicker(games, today, { tb8, tomThumb }) {
+  // The title as one line, or, when it's wider than WRAP_WIDTH, two lines split at the
+  // space that keeps the wider of them narrowest (as title_lines() in the app).
+  const titleLines = (title) => {
+    if (textWidth(tb8, title) <= WRAP_WIDTH || !title.includes(' ')) return [title];
+    const words = title.split(' ');
+    let best = null;
+    for (let i = 1; i < words.length; i++) {
+      const lines = [words.slice(0, i).join(' '), words.slice(i).join(' ')];
+      const w = Math.max(...lines.map((line) => textWidth(tb8, line)));
+      if (!best || w < best.w) best = { w, lines };
+    }
+    return best.lines;
+  };
+
   // Grouped by date, soonest first, games in a date by title.
   const byDate = new Map();
   for (const game of [...games].sort((a, b) => (a.date + a.title < b.date + b.title ? -1 : 1))) {
@@ -170,7 +183,7 @@ export function createTicker(games, today, { tb8, tomThumb }) {
   }
 
   // Each date's group drawn once: the date and how far off it is, over each game's
-  // title and platforms.
+  // title (on one line or two) and platforms, the ticker having the whole screen.
   const groups = [];
   let x = 0;
   for (const [date, dated] of [...byDate].sort(([a], [b]) => (a < b ? -1 : 1))) {
@@ -180,35 +193,31 @@ export function createTicker(games, today, { tb8, tomThumb }) {
     const daysText = days <= 0 ? 'TODAY' : `${days}D`;
     const columns = dated.map((g) => {
       const platforms = shortPlatforms(g.platforms);
-      return { ...g, platforms, w: Math.max(textWidth(tb8, g.title), textWidth(tomThumb, platforms)) };
+      const lines = titleLines(g.title);
+      const w = Math.max(...lines.map((line) => textWidth(tb8, line)), textWidth(tomThumb, platforms));
+      return { lines, platforms, w };
     });
     const gamesWidth = columns.reduce((sum, c) => sum + c.w, 0) + GAME_GAP * (columns.length - 1);
     const dateWidth = textWidth(tomThumb, dateText) + 4 + textWidth(tomThumb, daysText);
-    const img = image(Math.max(dateWidth, gamesWidth), BODY_HEIGHT);
+    const img = image(Math.max(dateWidth, gamesWidth), ROWS);
     drawText(img, tomThumb, daysText, DAYS, drawText(img, tomThumb, dateText, DATE, 0, 0) + 4, 0);
     let cx = 0;
     for (const c of columns) {
-      drawText(img, tb8, c.title, TITLE, cx, 7);
-      drawText(img, tomThumb, c.platforms, PLATFORM, cx, 16);
+      c.lines.forEach((line, k) => drawText(img, tb8, line, TITLE, cx, 7 + k * LINE_HEIGHT));
+      drawText(img, tomThumb, c.platforms, PLATFORM, cx, 7 + 2 * LINE_HEIGHT + 1);
       cx += c.w + GAME_GAP;
     }
     groups.push({ img, x });
     x += img.w + DATE_GAP;
   }
 
-  const header = image(COLS, ROWS);
-  drawText(header, tomThumb, 'NEXT 30 DAYS', HEADER, 0, 0);
-  const count = String(games.length);
-  drawText(header, tomThumb, count, DATE, COLS - textWidth(tomThumb, count), 0);
-  const [dr, dg, db] = rgbOf(DIVIDER);
-  for (let col = 0; col < COLS; col++) header.data.set([dr, dg, db, 255], (7 * COLS + col) * 4);
-
   if (!groups.length) {
-    // Centered in the ticker's place, as the app's Box does.
+    // Centered on the screen, as the app's Box does.
+    const blank = image(COLS, ROWS);
     const note = 'NOTHING DATED';
     const nx = Math.floor((COLS - textWidth(tomThumb, note)) / 2);
-    drawText(header, tomThumb, note, PLATFORM, nx, BODY_TOP + Math.floor((BODY_HEIGHT - tomThumb.ascent - tomThumb.descent) / 2));
-    return { frames: 1, frame: () => header.data.slice() };
+    drawText(blank, tomThumb, note, PLATFORM, nx, Math.floor((ROWS - tomThumb.ascent - tomThumb.descent) / 2));
+    return { frames: 1, frame: () => blank.data };
   }
 
   // One loop: the strip scrolls left a LED a frame until it has gone, then comes back
@@ -218,11 +227,11 @@ export function createTicker(games, today, { tb8, tomThumb }) {
   return {
     frames,
     frame: (f) => {
-      const out = { w: COLS, h: ROWS, data: header.data.slice() };
+      const out = image(COLS, ROWS);
       for (const { img, x: gx } of groups) {
         let at = gx - (f % frames);
         if (at + img.w <= 0) at += frames;
-        if (at < COLS && at + img.w > 0) blit(out, img, at, BODY_TOP);
+        if (at < COLS && at + img.w > 0) blit(out, img, at, 0);
       }
       return out.data;
     },

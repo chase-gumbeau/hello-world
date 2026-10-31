@@ -3,6 +3,7 @@ Applet: Upcoming Games
 Summary: Games out in the next 30 days
 Description: A ticker of PS5 and Switch 2 games releasing in the next 30 days, grouped
 by release date, with how many days away each date is and the platforms each game is out on.
+Long titles wrap to two lines, so more games fit on screen at once.
 Release dates come live from RAWG (rawg.io) with an API key, and otherwise from the
 snapshot bundled below.
 Author: Chase Chenevert
@@ -19,8 +20,6 @@ WINDOW_DAYS = 30
 # How long each LED step of the scroll shows, in ms: 25 LEDs a second.
 FRAME_MS = 40
 
-HEADER = "#3cf"
-DIVIDER = "#234"
 DATE = "#fb0"
 DAYS = "#a60"
 TITLE = "#fff"
@@ -28,6 +27,10 @@ PLATFORM = "#778"
 
 GAME_GAP = 8  # between games on the same date
 DATE_GAP = 14  # between dates
+
+# Titles wider than this, in LEDs, wrap to two lines.
+WRAP_WIDTH = 48
+LINE_HEIGHT = 8  # tb-8's
 
 MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 
@@ -118,17 +121,32 @@ def tiny(text, color):
 def width_of(text, font):
     return render.Text(text, font = font).size()[0]
 
+def title_lines(title):
+    """The title as one line, or, when it's wider than WRAP_WIDTH, two lines split at
+    the space that keeps the wider of them narrowest."""
+    if width_of(title, "tb-8") <= WRAP_WIDTH or " " not in title:
+        return [title]
+    words = title.split(" ")
+    best = None
+    for i in range(1, len(words)):
+        lines = [" ".join(words[:i]), " ".join(words[i:])]
+        width = max([width_of(line, "tb-8") for line in lines])
+        if best == None or width < best[0]:
+            best = (width, lines)
+    return best[1]
+
 def game_column(game):
-    """A game's title over its platforms, and how wide it is."""
+    """A game's title (on one line or two) over its platforms, and how wide it is."""
     platforms = short_platforms(game["platforms"])
-    column = render.Column(
-        children = [
-            render.Text(game["title"], font = "tb-8", color = TITLE),
-            render.Box(width = 1, height = 1),
-            tiny(platforms, PLATFORM),
-        ],
-    )
-    return column, max(width_of(game["title"], "tb-8"), width_of(platforms, "tom-thumb"))
+    lines = title_lines(game["title"])
+    children = [render.Text(line, font = "tb-8", color = TITLE) for line in lines]
+    if len(lines) == 1:
+        # Keeps the platforms level with those under two-line titles.
+        children.append(render.Box(width = 1, height = LINE_HEIGHT))
+    children.append(render.Box(width = 1, height = 1))
+    children.append(tiny(platforms, PLATFORM))
+    width = max([width_of(line, "tb-8") for line in lines] + [width_of(platforms, "tom-thumb")])
+    return render.Column(children = children), width
 
 def date_group(when, days, games):
     """One release date (and how far off it is) over the games out that day, and how wide it is."""
@@ -188,7 +206,7 @@ def scroll(groups):
                 at += period
             if at < 64 and at + width > 0:
                 visible.append(render.Padding(pad = (at, 0, 0, 0), child = group))
-        frames.append(render.Stack(children = visible) if visible else render.Box(width = 64, height = 22))
+        frames.append(render.Stack(children = visible) if visible else render.Box(width = 64, height = 32))
     return render.Animation(children = frames)
 
 def main(config):
@@ -213,32 +231,16 @@ def main(config):
     ]
     games = games[:int(config.get("count", "12"))]
 
+    # The ticker has the whole screen: two-line titles leave no room for a header.
     if not games:
-        body = render.Box(
-            height = 22,
-            child = tiny("NOTHING DATED", PLATFORM),
-        )
-        shown = 0
+        body = render.Box(child = tiny("NOTHING DATED", PLATFORM))
     else:
         body = scroll(ticker(games, today, tz))
-        shown = len(games)
 
     return render.Root(
         delay = FRAME_MS,
         show_full_animation = True,
-        child = render.Column(
-            children = [
-                render.Row(
-                    expanded = True,
-                    main_align = "space_between",
-                    children = [tiny("NEXT 30 DAYS", HEADER), tiny("%d" % shown, DATE)],
-                ),
-                render.Box(width = 64, height = 1),
-                render.Box(width = 64, height = 1, color = DIVIDER),
-                render.Box(width = 64, height = 1),
-                body,
-            ],
-        ),
+        child = body,
     )
 
 def get_schema():

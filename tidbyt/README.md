@@ -55,7 +55,7 @@ installed.
 30 days, grouped by release date: the date and how many days off it is, then each
 game's title over which of the two it's on (PS5, SW2). Games only on other platforms
 are left out; `WANTED` in the app (and in `stories/tidbyt-games.js`) picks the
-platforms. The count in the corner is how many games are coming.
+platforms. Titles wider than 48 LEDs wrap to two lines, so more fits on screen; the ticker takes the whole display to make room.
 
 - **Live dates** come from [RAWG](https://rawg.io/apidocs): get a free API key there
   and set it as the app's *RAWG API key* in Tronbyt. The app takes RAWG's most
